@@ -862,6 +862,9 @@ $(document).ready(async function () {
             let long = position.coords.longitude;
             displayLocation(lat, long);
         }
+        
+        // Auto-fill pickup location for cab booking form
+        autoFillPickupLocation(position);
     }
 
     function defaultPosition() {
@@ -1348,5 +1351,60 @@ function initializeNewCabHome(random_id, rel) {
 
 
 
+    });
+}
+
+// Auto-fill pickup location for cab booking form when location permission is granted
+function autoFillPickupLocation(position) {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    
+    // Check if pickup location inputs exist and are empty
+    var pickupInputs = $('input[name="pickup_location"]');
+    if (pickupInputs.length === 0) {
+        return; // No pickup location inputs on this page
+    }
+    
+    // Only auto-fill if the pickup location is empty
+    var hasEmptyPickup = false;
+    pickupInputs.each(function() {
+        if ($(this).val() === '') {
+            hasEmptyPickup = true;
+        }
+    });
+    
+    if (!hasEmptyPickup) {
+        return; // All pickup locations already have values
+    }
+    
+    // Reverse geocode to get address from coordinates
+    var geocoder = new google.maps.Geocoder();
+    var latlng = { lat: lat, lng: lng };
+    
+    geocoder.geocode({ location: latlng }, function(results, status) {
+        if (status === 'OK' && results[0]) {
+            var formattedAddress = results[0].formatted_address;
+            
+            // Fill all empty pickup_location inputs on the page
+            pickupInputs.each(function() {
+                if ($(this).val() === '') {
+                    $(this).val(formattedAddress);
+                    
+                    // Get the input ID and find corresponding lat/lng hidden fields
+                    var inputId = $(this).attr('id');
+                    if (inputId) {
+                        var latInput = $('#' + inputId + '_latitude_home');
+                        var lngInput = $('#' + inputId + '_longitude_home');
+                        
+                        if (latInput.length > 0) {
+                            latInput.val(lat);
+                        }
+                        if (lngInput.length > 0) {
+                            lngInput.val(lng);
+                        }
+                    }
+                }
+            });
+        }
     });
 }
