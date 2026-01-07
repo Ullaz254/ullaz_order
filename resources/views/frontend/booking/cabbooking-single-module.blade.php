@@ -55,10 +55,10 @@
             <!-- Cab Service Image on Right Side -->
             <div class="col-md-6 col-lg-7 col-xl-8 d-none d-md-flex justify-content-center align-items-center">
                 <div class="cab-service-image">
-                    <img src="https://img.freepik.com/free-vector/taxi-app-concept_23-2148496623.jpg" 
+                    <img src="{{ asset('images/hero-banner.jpg') }}" 
                          class="img-fluid" 
                          alt="{{ __('Cab Service') }}" 
-                         style="max-height: 420px; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); object-fit: contain;">
+                         style="max-height: 450px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); object-fit: cover;">
                 </div>
             </div>
         </div>
