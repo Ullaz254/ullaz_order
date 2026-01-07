@@ -16,7 +16,17 @@
     style="background:url({{ $img }});background-size: cover;background-repeat: no-repeat;background-position: center;">
     <div class="container-fluid p-64 py-64">
         <div class="row align-items-center">
-            <div class="col-md-6 col-lg-5 col-xl-4">
+            <!-- Cab Service Image - Shows on top for mobile, right side for desktop -->
+            <div class="col-12 col-md-6 col-lg-7 col-xl-8 order-first order-md-last d-flex justify-content-center align-items-center mb-4 mb-md-0">
+                <div class="cab-service-image">
+                    <img src="{{ asset('images/hero-banner.jpg') }}" 
+                         class="img-fluid" 
+                         alt="{{ __('Cab Service') }}" 
+                         style="max-height: 350px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); object-fit: cover;">
+                </div>
+            </div>
+            <!-- Form Section -->
+            <div class="col-12 col-md-6 col-lg-5 col-xl-4 order-last order-md-first">
                 <div class="card-box mb-0">
                     <h2>{{ $homePageLabel->translations->first() ? $homePageLabel->translations->first()->title : '' }}
                     </h2>
@@ -50,15 +60,6 @@
                                 class="btn btn-solid new-btn schedule-btn">{{ __('Schedule For Later') }}</button>
                         </div>
                     </form>
-                </div>
-            </div>
-            <!-- Cab Service Image on Right Side -->
-            <div class="col-md-6 col-lg-7 col-xl-8 d-none d-md-flex justify-content-center align-items-center">
-                <div class="cab-service-image">
-                    <img src="{{ asset('images/hero-banner.jpg') }}" 
-                         class="img-fluid" 
-                         alt="{{ __('Cab Service') }}" 
-                         style="max-height: 450px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); object-fit: cover;">
                 </div>
             </div>
         </div>
