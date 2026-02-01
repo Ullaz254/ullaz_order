@@ -58,9 +58,14 @@
 // Initialize Cab Booking Map
 var cabBookingMap;
 var cabBookingMarker;
+var riderMarkers = []; // Array to store rider markers
 
 // Default location: Nairobi, Kenya
 var defaultKenyaLocation = { lat: -1.286389, lng: 36.817223 };
+
+// Marker icon paths
+var riderMarkerIconAvailablePath = '{{ asset("demo/images/location.png") }}';
+var riderMarkerIconUnavailablePath = '{{ asset("demo/images/location_grey.png") }}';
 
 function initCabBookingMap() {
     // Initialize map with default Kenya location
@@ -101,6 +106,9 @@ function initCabBookingMap() {
                 
                 // Auto-fill pickup location
                 reverseGeocodeAndFillPickup(userLocation.lat, userLocation.lng);
+                
+                // Fetch and display nearby riders
+                fetchNearbyRiders(userLocation.lat, userLocation.lng);
             },
             function(error) {
                 // Error or denied - keep default Kenya location
@@ -140,6 +148,118 @@ function reverseGeocodeAndFillPickup(lat, lng) {
                 }
             });
         }
+    });
+}
+
+// Function to clear all rider markers
+function clearRiderMarkers() {
+    for (var i = 0; i < riderMarkers.length; i++) {
+        riderMarkers[i].setMap(null);
+    }
+    riderMarkers = [];
+}
+
+// Function to fetch nearby riders from API
+function fetchNearbyRiders(lat, lng) {
+    // Clear existing markers
+    clearRiderMarkers();
+    
+    // API endpoint - adjust if needed based on your setup
+    var apiUrl = '{{ url("/api/v1/get/agents") }}';
+    
+    // Make API call to get nearby riders
+    $.ajax({
+        url: apiUrl,
+        type: 'POST',
+        data: {
+            latitude: lat,
+            longitude: lng
+        },
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        success: function(response) {
+            if (response && response.status === 200 && response.data && response.data.length > 0) {
+                // Display riders on map
+                displayRidersOnMap(response.data);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.log('Error fetching nearby riders:', error);
+            // Silently fail - don't show riders if API fails
+        }
+    });
+}
+
+// Function to display riders on map
+function displayRidersOnMap(riders) {
+    riders.forEach(function(rider) {
+        // Get rider location from agentlog
+        var riderLat = 0;
+        var riderLng = 0;
+        
+        if (rider.agentlog && rider.agentlog.lat && rider.agentlog.long) {
+            riderLat = parseFloat(rider.agentlog.lat);
+            riderLng = parseFloat(rider.agentlog.long);
+        } else if (rider.lat && rider.long) {
+            riderLat = parseFloat(rider.lat);
+            riderLng = parseFloat(rider.long);
+        }
+        
+        // Skip if invalid coordinates
+        if (riderLat === 0 || riderLng === 0 || isNaN(riderLat) || isNaN(riderLng)) {
+            return;
+        }
+        
+        // Determine marker icon based on availability
+        var markerIconPath = (rider.is_available == 1) ? riderMarkerIconAvailablePath : riderMarkerIconUnavailablePath;
+        var markerIcon = {
+            url: markerIconPath,
+            scaledSize: new google.maps.Size(50, 50),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(22, 22)
+        };
+        
+        // Create marker
+        var riderMarker = new google.maps.Marker({
+            position: { lat: riderLat, lng: riderLng },
+            map: cabBookingMap,
+            icon: markerIcon,
+            title: rider.agent_name || 'Rider'
+        });
+        
+        // Create info window content
+        var infoContent = '<div style="padding: 10px; min-width: 200px;">' +
+            '<h6 style="margin: 0 0 8px 0; font-weight: bold;">' + (rider.agent_name || 'Rider') + '</h6>';
+        
+        if (rider.phone_number) {
+            infoContent += '<p style="margin: 4px 0;"><i class="fas fa-phone-alt"></i> ' + rider.phone_number + '</p>';
+        }
+        
+        if (rider.distance !== undefined) {
+            infoContent += '<p style="margin: 4px 0;"><i class="fas fa-map-marker-alt"></i> ' + 
+                parseFloat(rider.distance).toFixed(2) + ' ' + (rider.distance_type || 'km') + ' away</p>';
+        }
+        
+        if (rider.arrival_time) {
+            infoContent += '<p style="margin: 4px 0;"><i class="far fa-clock"></i> ETA: ' + rider.arrival_time + '</p>';
+        }
+        
+        infoContent += '</div>';
+        
+        var infoWindow = new google.maps.InfoWindow({
+            content: infoContent
+        });
+        
+        // Add click listener to show info window
+        riderMarker.addListener('click', function() {
+            infoWindow.open(cabBookingMap, riderMarker);
+        });
+        
+        // Store marker in array
+        riderMarkers.push(riderMarker);
     });
 }
 
