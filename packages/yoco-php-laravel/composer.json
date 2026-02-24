@@ -1,0 +1,15 @@
+{
+    "name": "yoco/yoco-php-laravel",
+    "description": "Yoco PHP Laravel library",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0",
+        "yoco/yoco-php": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yoco\\": "src/"
+        }
+    }
+}

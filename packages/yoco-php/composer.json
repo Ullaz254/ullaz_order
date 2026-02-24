@@ -1,0 +1,14 @@
+{
+    "name": "yoco/yoco-php",
+    "description": "Yoco PHP client library",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yoco\\": "src/"
+        }
+    }
+}
