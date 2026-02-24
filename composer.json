@@ -19,7 +19,7 @@
         "apimatic/core-interfaces": "~0.1.0",
         "apimatic/unirest-php": "^4.0.0",
         "artisangang/jwt": "^0.2.0",
-        "aws/aws-sdk-php": "^3.273",
+        "aws/aws-sdk-php": "~3.269.0",
         "barryvdh/laravel-dompdf": "^2.0",
         "bavix/laravel-wallet": "^6.1",
         "braintree/braintree_php": "^6.8",
@@ -119,6 +119,9 @@
         "allow-plugins": {
             "symfony/thanks": true,
             "php-http/discovery": true
+        },
+        "platform": {
+            "php": "8.2.0"
         }
     },
     "extra": {
