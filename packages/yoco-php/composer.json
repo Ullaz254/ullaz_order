@@ -1,5 +1,6 @@
 {
     "name": "yoco/yoco-php",
+    "version": "0.1.0-beta",
     "description": "Yoco PHP client library",
     "type": "library",
     "license": "MIT",

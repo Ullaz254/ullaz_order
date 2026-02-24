@@ -1,5 +1,6 @@
 {
     "name": "yoco/yoco-php-laravel",
+    "version": "0.1.0-beta",
     "description": "Yoco PHP Laravel library",
     "type": "library",
     "license": "MIT",
