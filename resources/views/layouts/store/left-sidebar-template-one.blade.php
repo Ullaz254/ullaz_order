@@ -43,16 +43,20 @@ try {
 } catch (\Exception $e) {
     // Table doesn't exist, use empty collection
 }
-$pages = \App\Models\Page::with([
-'translations' => function ($q) {
-$q->where('language_id', session()->get('customerLanguage') ?? 1);
-},
-])
-->whereHas('translations', function ($q) {
-$q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguage') ?? 1]);
-})
-->orderBy('order_by', 'ASC')
-->get();
+$pages = collect([]);
+try {
+    $pages = \App\Models\Page::with([
+    'translations' => function ($q) {
+    $q->where('language_id', session()->get('customerLanguage') ?? 1);
+    },
+    ])
+    ->whereHas('translations', function ($q) {
+    $q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguage') ?? 1]);
+    })
+    ->get(); // Removed orderBy('order_by') as column doesn't exist
+} catch (\Exception $e) {
+    // Table or column doesn't exist, use empty collection
+}
 @endphp
 <article class="site-header @if ($client_preference_detail->business_type == 'taxi') taxi-header @endif">
     @include('layouts.store/topbar-template-one')

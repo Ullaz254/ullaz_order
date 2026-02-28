@@ -41,8 +41,7 @@ $q->where('language_id', session()->get('customerLanguage') ?? 1);
 ->whereHas('translations', function ($q) {
 $q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguage') ?? 1]);
 })
-->orderBy('order_by', 'ASC')
-->get();
+->get(); // Removed orderBy('order_by') as column doesn't exist
 } catch (\Exception $e) {
     // Table doesn't exist, use empty collection
 }
