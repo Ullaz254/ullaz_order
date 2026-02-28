@@ -562,26 +562,48 @@ class UserhomeController extends FrontController
                 $mobile_banners = $client_preferences ? $this->getBannersForHomePage($client_preferences, 'mobile_banners', $latitude, $longitude) : [];
 
 
-                $home_page_labels = CabBookingLayout::where('is_active', 1)->web()->where('for_no_product_found_html',0)->orderBy('order_by');
+                // Try to get home page labels, handle missing table gracefully
+                try {
+                    $home_page_labels = CabBookingLayout::where('is_active', 1)->web()->where('for_no_product_found_html',0)->orderBy('order_by');
 
+                    if (isset($langId) && !empty($langId))
+                        $home_page_labels = $home_page_labels->with(['translations' => function ($q) use ($langId) {
+                            $q->where('language_id', $langId);
+                        }]);
 
-                if (isset($langId) && !empty($langId))
-                    $home_page_labels = $home_page_labels->with(['translations' => function ($q) use ($langId) {
-                        $q->where('language_id', $langId);
-                    }]);
+                    $home_page_labels = $home_page_labels->get();
+                } catch (\Exception $e) {
+                    // Table doesn't exist or query failed, use empty collection
+                    $home_page_labels = collect([]);
+                }
 
-                $home_page_labels = $home_page_labels->get();
-                // if nothing in enblead for home page then show all
-
-                //     $home_page_labels = HomePageLabel::with('translations')->where('is_active', 1)->orderBy('order_by')->get();
                 $request->request->add(['type'=>Session::get('vendorType')??'delivery','noTinJson'=>1] );
-                $set_template = WebStylingOption::where('web_styling_id', 1)->where('is_selected', 1)->first();
+                
+                // Try to get web styling option, handle missing table gracefully
+                try {
+                    $set_template = WebStylingOption::where('web_styling_id', 1)->where('is_selected', 1)->first();
+                } catch (\Exception $e) {
+                    $set_template = null;
+                }
 
-                $CabBookingLayout = CabBookingLayout::web()->where('is_active', 1);
-                $home_page_pickup_labels   = clone $CabBookingLayout;
-                $for_no_product_found_html = clone $CabBookingLayout;
-                $enable_layout             = clone $CabBookingLayout;
-                $enable_layout = $enable_layout->orderBy('order_by','asc')->pluck('slug')->toArray();
+                // Try to get cab booking layout, handle missing table gracefully
+                $enable_layout = [];
+                $home_page_pickup_labels = collect([]);
+                $for_no_product_found_html = collect([]);
+                $home_page_pickup_labels_query = null;
+                $for_no_product_found_html_query = null;
+                
+                try {
+                    $CabBookingLayout = CabBookingLayout::web()->where('is_active', 1);
+                    $home_page_pickup_labels_query   = clone $CabBookingLayout;
+                    $for_no_product_found_html_query = clone $CabBookingLayout;
+                    $enable_layout_query             = clone $CabBookingLayout;
+                    $enable_layout = $enable_layout_query->orderBy('order_by','asc')->pluck('slug')->toArray();
+                } catch (\Exception $e) {
+                    // Table doesn't exist, use defaults
+                    $enable_layout = [];
+                }
+
                 $homePageData = $this->postHomePageData($request, $set_template, $enable_layout, $additionalPreference);
 
                 $home_page_labels = $home_page_labels->map(function($da) use ($homePageData, $navCategories) {
@@ -594,30 +616,51 @@ class UserhomeController extends FrontController
                     return $da;
                 });
 
-                $only_cab_booking = OnboardSetting::where('key_value', 'home_page_cab_booking')->count();
+                // Try to check cab booking setting, handle missing table gracefully
+                $only_cab_booking = 0;
+                try {
+                    $only_cab_booking = OnboardSetting::where('key_value', 'home_page_cab_booking')->count();
+                } catch (\Exception $e) {
+                    // Table doesn't exist, use default
+                    $only_cab_booking = 0;
+                }
                 if ($only_cab_booking == 1)
                     return Redirect::route('categoryDetail', 'cabservice');
 
+                // Try to get pickup labels, handle missing table gracefully
+                try {
+                    if ($home_page_pickup_labels_query !== null) {
+                        $home_page_pickup_labels = $home_page_pickup_labels_query->with('translations')->where('for_no_product_found_html',0)->orderBy('order_by')->get();
+                    }
+                } catch (\Exception $e) {
+                    $home_page_pickup_labels = collect([]);
+                }
 
-
-                $home_page_pickup_labels  = $home_page_pickup_labels->with('translations')->where('for_no_product_found_html',0)->orderBy('order_by')->get();
-
-
-
-                $for_no_product_found_html = $for_no_product_found_html->with('translations')->where('for_no_product_found_html',1)->orderBy('order_by')->get();
+                // Try to get no product found HTML, handle missing table gracefully
+                try {
+                    if ($for_no_product_found_html_query !== null) {
+                        $for_no_product_found_html = $for_no_product_found_html_query->with('translations')->where('for_no_product_found_html',1)->orderBy('order_by')->get();
+                    }
+                } catch (\Exception $e) {
+                    $for_no_product_found_html = collect([]);
+                }
 
                 $categories = [];
                 if(isset($set_template)  && ($set_template->template_id == 8 || $set_template->template_id == 9)){
-                    $categories = Category::with('translation_one')->select('id', 'icon', 'slug', 'type_id', 'is_visible', 'status', 'is_core', 'vendor_id', 'can_add_products', 'parent_id')
-                    ->where('id', '>', '1')
-
-                    ->whereNotIn('type_id', [4, 5])
-                    ->where(function ($q) {
-                        $q->whereNull('vendor_id');
-                    })->orderBy('position', 'asc')
-                    ->orderBy('id', 'asc')
-                    ->where('status', 1)
-                    ->orderBy('parent_id', 'asc')->get();
+                    try {
+                        $categories = Category::with('translation_one')->select('id', 'icon', 'slug', 'type_id', 'is_visible', 'status', 'is_core', 'vendor_id', 'can_add_products', 'parent_id')
+                        ->where('id', '>', '1')
+                        ->whereNotIn('type_id', [4, 5])
+                        ->where(function ($q) {
+                            $q->whereNull('vendor_id');
+                        })->orderBy('position', 'asc')
+                        ->orderBy('id', 'asc')
+                        ->where('status', 1)
+                        ->orderBy('parent_id', 'asc')->get();
+                    } catch (\Exception $e) {
+                        // Table doesn't exist or query failed, use empty array
+                        $categories = [];
+                    }
                 }
 
 
