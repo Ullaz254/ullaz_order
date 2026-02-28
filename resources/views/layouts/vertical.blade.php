@@ -84,7 +84,7 @@
 
     var NumberFormatHelper = { formatPrice: function(x,format=1){
         if(x){
-            var digit_count = "{{$client_preference_detail->digit_after_decimal}}";
+            var digit_count = "{{($client_preference_detail && isset($client_preference_detail->digit_after_decimal)) ? $client_preference_detail->digit_after_decimal : 2}}";
             if(digit_count)
             {
                 x = parseFloat(x).toFixed(digit_count);

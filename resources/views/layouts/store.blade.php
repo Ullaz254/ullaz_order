@@ -1,6 +1,6 @@
 @php
 $set_template = \App\Models\WebStylingOption::where('web_styling_id',1)->where('is_selected',1)->first();
-$set_common_business_type = $client_preference_detail->business_type??'';
+$set_common_business_type = ($client_preference_detail && isset($client_preference_detail->business_type)) ? $client_preference_detail->business_type : '';
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -15,11 +15,13 @@ $set_common_business_type = $client_preference_detail->business_type??'';
 @php
 
 $dark_mode = '';
-if($client_preference_detail->show_dark_mode == 1){
-  $dark_mode = 'dark';
-}else if($client_preference_detail->show_dark_mode == 2){
-  if(session()->has('config_theme')){
-    $dark_mode = session()->get('config_theme');
+if($client_preference_detail && isset($client_preference_detail->show_dark_mode)){
+  if($client_preference_detail->show_dark_mode == 1){
+    $dark_mode = 'dark';
+  }else if($client_preference_detail->show_dark_mode == 2){
+    if(session()->has('config_theme')){
+      $dark_mode = session()->get('config_theme');
+    }
   }
 }
 $analytics = getAdditionalPreference(['gtag_id', 'fpixel_id','is_service_product_price_from_dispatch','is_service_price_selection']);

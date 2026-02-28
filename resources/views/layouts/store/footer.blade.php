@@ -397,15 +397,15 @@ if($showSubscriptionPlanPopUp == 1){
     var stop_accepting_orders = "{{Session::get('preferences')->stop_order_acceptance_for_users ?? 0}}";
 
 // Client Detail
-    var client_company_name = "{{Session::get('clientdata')->company_name}}";
-    var client_logo_url = "{{Session::get('clientdata')->logo_image_url}}";
-    var digit_count = "{{$client_preference_detail->digit_after_decimal}}";
+    var client_company_name = "{{Session::get('clientdata')->company_name ?? ''}}";
+    var client_logo_url = "{{Session::get('clientdata')->logo_image_url ?? ''}}";
+    var digit_count = "{{($client_preference_detail && isset($client_preference_detail->digit_after_decimal)) ? $client_preference_detail->digit_after_decimal : 2}}";
 
 //////////////Telr payment Routes
     var skipcash = "{{route('payment.skipcash')}}";
 
 // is restricted
-    var is_age_restricted ="{{$client_preference_detail->age_restriction}}";
+    var is_age_restricted ="{{($client_preference_detail && isset($client_preference_detail->age_restriction)) ? $client_preference_detail->age_restriction : 0}}";
     //user lat long
     // check vendor slot urkl
     var checkSlotOrdersUrl = "{{route('checkSlotOrders')}}";

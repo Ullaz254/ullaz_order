@@ -44,9 +44,15 @@ class AppServiceProvider extends ServiceProvider
         if(Schema::hasTable('social_media'))
         $social_media_details = SocialMedia::get();
         $favicon_url = asset('assets/images/favicon.png');
-        $client_preference_detail = ClientPreference::where(['id' => 1])->first();
-        if ($client_preference_detail) {
-            $favicon_url = $client_preference_detail->favicon['proxy_url'] . '600/400' . $client_preference_detail->favicon['image_path'];
+        $client_preference_detail = null;
+        try {
+            $client_preference_detail = ClientPreference::where(['id' => 1])->first();
+            if ($client_preference_detail && isset($client_preference_detail->favicon)) {
+                $favicon_url = $client_preference_detail->favicon['proxy_url'] . '600/400' . $client_preference_detail->favicon['image_path'];
+            }
+        } catch (\Exception $e) {
+            // Table doesn't exist or query failed, use default favicon
+            $client_preference_detail = null;
         }
         $client_head = Client::where(['id' => 1])->first();
 
