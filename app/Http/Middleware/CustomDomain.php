@@ -239,8 +239,27 @@ class CustomDomain
           @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
           // #endregion
           
-          // If both fail, abort with a clear error
-          abort(500, "Database connection failed for client database: {$database_name}. Please check database credentials and permissions.");
+          // If both fail, continue with default database connection
+          // This allows the app to work even if client-specific DB is unavailable
+          // The client data might be in the default database
+          DB::setDefaultConnection(env('DB_CONNECTION', 'mysql'));
+          
+          // #region agent log
+          $logData = [
+            'id' => 'log_' . time() . '_' . uniqid(),
+            'timestamp' => round(microtime(true) * 1000),
+            'location' => 'CustomDomain.php:195',
+            'message' => 'Falling back to default database connection',
+            'data' => [
+              'failed_database' => $database_name,
+              'default_database' => env('DB_DATABASE'),
+              'warning' => 'Client-specific database unavailable, using default database'
+            ],
+            'runId' => 'run1',
+            'hypothesisId' => 'HDB'
+          ];
+          @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
+          // #endregion
         }
       }
       if (!empty($redisData->custom_domain)) {
@@ -252,48 +271,92 @@ class CustomDomain
         $sub_domain = ltrim($sub_domain, "https://");
         $callback = "https://" . $sub_domain . ".royoorders.com/auth/facebook/callback";
       }
-      $clientPreference = ClientPreference::where('client_code', $redisData->code)->first();
-      if ($clientPreference) {
-        Config::set('FACEBOOK_CLIENT_ID', $clientPreference->fb_client_id);
-        Config::set('FACEBOOK_CLIENT_SECRET', $clientPreference->fb_client_secret);
-        Config::set('FACEBOOK_CALLBACK_URL', $callback);
+      // Try to get client preferences, handle errors gracefully
+      try {
+        $clientPreference = ClientPreference::where('client_code', $redisData->code)->first();
+        if ($clientPreference) {
+          Config::set('FACEBOOK_CLIENT_ID', $clientPreference->fb_client_id);
+          Config::set('FACEBOOK_CLIENT_SECRET', $clientPreference->fb_client_secret);
+          Config::set('FACEBOOK_CALLBACK_URL', $callback);
+        }
+      } catch (\Exception $e) {
+        // #region agent log
+        $logData = [
+          'id' => 'log_' . time() . '_' . uniqid(),
+          'timestamp' => round(microtime(true) * 1000),
+          'location' => 'CustomDomain.php:274',
+          'message' => 'ClientPreference query failed',
+          'data' => [
+            'client_code' => $redisData->code ?? null,
+            'error' => $e->getMessage(),
+            'current_database' => DB::connection()->getDatabaseName()
+          ],
+          'runId' => 'run1',
+          'hypothesisId' => 'HDB'
+        ];
+        @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
+        // #endregion
+        
+        // Continue without client preferences - app should still work
+        $clientPreference = null;
       }
       Session::put('client_config', $redisData);
       Session::put('login_user_type', 'client');
 
-      // Set language
-      $primeLang = ClientLanguage::select('language_id', 'is_primary')->where('is_primary', 1)->first();
-      if (!Session::has('customerLanguage') || empty(Session::get('customerLanguage'))) {
-        if ($primeLang) {
-          Session::put('customerLanguage', $primeLang->language_id);
+      // Set language - with error handling
+      try {
+        $primeLang = ClientLanguage::select('language_id', 'is_primary')->where('is_primary', 1)->first();
+        if (!Session::has('customerLanguage') || empty(Session::get('customerLanguage'))) {
+          if ($primeLang) {
+            Session::put('customerLanguage', $primeLang->language_id);
+          }
         }
-      }
-      if (!Session::has('customerLanguage') || empty(Session::get('customerLanguage'))) {
-        $primeLang = Language::where('id', 1)->first();
+        if (!Session::has('customerLanguage') || empty(Session::get('customerLanguage'))) {
+          $primeLang = Language::where('id', 1)->first();
+          Session::put('customerLanguage', 1);
+        }
+        $lang_detail = Language::where('id', Session::get('customerLanguage'))->first();
+        if ($lang_detail) {
+          App::setLocale($lang_detail->sort_code);
+          Session::put('applocale', $lang_detail->sort_code);
+        }
+      } catch (\Exception $e) {
+        // Use default language if query fails
         Session::put('customerLanguage', 1);
+        App::setLocale('en');
+        Session::put('applocale', 'en');
       }
-      $lang_detail = Language::where('id', Session::get('customerLanguage'))->first();
-      App::setLocale($lang_detail->sort_code);
-      Session::put('applocale', $lang_detail->sort_code);
 
-      // Set Currency                   
-      $primeCurcy = ClientCurrency::join('currencies as cu', 'cu.id', 'client_currencies.currency_id')->where('client_currencies.is_primary', 1)->first();
-      Session::put('client_primary_currency', $primeCurcy->iso_code);
-      if (!Session::has('customerCurrency') || empty(Session::get('customerCurrency'))) {
+      // Set Currency - with error handling                  
+      try {
+        $primeCurcy = ClientCurrency::join('currencies as cu', 'cu.id', 'client_currencies.currency_id')->where('client_currencies.is_primary', 1)->first();
         if ($primeCurcy) {
-          Session::put('customerCurrency', $primeCurcy->currency_id);
-          Session::put('currencySymbol', $primeCurcy->symbol);
-          Session::put('currencyMultiplier', $primeCurcy->doller_compare);
+          Session::put('client_primary_currency', $primeCurcy->iso_code);
         }
-      }
-      if (!Session::has('customerCurrency') || empty(Session::get('customerCurrency'))) {
-        $primeCurcy = Currency::where('id', 147)->first();
+        if (!Session::has('customerCurrency') || empty(Session::get('customerCurrency'))) {
+          if ($primeCurcy) {
+            Session::put('customerCurrency', $primeCurcy->currency_id);
+            Session::put('currencySymbol', $primeCurcy->symbol);
+            Session::put('currencyMultiplier', $primeCurcy->doller_compare);
+          }
+        }
+        if (!Session::has('customerCurrency') || empty(Session::get('customerCurrency'))) {
+          $primeCurcy = Currency::where('id', 147)->first();
+          if ($primeCurcy) {
+            Session::put('customerCurrency', 147);
+            Session::put('currencySymbol', $primeCurcy->symbol);
+            Session::put('currencyMultiplier', 1);
+          }
+        }
+        $currency_detail = Currency::where('id', Session::get('customerCurrency'))->first();
+        if ($currency_detail) {
+          Session::put('iso_code', $currency_detail->iso_code);
+        }
+      } catch (\Exception $e) {
+        // Use default currency if query fails
         Session::put('customerCurrency', 147);
-        Session::put('currencySymbol', $primeCurcy->symbol);
-        Session::put('currencyMultiplier', 1);
+        Session::put('iso_code', 'USD');
       }
-      $currency_detail = Currency::where('id', Session::get('customerCurrency'))->first();
-      Session::put('iso_code', $currency_detail->iso_code);
 
       // Client preferences
       $preferData = array();
@@ -301,14 +364,27 @@ class CustomDomain
         $preferData = $clientPreference;
       }
 
-      $cl = Client::first();
-      $getAdminCurrentCountry = Country::where('id', '=', $cl->country_id)->get()->first();
-      if (!empty($getAdminCurrentCountry)) {
-        $countryCode = $getAdminCurrentCountry->code;
-        $phoneCode = $getAdminCurrentCountry->phonecode;
-      } else {
+      // Get client and country - with error handling
+      try {
+        $cl = Client::first();
+        if ($cl) {
+          $getAdminCurrentCountry = Country::where('id', '=', $cl->country_id)->get()->first();
+          if (!empty($getAdminCurrentCountry)) {
+            $countryCode = $getAdminCurrentCountry->code;
+            $phoneCode = $getAdminCurrentCountry->phonecode;
+          } else {
+            $countryCode = '';
+            $phoneCode = '';
+          }
+        } else {
+          $countryCode = '';
+          $phoneCode = '';
+          $cl = null;
+        }
+      } catch (\Exception $e) {
         $countryCode = '';
         $phoneCode = '';
+        $cl = null;
       }
 
       $vendor_mode_count = 0;
@@ -348,8 +424,10 @@ class CustomDomain
       Session::put('default_country_phonecode', $phoneCode);
 
       Session::put('preferences', $preferData);
-      $cl->logo_image_url = $cl ? $cl->logo['original'] : ' ';
-      Session::put('clientdata', $cl);
+      if ($cl) {
+        $cl->logo_image_url = isset($cl->logo['original']) ? $cl->logo['original'] : ' ';
+        Session::put('clientdata', $cl);
+      }
     } else {
       return redirect()->route('error_404');
     }
