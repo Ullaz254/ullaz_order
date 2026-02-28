@@ -39,7 +39,7 @@ class CustomDomain
       'runId' => 'run1',
       'hypothesisId' => 'H404'
     ];
-    file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+    @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
     // #endregion
     
     $existRedis = Redis::get($domain);
@@ -67,7 +67,7 @@ class CustomDomain
         'runId' => 'run1',
         'hypothesisId' => 'H404'
       ];
-      file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+      @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
       // #endregion
       
       if (!$client) {
@@ -81,7 +81,7 @@ class CustomDomain
           'runId' => 'run1',
           'hypothesisId' => 'H404'
         ];
-        file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+        @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
         // #endregion
         
         abort(404, "Domain not found: {$domain}");
