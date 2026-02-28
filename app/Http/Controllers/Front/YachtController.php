@@ -98,25 +98,46 @@ class YachtController extends FrontController
             $mobile_banners = $this->getBannersForHomePage($client_preferences, 'mobile_banners', $latitude, $longitude);
 
 
-            $home_page_labels = CabBookingLayout::where('is_active', 1)->web()->where('for_no_product_found_html',0)->orderBy('order_by');
+            $home_page_labels = collect([]);
+            try {
+                $home_page_labels = CabBookingLayout::where('is_active', 1)->web()->where('for_no_product_found_html',0)->orderBy('order_by');
 
+                if (isset($langId) && !empty($langId))
+                    $home_page_labels = $home_page_labels->with(['translations' => function ($q) use ($langId) {
+                        $q->where('language_id', $langId);
+                    }]);
 
-            if (isset($langId) && !empty($langId))
-                $home_page_labels = $home_page_labels->with(['translations' => function ($q) use ($langId) {
-                    $q->where('language_id', $langId);
-                }]);
-
-            $home_page_labels = $home_page_labels->get();
+                $home_page_labels = $home_page_labels->get();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use empty collection
+                $home_page_labels = collect([]);
+            }
            
             //     $home_page_labels = HomePageLabel::with('translations')->where('is_active', 1)->orderBy('order_by')->get();
             $request->request->add(['type'=>Session::get('vendorType')??'delivery','noTinJson'=>1] );
-            $set_template = WebStylingOption::where('web_styling_id', 1)->where('is_selected', 1)->first();
+            
+            $set_template = null;
+            try {
+                $set_template = WebStylingOption::where('web_styling_id', 1)->where('is_selected', 1)->first();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use null
+                $set_template = null;
+            }
 
-            $CabBookingLayout = CabBookingLayout::web()->where('is_active', 1);
-            $home_page_pickup_labels   = clone $CabBookingLayout;
-            $for_no_product_found_html = clone $CabBookingLayout;
-            $enable_layout             = clone $CabBookingLayout;
-            $enable_layout = $enable_layout->orderBy('order_by','asc')->pluck('slug')->toArray();
+            $enable_layout = [];
+            $home_page_pickup_labels = collect([]);
+            $for_no_product_found_html = collect([]);
+            try {
+                $CabBookingLayout = CabBookingLayout::web()->where('is_active', 1);
+                $home_page_pickup_labels   = clone $CabBookingLayout;
+                $for_no_product_found_html = clone $CabBookingLayout;
+                $enable_layout_query             = clone $CabBookingLayout;
+                $enable_layout = $enable_layout_query->orderBy('order_by','asc')->pluck('slug')->toArray();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use defaults
+                $enable_layout = [];
+            }
+            
             $homePageData = $this->rentalProducts($request, $set_template, $enable_layout, $additionalPreference);
 
             $home_page_labels = $home_page_labels->map(function($da) use ($homePageData, $navCategories) {
@@ -129,25 +150,46 @@ class YachtController extends FrontController
                 return $da;
             });
             
-            $only_cab_booking = OnboardSetting::where('key_value', 'home_page_cab_booking')->count();
+            $only_cab_booking = 0;
+            try {
+                $only_cab_booking = OnboardSetting::where('key_value', 'home_page_cab_booking')->count();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use default
+                $only_cab_booking = 0;
+            }
             if ($only_cab_booking == 1)
                 return Redirect::route('categoryDetail', 'cabservice');
 
-            $home_page_pickup_labels  = $home_page_pickup_labels->with('translations')->where('for_no_product_found_html',0)->orderBy('order_by')->get();
+            try {
+                $home_page_pickup_labels  = $home_page_pickup_labels->with('translations')->where('for_no_product_found_html',0)->orderBy('order_by')->get();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use empty collection
+                $home_page_pickup_labels = collect([]);
+            }
 
-            $for_no_product_found_html = $for_no_product_found_html->with('translations')->where('for_no_product_found_html',1)->orderBy('order_by')->get();
+            try {
+                $for_no_product_found_html = $for_no_product_found_html->with('translations')->where('for_no_product_found_html',1)->orderBy('order_by')->get();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use empty collection
+                $for_no_product_found_html = collect([]);
+            }
             
             $categories = [];
             if(isset($set_template)  && ($set_template->template_id == 8 || $set_template->template_id == 9)){
-                $categories = Category::with('translation_one')->select('id', 'icon', 'slug', 'type_id', 'is_visible', 'status', 'is_core', 'vendor_id', 'can_add_products', 'parent_id')
-                ->where('id', '>', '1')
-                ->whereIn('type_id', [7, 10])
-                ->where(function ($q) {
-                    $q->whereNull('vendor_id');
-                })->orderBy('position', 'asc')
-                ->orderBy('id', 'asc')
-                ->where('status', 1)
-                ->orderBy('parent_id', 'asc')->get();
+                try {
+                    $categories = Category::with('translation_one')->select('id', 'icon', 'slug', 'type_id', 'is_visible', 'status', 'is_core', 'vendor_id', 'can_add_products', 'parent_id')
+                    ->where('id', '>', '1')
+                    ->whereIn('type_id', [7, 10])
+                    ->where(function ($q) {
+                        $q->whereNull('vendor_id');
+                    })->orderBy('position', 'asc')
+                    ->orderBy('id', 'asc')
+                    ->where('status', 1)
+                    ->orderBy('parent_id', 'asc')->get();
+                } catch (\Exception $e) {
+                    // Table doesn't exist, use empty array
+                    $categories = [];
+                }
             }
 
             $is_service_product_price_from_dispatch_forOnDemand = 0;

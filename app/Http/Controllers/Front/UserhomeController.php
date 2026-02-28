@@ -1315,22 +1315,55 @@ class UserhomeController extends FrontController
                 }
             }
 
-            $banners = Banner::where('status', 1)->where('validity_on', 1)
-                ->where(function ($q) {
-                    $q->whereNull('start_date_time')->orWhere(function ($q2) {
-                        $q2->whereDate('start_date_time', '<=', Carbon::now())
-                            ->whereDate('end_date_time', '>=', Carbon::now());
-                    });
-                })->orderBy('sorting', 'asc')->with('category')->with('vendor')->get();
-            $home_page_labels = HomePageLabel::with('translations')->where('is_active', 1)->orderBy('order_by')->get();
+            $banners = collect([]);
+            try {
+                $banners = Banner::where('status', 1)->where('validity_on', 1)
+                    ->where(function ($q) {
+                        $q->whereNull('start_date_time')->orWhere(function ($q2) {
+                            $q2->whereDate('start_date_time', '<=', Carbon::now())
+                                ->whereDate('end_date_time', '>=', Carbon::now());
+                        });
+                    })->orderBy('sorting', 'asc')->with('category')->with('vendor')->get();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use empty collection
+                $banners = collect([]);
+            }
+            
+            $home_page_labels = collect([]);
+            try {
+                $home_page_labels = HomePageLabel::with('translations')->where('is_active', 1)->orderBy('order_by')->get();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use empty collection
+                $home_page_labels = collect([]);
+            }
 
-            $only_cab_booking = OnboardSetting::where('key_value', 'home_page_cab_booking')->count();
+            $only_cab_booking = 0;
+            try {
+                $only_cab_booking = OnboardSetting::where('key_value', 'home_page_cab_booking')->count();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use default
+                $only_cab_booking = 0;
+            }
             if ($only_cab_booking == 1)
                 return Redirect::route('categoryDetail', 'cabservice');
-            $home_page_pickup_labels = CabBookingLayout::with(['translations' => function ($q) use ($langId) {
-                $q->where('language_id', $langId);
-            }])->where('is_active', 1)->orderBy('order_by')->where('for_no_product_found_html',0)->get();
-            $for_no_product_found_html = CabBookingLayout::with('translations')->where('is_active', 1)->where('for_no_product_found_html',1)->orderBy('order_by')->get();
+            
+            $home_page_pickup_labels = collect([]);
+            try {
+                $home_page_pickup_labels = CabBookingLayout::with(['translations' => function ($q) use ($langId) {
+                    $q->where('language_id', $langId);
+                }])->where('is_active', 1)->orderBy('order_by')->where('for_no_product_found_html',0)->get();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use empty collection
+                $home_page_pickup_labels = collect([]);
+            }
+            
+            $for_no_product_found_html = collect([]);
+            try {
+                $for_no_product_found_html = CabBookingLayout::with('translations')->where('is_active', 1)->where('for_no_product_found_html',1)->orderBy('order_by')->get();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use empty collection
+                $for_no_product_found_html = collect([]);
+            }
 
             return view('frontend.home-template-one')->with(['home' => $home, 'count' => $count, 'for_no_product_found_html' => $for_no_product_found_html,'homePagePickupLabels' => $home_page_pickup_labels, 'homePageLabels' => $home_page_labels, 'clientPreferences' => $clientPreferences, 'banners' => $banners, 'navCategories' => $navCategories, 'selectedAddress' => $selectedAddress, 'latitude' => $latitude, 'longitude' => $longitude]);
         } catch (Exception $e) {
