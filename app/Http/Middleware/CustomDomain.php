@@ -112,6 +112,26 @@ class CustomDomain
       $database_port = !empty($redisData->database_port) ? $redisData->database_port : env('DB_PORT', '3306');
       $database_username = !empty($redisData->database_username) ? $redisData->database_username : env('DB_USERNAME', 'royoorders');
       $database_password = !empty($redisData->database_password) ? $redisData->database_password : env('DB_PASSWORD', '');
+      
+      // #region agent log
+      $logData = [
+        'id' => 'log_' . time() . '_' . uniqid(),
+        'timestamp' => round(microtime(true) * 1000),
+        'location' => 'CustomDomain.php:110',
+        'message' => 'Attempting database connection switch',
+        'data' => [
+          'database_name' => $database_name,
+          'database_host' => $database_host,
+          'database_username' => $database_username,
+          'has_password' => !empty($database_password),
+          'client_code' => $redisData->code ?? null
+        ],
+        'runId' => 'run1',
+        'hypothesisId' => 'HDB'
+      ];
+      @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
+      // #endregion
+      
       $default = [
         'driver' => env('DB_CONNECTION', 'mysql'),
         'host' => $database_host,
@@ -130,8 +150,99 @@ class CustomDomain
       Config::set("client_id", 1);
       Config::set("client_connected", true);
       Config::set("client_data", $redisData);
-      DB::setDefaultConnection($database_name);
-      DB::purge($database_name);
+      
+      // Try to switch database connection, with error handling
+      try {
+        DB::setDefaultConnection($database_name);
+        DB::purge($database_name);
+        
+        // Test the connection
+        DB::connection($database_name)->getPdo();
+        
+        // #region agent log
+        $logData = [
+          'id' => 'log_' . time() . '_' . uniqid(),
+          'timestamp' => round(microtime(true) * 1000),
+          'location' => 'CustomDomain.php:133',
+          'message' => 'Database connection successful',
+          'data' => ['database_name' => $database_name],
+          'runId' => 'run1',
+          'hypothesisId' => 'HDB'
+        ];
+        @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
+        // #endregion
+      } catch (\Exception $e) {
+        // #region agent log
+        $logData = [
+          'id' => 'log_' . time() . '_' . uniqid(),
+          'timestamp' => round(microtime(true) * 1000),
+          'location' => 'CustomDomain.php:145',
+          'message' => 'Database connection failed',
+          'data' => [
+            'database_name' => $database_name,
+            'error' => $e->getMessage(),
+            'error_code' => $e->getCode()
+          ],
+          'runId' => 'run1',
+          'hypothesisId' => 'HDB'
+        ];
+        @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
+        // #endregion
+        
+        // Fallback: Try using default DB credentials instead of client-specific ones
+        try {
+          $default_db_config = [
+            'driver' => env('DB_CONNECTION', 'mysql'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => $database_name,
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null
+          ];
+          Config::set("database.connections.$database_name", $default_db_config);
+          DB::setDefaultConnection($database_name);
+          DB::purge($database_name);
+          DB::connection($database_name)->getPdo();
+          
+          // #region agent log
+          $logData = [
+            'id' => 'log_' . time() . '_' . uniqid(),
+            'timestamp' => round(microtime(true) * 1000),
+            'location' => 'CustomDomain.php:170',
+            'message' => 'Database connection successful with fallback credentials',
+            'data' => ['database_name' => $database_name],
+            'runId' => 'run1',
+            'hypothesisId' => 'HDB'
+          ];
+          @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
+          // #endregion
+        } catch (\Exception $e2) {
+          // #region agent log
+          $logData = [
+            'id' => 'log_' . time() . '_' . uniqid(),
+            'timestamp' => round(microtime(true) * 1000),
+            'location' => 'CustomDomain.php:180',
+            'message' => 'Database connection failed with fallback credentials',
+            'data' => [
+              'database_name' => $database_name,
+              'error' => $e2->getMessage()
+            ],
+            'runId' => 'run1',
+            'hypothesisId' => 'HDB'
+          ];
+          @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
+          // #endregion
+          
+          // If both fail, abort with a clear error
+          abort(500, "Database connection failed for client database: {$database_name}. Please check database credentials and permissions.");
+        }
+      }
       if (!empty($redisData->custom_domain)) {
         $domain = rtrim($redisData->custom_domain, "/");
         $domain = ltrim($domain, "https://");
