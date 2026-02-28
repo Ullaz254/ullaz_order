@@ -58,10 +58,10 @@ try {
     // Table or column doesn't exist, use empty collection
 }
 @endphp
-<article class="site-header @if ($client_preference_detail->business_type == 'taxi') taxi-header @endif">
+<article class="site-header @if ($client_preference_detail && isset($client_preference_detail->business_type) && $client_preference_detail->business_type == 'taxi') taxi-header @endif">
     @include('layouts.store/topbar-template-one')
 
-    @if($client_preference_detail->business_type == 'taxi')
+    @if($client_preference_detail && isset($client_preference_detail->business_type) && $client_preference_detail->business_type == 'taxi')
     <!-- Start Cab Booking Header From Here -->
     <div class="cab-booking-header" style="background: var(--top-header-color)">
         <div class="container-fluid">
@@ -71,7 +71,7 @@ try {
                 </div>
                 <div class="col-sm-9 col-md-10 top-header bg-transparent">
                     <ul class="header-dropdown d-flex align-items-center justify-content-md-end justify-content-center">
-                        @if ($client_preference_detail->header_quick_link == 1)
+                        @if ($client_preference_detail && isset($client_preference_detail->header_quick_link) && $client_preference_detail->header_quick_link == 1)
                         <li class="onhover-dropdown quick-links quick-links">
                             <span class="quick-links ml-1 align-middle">{{ __('Quick Links') }}</span>
                             <ul class="onhover-show-div">
@@ -673,15 +673,15 @@ try {
                                     @if($cate['name'])
                                     <li class="al_main_category">
 
-                                @if ($client_preference_detail->view_get_estimation_in_category == 1 && $client_preference_detail->business_type == "laundry")
+                                @if ($client_preference_detail && isset($client_preference_detail->view_get_estimation_in_category) && $client_preference_detail->view_get_estimation_in_category == 1 && isset($client_preference_detail->business_type) && $client_preference_detail->business_type == "laundry")
                                     <a href="/get-estimation#{{$cate['slug']}}">
-                                        @if($client_preference_detail->show_icons==1 && (\Request::route()->getName()=='userHome' || \Request::route()->getName()=='homeTest'))
+                                        @if($client_preference_detail && isset($client_preference_detail->show_icons) && $client_preference_detail->show_icons==1 && (\Request::route()->getName()=='userHome' || \Request::route()->getName()=='homeTest'))
                                         <div class="nav-cate-img" > <img class="blur blurload" data-src="{{$cate['icon']['image_fit']}}200/200{{$cate['icon']['image_path']}}" src="{{$cate['icon']['image_fit']}}20/20{{$cate['icon']['image_path']}}" alt=""> </div>
                                         @endif{{$cate['name']}}
                                     </a>
                                 @else
                                     <a href="{{route('categoryDetail', $cate['slug'])}}">
-                                        @if($client_preference_detail->show_icons==1 && (\Request::route()->getName()=='userHome' || \Request::route()->getName()=='homeTest'))
+                                        @if($client_preference_detail && isset($client_preference_detail->show_icons) && $client_preference_detail->show_icons==1 && (\Request::route()->getName()=='userHome' || \Request::route()->getName()=='homeTest'))
                                         <div class="nav-cate-img" > <img class="blur blurload" data-src="{{$cate['icon']['image_fit']}}200/200{{$cate['icon']['image_path']}}" src="{{$cate['icon']['image_fit']}}20/20{{$cate['icon']['image_path']}}" alt=""> </div>
                                         @endif{{$cate['name']}}
                                     </a>
@@ -1157,9 +1157,9 @@ c-13 -26 -36 -53 -58 -66 l-37 -23 -1465 0 -1465 0 -37 23 c-22 13 -45 40 -58
                                     @if($cate['name'])
                                     <li class="al_main_category ">
 
-                                @if ($client_preference_detail->view_get_estimation_in_category == 1 && $client_preference_detail->business_type == "laundry")
+                                @if ($client_preference_detail && isset($client_preference_detail->view_get_estimation_in_category) && $client_preference_detail->view_get_estimation_in_category == 1 && isset($client_preference_detail->business_type) && $client_preference_detail->business_type == "laundry")
                                     <a href="/get-estimation#{{$cate['slug']}}">
-                                        @if($client_preference_detail->show_icons==1 && (\Request::route()->getName()=='userHome' || \Request::route()->getName()=='homeTest'))
+                                        @if($client_preference_detail && isset($client_preference_detail->show_icons) && $client_preference_detail->show_icons==1 && (\Request::route()->getName()=='userHome' || \Request::route()->getName()=='homeTest'))
                                             <div class="nav-cate-img" >
                                                  <img class="blur blurload" data-src="{{$cate['icon']['image_fit']}}200/200{{$cate['icon']['image_path']}}" src="{{$cate['icon']['image_fit']}}20/20{{$cate['icon']['image_path']}}" alt="">                                                  
                                                 </div>
@@ -1178,7 +1178,7 @@ c-13 -26 -36 -53 -58 -66 l-37 -23 -1465 0 -1465 0 -37 23 c-22 13 -45 40 -58
                                     </a>
                                 @else
                                     <a href="{{route('categoryDetail', $cate['slug'])}}">
-                                        @if($client_preference_detail->show_icons==1 && (\Request::route()->getName()=='userHome' || \Request::route()->getName()=='homeTest'))
+                                        @if($client_preference_detail && isset($client_preference_detail->show_icons) && $client_preference_detail->show_icons==1 && (\Request::route()->getName()=='userHome' || \Request::route()->getName()=='homeTest'))
                                         <div class="nav-cate-img" > <img class="blur blurload" data-src="{{$cate['icon']['image_fit']}}200/200{{$cate['icon']['image_path']}}" src="{{$cate['icon']['image_fit']}}20/20{{$cate['icon']['image_path']}}" alt=""> </div>
                                         @endif
                                         <div class="categories_menu" style="overflow: hidden; max-width:60px;">
@@ -1224,7 +1224,7 @@ c-13 -26 -36 -53 -58 -66 l-37 -23 -1465 0 -1465 0 -37 23 c-22 13 -45 40 -58
     </div>
     @endif
 </article>
-<div class=" @if((\Request::route()->getName() != 'userHome') || ($client_preference_detail->show_icons == 0)) inner-pages-offset @else al_offset-top-home @endif @if($client_preference_detail->hide_nav_bar == 1) set-hide-nav-bar @endif">
+<div class=" @if((\Request::route()->getName() != 'userHome') || !$client_preference_detail || !isset($client_preference_detail->show_icons) || $client_preference_detail->show_icons == 0) inner-pages-offset @else al_offset-top-home @endif @if($client_preference_detail && isset($client_preference_detail->hide_nav_bar) && $client_preference_detail->hide_nav_bar == 1) set-hide-nav-bar @endif">
 </div>
 <script type="text/template" id="nav_categories_template">
     <!-- <li>
@@ -1238,11 +1238,11 @@ c-13 -26 -36 -53 -58 -66 l-37 -23 -1465 0 -1465 0 -37 23 c-22 13 -45 40 -58
         icon_two_url =  category.icon.image_fit + '200/200' + category.icon.image_path;
       }
    %>
-   @if ($client_preference_detail->view_get_estimation_in_category == 1 && $client_preference_detail->business_type == "laundry")
-   <li class="al_main_category"> <a href="/get-estimation#<%=category.slug %>"> @if($client_preference_detail->show_icons==1 && \Request::route()->getName()=='userHome') <div class="nav-cate-img"> <img class="blur-up lazyload" data-src="<%=category.icon.image_fit %>200/200<%=category.icon.image_path %>" alt=""> </div>@endif <%=category.name %> </a> <% if(category.children){%> <ul class="al_main_category_list"> <% _.each(category.children, function(childs, key1){%> <li> <a href="/get-estimation#<%=category.slug %>"><span class="new-tag"><%=childs.name %></span></a> <% if(childs.children){%> <ul class="al_main_category_sub_list"> <% _.each(childs.children, function(chld, key2){%> <li><a href="/get-estimation#<%=category.slug %>"><%=chld.name %></a></li><%}); %> </ul> <%}%> </li><%}); %> </ul> <%}%> </li>
+   @if ($client_preference_detail && isset($client_preference_detail->view_get_estimation_in_category) && $client_preference_detail->view_get_estimation_in_category == 1 && isset($client_preference_detail->business_type) && $client_preference_detail->business_type == "laundry")
+   <li class="al_main_category"> <a href="/get-estimation#<%=category.slug %>"> @if($client_preference_detail && isset($client_preference_detail->show_icons) && $client_preference_detail->show_icons==1 && \Request::route()->getName()=='userHome') <div class="nav-cate-img"> <img class="blur-up lazyload" data-src="<%=category.icon.image_fit %>200/200<%=category.icon.image_path %>" alt=""> </div>@endif <%=category.name %> </a> <% if(category.children){%> <ul class="al_main_category_list"> <% _.each(category.children, function(childs, key1){%> <li> <a href="/get-estimation#<%=category.slug %>"><span class="new-tag"><%=childs.name %></span></a> <% if(childs.children){%> <ul class="al_main_category_sub_list"> <% _.each(childs.children, function(chld, key2){%> <li><a href="/get-estimation#<%=category.slug %>"><%=chld.name %></a></li><%}); %> </ul> <%}%> </li><%}); %> </ul> <%}%> </li>
    @else
     <li class="al_main_category"> <a href="{{route('categoryDetail')}}/<%=category.slug %>" >
-            @if($client_preference_detail->show_icons==1 && \Request::route()->getName()=='userHome') <div
+            @if($client_preference_detail && isset($client_preference_detail->show_icons) && $client_preference_detail->show_icons==1 && \Request::route()->getName()=='userHome') <div
                 class="nav-cate-img"> <img class="blur-up lazyload" data-icon_two="<%=icon_two_url %>" data-icon="<%=category.icon.image_fit %>200/200<%=category.icon.image_path %>"
                     data-src="<%=category.icon.image_fit %>200/200<%=category.icon.image_path %>" alt="" onmouseover='changeImage(this,1)' onmouseout='changeImage(this,0)'> </div>@endif
             <%=category.name %> </a> <% if(category.children){%> <ul class="al_main_category_list">
