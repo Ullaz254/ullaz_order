@@ -142,7 +142,15 @@ class AppServiceProvider extends ServiceProvider
             $domain = $request->getHost();
             $domain = str_replace(array('http://', '.test.com/login'), '', $domain);
             $subDomain = explode('.', $domain);
-            $existRedis = Redis::get($domain);
+            
+            // Try to get from Redis, but don't fail if Redis is unavailable
+            $existRedis = null;
+            try {
+                $existRedis = Redis::get($domain);
+            } catch (\Exception $e) {
+                // Redis not available, continue without cache
+                $existRedis = null;
+            }
 
             if ($domain != env('Main_Domain')) {
 
@@ -156,8 +164,14 @@ class AppServiceProvider extends ServiceProvider
 
 
                     if ($client) {
-                        Redis::set($domain, json_encode($client->toArray()), 'EX', 36000);
-                        $existRedis = Redis::get($domain);
+                        // Try to cache in Redis, but don't fail if Redis is unavailable
+                        try {
+                            Redis::set($domain, json_encode($client->toArray()), 'EX', 36000);
+                            $existRedis = Redis::get($domain);
+                        } catch (\Exception $e) {
+                            // Redis not available, continue without caching
+                            $existRedis = json_encode($client->toArray());
+                        }
                     }
                 }
 
