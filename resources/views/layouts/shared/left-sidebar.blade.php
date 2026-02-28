@@ -5,13 +5,21 @@
     <div class="logo-box d-lg-block" style="height: auto">
         @php
             $urlImg = URL::to('/').'/assets/images/users/user-1.jpg';
-            $clientData = \App\Models\Client::select('id', 'logo','dark_logo','socket_url')->first();
-            $client_preference = \App\Models\ClientPreference::where(['id' => 1])->first();
-            if($clientData){
-                if($client_preference->theme_admin == 'dark'){
-                    $urlImg = $clientData ? $clientData->dark_logo['original'] : ' ';
-                }else{
-                    $urlImg = $clientData ? $clientData->logo['original'] : ' ';
+            $clientData = null;
+            $client_preference = null;
+            try {
+                $clientData = \App\Models\Client::select('id', 'logo','socket_url')->first();
+                $client_preference = \App\Models\ClientPreference::where(['id' => 1])->first();
+                if($clientData && isset($clientData->logo['original'])){
+                    $urlImg = $clientData->logo['original'];
+                }
+            } catch (\Exception $e) {
+                // Table or column doesn't exist, use default
+            }
+            if($clientData && $client_preference){
+                // Use logo regardless of theme since dark_logo doesn't exist
+                if(isset($clientData->logo['original'])){
+                    $urlImg = $clientData->logo['original'];
                 }
             }
             $marketing_permissions = array("banner", "promocode", "loyalty_cards");

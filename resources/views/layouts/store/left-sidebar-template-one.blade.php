@@ -1,27 +1,48 @@
 @php
-$clientData = \App\Models\Client::select('id', 'logo', 'dark_logo')
-->where('id', '>', 0)
-->first();
-if(Session::get('config_theme') == 'dark'){
-    $urlImg = $clientData ? $clientData->dark_logo['original'] : ' ';
-}else{
-    $urlImg = $clientData ? $clientData->logo['original'] : ' ';
+$clientData = null;
+$urlImg = URL::to('/').'/assets/images/users/user-1.jpg';
+try {
+    $clientData = \App\Models\Client::select('id', 'logo')
+    ->where('id', '>', 0)
+    ->first();
+    if($clientData && isset($clientData->logo['original'])) {
+        $urlImg = $clientData->logo['original'];
+    }
+} catch (\Exception $e) {
+    // Table or column doesn't exist, use default
+    $urlImg = URL::to('/').'/assets/images/users/user-1.jpg';
 }
 $compId = session()->get('company_id')??null;
-if(!empty($compId) ||  @auth()->user()->company_id)
+if(!empty($compId) ||  (@auth()->check() && @auth()->user()->company_id))
 {
-    $compId = (($compId)?base64_decode($compId):auth()->user()->company_id);
-    $compdata =  \App\Models\Company::where('id',$compId)->first();
-    $urlImg = get_file_path($compdata->logo,'FILL_URL');
+    try {
+        $compId = (($compId)?base64_decode($compId):auth()->user()->company_id);
+        $compdata =  \App\Models\Company::where('id',$compId)->first();
+        if($compdata && isset($compdata->logo)) {
+            $urlImg = get_file_path($compdata->logo,'FILL_URL');
+        }
+    } catch (\Exception $e) {
+        // Table doesn't exist or query failed, keep default $urlImg
+    }
 }
 
-$languageList = \App\Models\ClientLanguage::with('language')
-->where('is_active', 1)
-->orderBy('is_primary', 'desc')
-->get();
-$currencyList = \App\Models\ClientCurrency::with('currency')
-->orderBy('is_primary', 'desc')
-->get();
+$languageList = collect([]);
+try {
+    $languageList = \App\Models\ClientLanguage::with('language')
+    ->where('is_active', 1)
+    ->orderBy('is_primary', 'desc')
+    ->get();
+} catch (\Exception $e) {
+    // Table doesn't exist, use empty collection
+}
+$currencyList = collect([]);
+try {
+    $currencyList = \App\Models\ClientCurrency::with('currency')
+    ->orderBy('is_primary', 'desc')
+    ->get();
+} catch (\Exception $e) {
+    // Table doesn't exist, use empty collection
+}
 $pages = \App\Models\Page::with([
 'translations' => function ($q) {
 $q->where('language_id', session()->get('customerLanguage') ?? 1);

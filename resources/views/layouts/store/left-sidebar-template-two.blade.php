@@ -1,12 +1,28 @@
 @php
-$clientData = \App\Models\Client::select('id', 'logo','dark_logo')->where('id', '>', 0)->first();
-if(Session::get('config_theme') == 'dark'){
-    $urlImg = $clientData ? $clientData->dark_logo['original'] : ' ';
-}else{
-    $urlImg = $clientData ? $clientData->logo['original'] : ' ';
+$clientData = null;
+$urlImg = URL::to('/').'/assets/images/users/user-1.jpg';
+try {
+    $clientData = \App\Models\Client::select('id', 'logo')->where('id', '>', 0)->first();
+    if($clientData && isset($clientData->logo['original'])) {
+        $urlImg = $clientData->logo['original'];
+    }
+} catch (\Exception $e) {
+    // Table or column doesn't exist, use default
 }
-$languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
-$currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
+
+$languageList = collect([]);
+try {
+    $languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
+} catch (\Exception $e) {
+    // Table doesn't exist, use empty collection
+}
+
+$currencyList = collect([]);
+try {
+    $currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
+} catch (\Exception $e) {
+    // Table doesn't exist, use empty collection
+}
 @endphp
 <style>.cab-booking-header{display: none;}</style>
 <header class="site-header">
