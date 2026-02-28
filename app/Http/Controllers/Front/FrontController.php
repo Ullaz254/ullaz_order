@@ -289,6 +289,19 @@ class FrontController extends Controller
 
     public function categoryNavOld($lang_id,$only_id = false)
     {
+        // #region agent log
+        $logData = [
+            'id' => 'log_' . time() . '_' . uniqid(),
+            'timestamp' => round(microtime(true) * 1000),
+            'location' => 'FrontController.php:290',
+            'message' => 'categoryNavOld entry',
+            'data' => ['lang_id' => $lang_id, 'only_id' => $only_id],
+            'runId' => 'run1',
+            'hypothesisId' => 'H3'
+        ];
+        file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+        // #endregion
+        
         $preferences = Session::get('preferences');
         // get selected vendor type
         $vendorType  = Session::get('vendorType');
@@ -296,6 +309,26 @@ class FrontController extends Controller
         $categoryTypes = getServiceTypesCategory($vendorType);
        // pr($categoryTypes);
         $primary     = ClientLanguage::orderBy('is_primary','desc')->first();
+        
+        // #region agent log
+        $logData = [
+            'id' => 'log_' . time() . '_' . uniqid(),
+            'timestamp' => round(microtime(true) * 1000),
+            'location' => 'FrontController.php:298',
+            'message' => 'primary language query result',
+            'data' => [
+                'primary_is_null' => is_null($primary),
+                'primary_id' => $primary ? $primary->id : null,
+                'primary_language_id' => $primary ? $primary->language_id : null,
+                'primary_is_primary' => $primary ? $primary->is_primary : null,
+                'client_language_count' => ClientLanguage::count(),
+                'client_language_with_primary_count' => ClientLanguage::where('is_primary', 1)->count()
+            ],
+            'runId' => 'run1',
+            'hypothesisId' => 'H1,H2,H4'
+        ];
+        file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+        // #endregion
        // DB::enableQueryLog();
         $categories  = Category::join('category_translations as cts', 'categories.id', 'cts.category_id')
                                 ->select('categories.id', 'categories.icon', 'categories.icon_two' , 'categories.slug', 'categories.parent_id','cts.name','categories.type_id')
@@ -338,7 +371,27 @@ class FrontController extends Controller
                                 ->where('categories.status', '!=', $status)
                                 ->where('cts.language_id', $lang_id)
                                 ->where(function ($qrt) use($lang_id,$primary){
-                                    $qrt->where('cts.language_id', $lang_id)->orWhere('cts.language_id',$primary->language_id);
+                                    // #region agent log
+                                    $logData = [
+                                        'id' => 'log_' . time() . '_' . uniqid(),
+                                        'timestamp' => round(microtime(true) * 1000),
+                                        'location' => 'FrontController.php:340',
+                                        'message' => 'where closure entry',
+                                        'data' => [
+                                            'lang_id' => $lang_id,
+                                            'primary_is_null' => is_null($primary),
+                                            'primary_language_id' => $primary ? $primary->language_id : null
+                                        ],
+                                        'runId' => 'run1',
+                                        'hypothesisId' => 'H1,H2'
+                                    ];
+                                    file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+                                    // #endregion
+                                    
+                                    $qrt->where('cts.language_id', $lang_id);
+                                    if ($primary && isset($primary->language_id)) {
+                                        $qrt->orWhere('cts.language_id', $primary->language_id);
+                                    }
                                 })->whereNull('categories.vendor_id')
                               //  ->orderBy('categories.position', 'asc')
                                 ->orderBy('categories.parent_id', 'asc')->groupBy('categories.id');

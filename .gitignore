@@ -14,7 +14,6 @@ ngrok.exe
 /storage/framework/laravel-excel/
 /storage/framework/sessions/
 storage/debugbar/
-composer.lock
 package-lock.json
 /storage
 .DS_Store
