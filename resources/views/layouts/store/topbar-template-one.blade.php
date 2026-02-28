@@ -1,10 +1,37 @@
 @php
-$clientData = \App\Models\Client::select('id', 'logo')->where('id', '>', 0)->first();
-$urlImg = $clientData ? $clientData->logo['original'] : ' ';
-$languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
-$currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
-$pages = \App\Models\Page::with(['translations' => function($q) {$q->where('language_id', session()->get('customerLanguage') ??1);}])->whereHas('translations', function($q) {$q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguage') ??1]);})->orderBy('order_by','ASC')->get();
-$preference = $client_preference_detail;
+$clientData = null;
+$urlImg = URL::to('/').'/assets/images/users/user-1.jpg';
+try {
+    $clientData = \App\Models\Client::select('id', 'logo')->where('id', '>', 0)->first();
+    if($clientData && isset($clientData->logo['original'])) {
+        $urlImg = $clientData->logo['original'];
+    }
+} catch (\Exception $e) {
+    // Table or column doesn't exist, use default
+}
+
+$languageList = collect([]);
+try {
+    $languageList = \App\Models\ClientLanguage::with('language')->orderBy('is_primary', 'desc')->get();
+} catch (\Exception $e) {
+    // Table doesn't exist or column doesn't exist, use empty collection
+}
+
+$currencyList = collect([]);
+try {
+    $currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
+} catch (\Exception $e) {
+    // Table doesn't exist, use empty collection
+}
+
+$pages = collect([]);
+try {
+    $pages = \App\Models\Page::with(['translations' => function($q) {$q->where('language_id', session()->get('customerLanguage') ??1);}])->whereHas('translations', function($q) {$q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguage') ??1]);})->get();
+} catch (\Exception $e) {
+    // Table or column doesn't exist, use empty collection
+}
+
+$preference = $client_preference_detail ?? null;
 @endphp
 
 <style>
@@ -63,7 +90,7 @@ $preference = $client_preference_detail;
                     @if( $is_ondemand_multi_pricing ==1 )
                         @include('layouts.store.onDemandTopBarli')
                     @endif
-                    @if($client_preference_detail->header_quick_link == 1)
+                    @if($client_preference_detail && isset($client_preference_detail->header_quick_link) && $client_preference_detail->header_quick_link == 1)
                     
                     <li class="onhover-dropdown quick-links quick-links">
 
@@ -218,7 +245,7 @@ $preference = $client_preference_detail;
                         </a></li>
                 @endif
 
-                @if($client_preference_detail->show_wishlist == 1)
+                @if($client_preference_detail && isset($client_preference_detail->show_wishlist) && $client_preference_detail->show_wishlist == 1)
                 <li class="mobile-wishlist d-inline d-sm-none al_iconsMb">
                     <a href="{{route('user.wishlists')}}">
                         <i class="fa fa-heart-o wishListCount" aria-hidden="true"></i>
@@ -241,7 +268,7 @@ $preference = $client_preference_detail;
                     </div>
                 </li>
 
-                @if($client_preference_detail->cart_enable == 1)
+                @if($client_preference_detail && isset($client_preference_detail->cart_enable) && $client_preference_detail->cart_enable == 1)
                 <li class="onhover-div mobile-cart al_iconsMb">
                     <a href="{{route('showCart')}}" style="position: relative">
                         <i class="ti-shopping-cart"></i>
