@@ -6,7 +6,7 @@
 --}}
 @endsection
 @php
-$preference = $client_preference_detail;
+$preference = $clientPreferences ?? null;
 @endphp
 @section('css')
 <style>
@@ -45,6 +45,7 @@ $preference = $client_preference_detail;
          </div>
       </div>
    </div>
+   @if($preference && isset($preference->business_type))
    @switch($preference->business_type)
    @case('taxi')
    <div class="container_al mb-3 shimmer_effect main_shimer">
@@ -328,6 +329,7 @@ $preference = $client_preference_detail;
       
    </div>
 </section>
+   @endif
 @else
 <section class="home-slider-wrapper">
    <div class="container-fulid">
