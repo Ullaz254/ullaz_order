@@ -243,7 +243,7 @@ class FrontController extends Controller
 
     $categories = Cache::remember($cacheKey, $cacheDuration, function () use ($categoryTypes, $status, $lang_id, $primary, $celebrity_check,$only_id,$vendors,$include_categories) {
          $cat = Category::join('category_translations as cts', 'categories.id', 'cts.category_id')
-            ->select('categories.id', 'categories.icon', 'categories.icon_two', 'categories.slug', 'categories.parent_id', 'cts.name', 'categories.type_id')
+            ->select('categories.id', 'categories.icon', 'categories.slug', 'categories.parent_id', 'cts.name', 'categories.type_id')
             ->when($vendors, function ($query) use($vendors , $include_categories) {
             $query->leftJoin('vendor_categories as vct', 'categories.id', 'vct.category_id')
                     ->where(function ($q1) use ($vendors , $include_categories) {
@@ -331,7 +331,7 @@ class FrontController extends Controller
         // #endregion
        // DB::enableQueryLog();
         $categories  = Category::join('category_translations as cts', 'categories.id', 'cts.category_id')
-                                ->select('categories.id', 'categories.icon', 'categories.icon_two' , 'categories.slug', 'categories.parent_id','cts.name','categories.type_id')
+                                ->select('categories.id', 'categories.icon', 'categories.slug', 'categories.parent_id','cts.name','categories.type_id')
                                 ->whereIn('categories.type_id',$categoryTypes )
                                 ->orderBy('position')->distinct('categories.slug');
         $status = $this->field_status;
