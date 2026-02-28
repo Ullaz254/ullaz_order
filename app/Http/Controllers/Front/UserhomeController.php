@@ -44,10 +44,14 @@ class UserhomeController extends FrontController
                 $this->client_preferences = Session::get('preferences');
                 return $next($request);
             }else{
-                $this->client_preferences = ClientPreference::first();
+                try {
+                    $this->client_preferences = ClientPreference::first();
+                } catch (\Exception $e) {
+                    // Log error but continue - app should work with null preferences
+                    $this->client_preferences = null;
+                }
                 return $next($request);
             }
-            abort(403);
         });
 
     }
@@ -513,22 +517,33 @@ class UserhomeController extends FrontController
             }
 
 
-            if($client_preferences->is_hyperlocal == 1) {
+            if($client_preferences) {
+                if($client_preferences->is_hyperlocal == 1) {
+                    $this->loc_key = $this->loc_key.":hyperlocal:".$vendor_type.":".$client_preferences->client_code;
+                    $banners = $this->getBannersForHomePage($client_preferences, 'banners', $latitude, $longitude);
+                    $cacheKey = $this->loc_key.":{$latitude}:{$longitude}";
 
-                $this->loc_key = $this->loc_key.":hyperlocal:".$vendor_type.":".$client_preferences->client_code;
-                $banners = $this->getBannersForHomePage($client_preferences, 'banners', $latitude, $longitude);
-                $cacheKey = $this->loc_key.":{$latitude}:{$longitude}";
-
-                $find_key = $this->isPointInRadius($latitude, $longitude, $this->radius, $this->loc_key);
-                $mobile_banners = $this->getBannersForHomePage($client_preferences, 'mobile_banners', $latitude, $longitude);
-            } else {
-                $this->loc_key = $this->loc_key.':'.$vendor_type.':'.$client_preferences->client_code;
-                $cacheKey = $this->loc_key;
-                $cachedResult = Redis::get($this->loc_key);
-                //$cachedResult['cacheKey'] = $cacheKey??'';
-                if ($cachedResult) {
-                    $find_key['data'] = json_decode($cachedResult);
+                    $find_key = $this->isPointInRadius($latitude, $longitude, $this->radius, $this->loc_key);
+                    $mobile_banners = $this->getBannersForHomePage($client_preferences, 'mobile_banners', $latitude, $longitude);
+                } else {
+                    $this->loc_key = $this->loc_key.':'.$vendor_type.':'.($client_preferences->client_code ?? 'default');
+                    $cacheKey = $this->loc_key;
+                    try {
+                        $cachedResult = Redis::get($this->loc_key);
+                        if ($cachedResult) {
+                            $find_key['data'] = json_decode($cachedResult);
+                        }
+                    } catch (\Exception $e) {
+                        // Redis unavailable, continue without cache
+                        $cachedResult = null;
+                    }
                 }
+            } else {
+                // Default behavior when client_preferences is null
+                $this->loc_key = $this->loc_key.':'.$vendor_type.':default';
+                $cacheKey = $this->loc_key;
+                $banners = [];
+                $mobile_banners = [];
             }
 
             if ($this->additionalPreference['is_cache_enable_for_home'] == 1 && @$find_key['data']) {
@@ -541,10 +556,10 @@ class UserhomeController extends FrontController
 
                 $carbon_now = Carbon::now();
 
-                $banners = $this->getBannersForHomePage($client_preferences, 'banners', $latitude, $longitude);
+                $banners = $client_preferences ? $this->getBannersForHomePage($client_preferences, 'banners', $latitude, $longitude) : [];
 
 
-                $mobile_banners = $this->getBannersForHomePage($client_preferences, 'mobile_banners', $latitude, $longitude);
+                $mobile_banners = $client_preferences ? $this->getBannersForHomePage($client_preferences, 'mobile_banners', $latitude, $longitude) : [];
 
 
                 $home_page_labels = CabBookingLayout::where('is_active', 1)->web()->where('for_no_product_found_html',0)->orderBy('order_by');
@@ -662,12 +677,15 @@ class UserhomeController extends FrontController
                 ];
 
                 $html = view('frontend.'.$view_page)->with($homeData)->render();
-                if($client_preferences->is_hyperlocal == 1) {
+                if($client_preferences && $client_preferences->is_hyperlocal == 1) {
                     $this->storeLocations($locations,$html,$this->loc_key);
                 }else{
-                    Redis::set($this->loc_key, json_encode($html));
-
-                    Redis::expire($this->loc_key, $this->cache_minutes);
+                    try {
+                        Redis::set($this->loc_key, json_encode($html));
+                        Redis::expire($this->loc_key, $this->cache_minutes);
+                    } catch (\Exception $e) {
+                        // Redis unavailable, skip caching
+                    }
                 }
 
             // Your code to be measured goes here
