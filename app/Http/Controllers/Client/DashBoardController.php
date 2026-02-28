@@ -722,7 +722,10 @@ class DashBoardController extends BaseController
 
             # Currency symbol
             $clientCurrency = ClientCurrency::with('currency')->where('is_primary', 1)->first();
-            $currencySymbol = $clientCurrency->currency->symbol;
+            $currencySymbol = '$'; // Default
+            if($clientCurrency && $clientCurrency->currency) {
+                $currencySymbol = $clientCurrency->currency->symbol;
+            }
             $orderNotificationCnt = OrderNotificationsLogs::whereIn('vendor_id',$vendorIds)->count();
 
             $orderLocations = [];

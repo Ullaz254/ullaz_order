@@ -17,7 +17,7 @@ class ClientCurrency extends Model
     public static function getAdminCurrencySymbol(){        
       $currencysymbol = '$';      
       $result = ClientCurrency::where('is_primary', 1)->first();
-      if($result){         
+      if($result && $result->currency){         
           $currencysymbol = $result->currency->symbol;
       }
       return $currencysymbol;

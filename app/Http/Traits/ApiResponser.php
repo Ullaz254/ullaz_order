@@ -20,7 +20,7 @@ use Auth;
 use App\Models\Cart;
 use App\Models\EmailTemplate;
 use App\Models\UserAddress;
-use App\Models\{Product, OrderProductRating, ClientPreference,UserDevice, NotificationTemplate};
+use App\Models\{Product, OrderProductRating, ClientPreference,UserDevice, NotificationTemplate, Currency};
 use Twilio\Rest\Client as TwilioClient;
 use App\Http\Traits\smsManager;
 trait ApiResponser
@@ -210,26 +210,60 @@ trait ApiResponser
 	# set currency in session
 	public function setCurrencyInSesion(){
 		$currency_id = Session::get('customerCurrency');
-		if(isset($currency_id) && !empty($currency_id)){
-            $all = ClientCurrency::orderBy('is_primary','desc')->where('currency_id',$currency_id)->first();
-            if(empty($all)){
-                $primaryCurrency = ClientCurrency::where('is_primary','=', 1)->first();
-                Session::put('customerCurrency',$primaryCurrency->currency_id);
-				Session::put('currencySymbol',$primaryCurrency->currency->symbol);
-                $currency_id = $primaryCurrency->currency_id ;
-            }else{
-                $currency_id = (int)$currency_id;
-                Session::put('customerCurrency',$currency_id);
-            }
-        }
-        else{
-            $primaryCurrency = ClientCurrency::where('is_primary','=', 1)->first();
-            Session::put('customerCurrency',$primaryCurrency->currency_id);
-			Session::put('currencySymbol',$primaryCurrency->currency->symbol);
-            $currency_id = $primaryCurrency->currency_id ;
-        }
+		
+		try {
+			if(isset($currency_id) && !empty($currency_id)){
+				$all = ClientCurrency::orderBy('is_primary','desc')->where('currency_id',$currency_id)->first();
+				if(empty($all)){
+					$primaryCurrency = ClientCurrency::with('currency')->where('is_primary','=', 1)->first();
+					if($primaryCurrency && $primaryCurrency->currency) {
+						Session::put('customerCurrency',$primaryCurrency->currency_id);
+						Session::put('currencySymbol',$primaryCurrency->currency->symbol);
+						$currency_id = $primaryCurrency->currency_id;
+					} else {
+						// Fallback to default currency
+						$this->setDefaultCurrency();
+						$currency_id = 147;
+					}
+				}else{
+					$currency_id = (int)$currency_id;
+					Session::put('customerCurrency',$currency_id);
+				}
+			} else {
+				$primaryCurrency = ClientCurrency::with('currency')->where('is_primary','=', 1)->first();
+				if($primaryCurrency && $primaryCurrency->currency) {
+					Session::put('customerCurrency',$primaryCurrency->currency_id);
+					Session::put('currencySymbol',$primaryCurrency->currency->symbol);
+					$currency_id = $primaryCurrency->currency_id;
+				} else {
+					// Fallback to default currency
+					$this->setDefaultCurrency();
+					$currency_id = 147;
+				}
+			}
+		} catch (\Exception $e) {
+			// Database error, use default currency
+			$this->setDefaultCurrency();
+			$currency_id = 147;
+		}
 
 		return  $currency_id;
+	}
+
+	private function setDefaultCurrency() {
+		try {
+			$defaultCurrency = Currency::where('id', 147)->first();
+			if($defaultCurrency) {
+				Session::put('customerCurrency', 147);
+				Session::put('currencySymbol', $defaultCurrency->symbol ?? '$');
+			} else {
+				Session::put('customerCurrency', 147);
+				Session::put('currencySymbol', '$');
+			}
+		} catch (\Exception $e) {
+			Session::put('customerCurrency', 147);
+			Session::put('currencySymbol', '$');
+		}
 	}
 
 	public function getCart($cart, $address_id = 0)
