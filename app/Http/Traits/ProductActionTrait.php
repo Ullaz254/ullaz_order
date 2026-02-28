@@ -77,13 +77,13 @@ trait ProductActionTrait{
             $return = $query->orderBy('updated_at','DESC')->take(6)->pluck('product_id');
             if(sizeof($return) > 0){
                 $return = $return->toArray();
+            } else {
+                $return = [];
             }
             return $return;
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ]);
+            // Return empty array instead of JsonResponse
+            return [];
         }
 
 
@@ -359,6 +359,10 @@ trait ProductActionTrait{
                 $product_ids = OrderProductRating::selectRaw('id, product_id, count(product_id) as total')->groupBy('product_id')->orderBy('total', 'DESC')->take(10)->get()->pluck('product_id')->toArray();
             } elseif($type == 'recent_viewed'){
                 $product_ids = $this->getRecentProductIds();
+                // Ensure it's an array
+                if(!is_array($product_ids)) {
+                    $product_ids = [];
+                }
             }elseif($type == 'all' || $type == 'is_new' || $type == 'is_featured'|| $type == 'on_sale' || $type = 'spotlight_deals'){
                 $completeWhere = ' ';
                 if($type != 'all'){
@@ -424,6 +428,11 @@ trait ProductActionTrait{
 
                     if($where =='single_category_products' || $where == 'selected_products' || $where == 'popular_products' || $where == 'top_rated_products' ||  $where == 'recent_viewed'){
                         $single_category_product_ids = $this->getProductsId($where);
+                        
+                        // Ensure it's an array before using count()
+                        if(!is_array($single_category_product_ids)) {
+                            $single_category_product_ids = [];
+                        }
 
                         if(count($single_category_product_ids) > 0){
                             $single_category_product_ids = @implode(',',$single_category_product_ids);
@@ -461,6 +470,11 @@ trait ProductActionTrait{
 
 
             $single_category_product_ids = $this->getProductsId($where, $vendorWhereIN, $whereProductType);
+            
+            // Ensure it's an array before using count()
+            if(!is_array($single_category_product_ids)) {
+                $single_category_product_ids = [];
+            }
 
             if(count($single_category_product_ids) > 0 && $where!=='recent_viewed'){
                 shuffle($single_category_product_ids);
