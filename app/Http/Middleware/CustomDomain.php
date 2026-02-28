@@ -29,13 +29,64 @@ class CustomDomain
     $domain = $request->getHost();
     $domain = str_replace(array('http://', '.test.com/login'), '', $domain);
     $subDomain = explode('.', $domain);
+    // #region agent log
+    $logData = [
+      'id' => 'log_' . time() . '_' . uniqid(),
+      'timestamp' => round(microtime(true) * 1000),
+      'location' => 'CustomDomain.php:32',
+      'message' => 'CustomDomain middleware entry',
+      'data' => ['domain' => $domain, 'subDomain' => $subDomain],
+      'runId' => 'run1',
+      'hypothesisId' => 'H404'
+    ];
+    file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+    // #endregion
+    
     $existRedis = Redis::get($domain);
     if (!$existRedis) {
       $client = Client::select('name', 'email', 'phone_number', 'is_deleted', 'is_blocked', 'logo', 'company_name', 'company_address', 'status', 'code', 'database_name', 'database_host', 'database_port', 'database_username', 'database_password', 'custom_domain', 'sub_domain')
         ->where(function ($q) use ($domain, $subDomain) {
           $q->where('custom_domain', $domain)
             ->orWhere('sub_domain', $subDomain[0]);
-        })->firstOrFail();
+        })->first();
+      
+      // #region agent log
+      $logData = [
+        'id' => 'log_' . time() . '_' . uniqid(),
+        'timestamp' => round(microtime(true) * 1000),
+        'location' => 'CustomDomain.php:38',
+        'message' => 'Client lookup result',
+        'data' => [
+          'client_found' => !is_null($client),
+          'client_id' => $client ? $client->id : null,
+          'custom_domain' => $client ? $client->custom_domain : null,
+          'sub_domain' => $client ? $client->sub_domain : null,
+          'domain_searched' => $domain,
+          'subdomain_searched' => isset($subDomain[0]) ? $subDomain[0] : null
+        ],
+        'runId' => 'run1',
+        'hypothesisId' => 'H404'
+      ];
+      file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+      // #endregion
+      
+      if (!$client) {
+        // #region agent log
+        $logData = [
+          'id' => 'log_' . time() . '_' . uniqid(),
+          'timestamp' => round(microtime(true) * 1000),
+          'location' => 'CustomDomain.php:45',
+          'message' => 'Client not found - returning 404',
+          'data' => ['domain' => $domain],
+          'runId' => 'run1',
+          'hypothesisId' => 'H404'
+        ];
+        file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+        // #endregion
+        
+        abort(404, "Domain not found: {$domain}");
+      }
+      
       Redis::set($domain, json_encode($client->toArray()), 'EX', 36000);
       $existRedis = Redis::get($domain);
     }
