@@ -1,5 +1,11 @@
 @php
-$set_template = \App\Models\WebStylingOption::where('web_styling_id',1)->where('is_selected',1)->first();
+$set_template = null;
+try {
+    $set_template = \App\Models\WebStylingOption::where('web_styling_id',1)->where('is_selected',1)->first();
+} catch (\Exception $e) {
+    // Table doesn't exist, use null
+    $set_template = null;
+}
 $set_common_business_type = ($client_preference_detail && isset($client_preference_detail->business_type)) ? $client_preference_detail->business_type : '';
 @endphp
 <!DOCTYPE html>

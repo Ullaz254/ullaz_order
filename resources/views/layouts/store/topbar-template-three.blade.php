@@ -1,11 +1,37 @@
 @php
-$clientData = \App\Models\Client::select('id', 'logo')->where('id', '>', 0)->first();
-$urlImg = $clientData->logo['image_fit'].'300/100'.$clientData->logo['image_path'];
+$clientData = null;
+$urlImg = URL::to('/').'/assets/images/users/user-1.jpg';
+try {
+    $clientData = \App\Models\Client::select('id', 'logo')->where('id', '>', 0)->first();
+    if($clientData && isset($clientData->logo['image_fit'])) {
+        $urlImg = $clientData->logo['image_fit'].'300/100'.$clientData->logo['image_path'];
+    }
+} catch (\Exception $e) {
+    // Table doesn't exist, use default
+}
 
-$languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
-$currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
-$pages = \App\Models\Page::with(['translations' => function($q) {$q->where('language_id', session()->get('customerLanguage') ??1);}])->whereHas('translations', function($q) {$q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguage') ??1]);})->orderBy('order_by','ASC')->get();
-$preference = $client_preference_detail;
+$languageList = collect([]);
+try {
+    $languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
+} catch (\Exception $e) {
+    // Table doesn't exist, use empty collection
+}
+
+$currencyList = collect([]);
+try {
+    $currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
+} catch (\Exception $e) {
+    // Table doesn't exist, use empty collection
+}
+
+$pages = collect([]);
+try {
+    $pages = \App\Models\Page::with(['translations' => function($q) {$q->where('language_id', session()->get('customerLanguage') ??1);}])->whereHas('translations', function($q) {$q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguage') ??1]);})->orderBy('order_by','ASC')->get();
+} catch (\Exception $e) {
+    // Table doesn't exist, use empty collection
+}
+
+$preference = $client_preference_detail ?? null;
 $applocale = 'en';
 if(session()->has('applocale')){
     $applocale = session()->get('applocale');

@@ -1,11 +1,27 @@
 @php
-$languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
-$currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
+$languageList = collect([]);
+try {
+    $languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
+} catch (\Exception $e) {
+    // Table doesn't exist, use empty collection
+}
+
+$currencyList = collect([]);
+try {
+    $currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
+} catch (\Exception $e) {
+    // Table doesn't exist, use empty collection
+}
 
 $urlImg = URL::to('/').'/assets/images/users/user-1.jpg';
-$clientData = \App\Models\Client::select('id', 'logo','custom_domain','code')->with('getPreference')->where('id', '>', 0)->first();
-if($clientData){
-$urlImg = $clientData->logo['image_fit'].'200/80'.$clientData->logo['image_path'];
+$clientData = null;
+try {
+    $clientData = \App\Models\Client::select('id', 'logo','custom_domain','code')->with('getPreference')->where('id', '>', 0)->first();
+    if($clientData && isset($clientData->logo['image_fit'])){
+        $urlImg = $clientData->logo['image_fit'].'200/80'.$clientData->logo['image_path'];
+    }
+} catch (\Exception $e) {
+    // Table doesn't exist, use default
 }
 
 $is_map_search_perticular_country = getMapConfigrationPreference();
