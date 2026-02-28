@@ -299,7 +299,7 @@ class FrontController extends Controller
             'runId' => 'run1',
             'hypothesisId' => 'H3'
         ];
-        file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+        @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
         // #endregion
         
         $preferences = Session::get('preferences');
@@ -327,7 +327,7 @@ class FrontController extends Controller
             'runId' => 'run1',
             'hypothesisId' => 'H1,H2,H4'
         ];
-        file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+        @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
         // #endregion
        // DB::enableQueryLog();
         $categories  = Category::join('category_translations as cts', 'categories.id', 'cts.category_id')
@@ -385,7 +385,7 @@ class FrontController extends Controller
                                         'runId' => 'run1',
                                         'hypothesisId' => 'H1,H2'
                                     ];
-                                    file_put_contents('/Users/yogeshgupta/My Projects/Drivarr/ullaz_order/.cursor/debug.log', json_encode($logData) . "\n", FILE_APPEND);
+                                    @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
                                     // #endregion
                                     
                                     $qrt->where('cts.language_id', $lang_id);
