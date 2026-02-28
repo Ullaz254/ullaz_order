@@ -826,14 +826,24 @@ class UserhomeController extends FrontController
         $featured_products_title = $vendors_title = $new_products_title = $on_sale_title = $brands_title = $best_sellers_title = $recent_orders_title = $banner_title = $selected_products_title = $trending_vendors_title = '';
 
         $slugs = array("featured_products", "vendors", "new_products", "on_sale", "brands", "best_sellers", "recent_orders", "banner", "selected_products", "trending");
-        $CabBookingLayoutTranslation = CabBookingLayoutTranslation::where('language_id', $language_id)->with('layout')
-                                       ->whereHas('layout', function($q) use ($slugs){
-                                            $q->whereIn('slug', $slugs);
-                                       })->whereNotNull('title')->select('title', 'cab_booking_layout_id')->get();
+        $CabBookingLayoutTranslation = collect([]);
+        try {
+            $CabBookingLayoutTranslation = CabBookingLayoutTranslation::where('language_id', $language_id)->with('layout')
+                                           ->whereHas('layout', function($q) use ($slugs){
+                                                $q->whereIn('slug', $slugs);
+                                           })->whereNotNull('title')->select('title', 'cab_booking_layout_id')->get();
+        } catch (\Exception $e) {
+            // Table doesn't exist, use empty collection
+            $CabBookingLayoutTranslation = collect([]);
+        }
                                        
 
         foreach($CabBookingLayoutTranslation as $translation)
         {
+            // Skip if layout relation is null
+            if(!$translation->layout) {
+                continue;
+            }
             switch ($translation->layout->slug) {
                 case "featured_products":
                     $featured_products_title = $translation->title;
@@ -870,7 +880,13 @@ class UserhomeController extends FrontController
             }
         }
         $vendor_ids = $this->getRandomVendorIdsForHomePage($preferences, $request->type, $this->additionalPreference['is_admin_vendor_rating'], $latitude, $longitude);
-        $home_page_labels = HomePageLabel::with('translations')->get();
+        $home_page_labels = collect([]);
+        try {
+            $home_page_labels = HomePageLabel::with('translations')->get();
+        } catch (\Exception $e) {
+            // Table doesn't exist, use empty collection
+            $home_page_labels = collect([]);
+        }
         if (in_array('brands', $enable_layout)) {     # if enable brands section in
             $brands = $this->getBrandsForHomePage($language_id, $this->field_status);
         }else{
@@ -903,12 +919,18 @@ class UserhomeController extends FrontController
         $trendingVendors = [];
         if (in_array('trending_vendors', $enable_layout)) {  # if enable trending_vendors section in
             $now = Carbon::now()->toDateTimeString();
-            $trending_vendors = SubscriptionInvoicesVendor::whereHas('features', function ($query) {
-                $query->where(['subscription_invoice_features_vendor.feature_id' => 1]);
-            })
-            ->select('id', 'vendor_id', 'subscription_id')
-            ->where('end_date', '>=', $now)
-            ->pluck('vendor_id')->toArray();
+            $trending_vendors = [];
+            try {
+                $trending_vendors = SubscriptionInvoicesVendor::whereHas('features', function ($query) {
+                    $query->where(['subscription_invoice_features_vendor.feature_id' => 1]);
+                })
+                ->select('id', 'vendor_id', 'subscription_id')
+                ->where('end_date', '>=', $now)
+                ->pluck('vendor_id')->toArray();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use empty array
+                $trending_vendors = [];
+            }
             if(count($trending_vendors) > 0){
                 $trendingVendors = $this->getVendorForHomePage($preferences, "trending_vendors", $clientdata->timezone, 0, $request->type, $language_id, $latitude, $longitude, $trending_vendors);
             }
@@ -946,10 +968,16 @@ class UserhomeController extends FrontController
        
 
         if (in_array('banner', $enable_layout)) {  # if enable banner section in
-            $cab_booking_layouts = CabBookingLayout::with('banner_image')->where('slug','banner')->get();
+            $cab_booking_layouts = collect([]);
+            try {
+                $cab_booking_layouts = CabBookingLayout::with('banner_image')->where('slug','banner')->get();
+            } catch (\Exception $e) {
+                // Table doesn't exist, use empty collection
+                $cab_booking_layouts = collect([]);
+            }
             // dd($cab_booking_layouts);
             foreach($cab_booking_layouts as $bkey => $bval){
-                if(count($bval->banner_image) > 0){
+                if($bval->banner_image && count($bval->banner_image) > 0){
                     $banners[$bval->banner_image[0]->cab_booking_layout_id] = $bval->banner_image[0]->banner_image_url;
                     $banners['url_'.$bval->banner_image[0]->cab_booking_layout_id] = $bval->banner_image[0]->banner_url;
                 }
