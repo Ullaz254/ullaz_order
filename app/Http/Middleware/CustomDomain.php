@@ -42,7 +42,15 @@ class CustomDomain
     @file_put_contents(storage_path('logs/debug.log'), json_encode($logData) . "\n", FILE_APPEND);
     // #endregion
     
-    $existRedis = Redis::get($domain);
+    // Try to get from Redis, but don't fail if Redis is unavailable
+    $existRedis = null;
+    try {
+      $existRedis = Redis::get($domain);
+    } catch (\Exception $e) {
+      // Redis not available, continue without cache
+      $existRedis = null;
+    }
+    
     if (!$existRedis) {
       $client = Client::select('name', 'email', 'phone_number', 'is_deleted', 'is_blocked', 'logo', 'company_name', 'company_address', 'status', 'code', 'database_name', 'database_host', 'database_port', 'database_username', 'database_password', 'custom_domain', 'sub_domain')
         ->where(function ($q) use ($domain, $subDomain) {
@@ -87,8 +95,14 @@ class CustomDomain
         abort(404, "Domain not found: {$domain}");
       }
       
-      Redis::set($domain, json_encode($client->toArray()), 'EX', 36000);
-      $existRedis = Redis::get($domain);
+      // Try to cache in Redis, but don't fail if Redis is unavailable
+      try {
+        Redis::set($domain, json_encode($client->toArray()), 'EX', 36000);
+        $existRedis = Redis::get($domain);
+      } catch (\Exception $e) {
+        // Redis not available, continue without caching
+        $existRedis = json_encode($client->toArray());
+      }
     }
     $callback = '';
     $redisData = json_decode($existRedis);
