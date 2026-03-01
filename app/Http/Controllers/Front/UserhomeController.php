@@ -607,15 +607,24 @@ class UserhomeController extends FrontController
                 $mobile_banners = $this->getBannersForHomePage($client_preferences, 'mobile_banners', $latitude, $longitude);
 
 
-                $home_page_labels = CabBookingLayout::where('is_active', 1)->web()->where('for_no_product_found_html',0)->orderBy('order_by');
+                $home_page_labels = collect(); // Default to empty collection
+                try {
+                    $home_page_labels = CabBookingLayout::where('is_active', 1)->web()->where('for_no_product_found_html',0)->orderBy('order_by');
 
+                    if (isset($langId) && !empty($langId))
+                        $home_page_labels = $home_page_labels->with(['translations' => function ($q) use ($langId) {
+                            $q->where('language_id', $langId);
+                        }]);
 
-                if (isset($langId) && !empty($langId))
-                    $home_page_labels = $home_page_labels->with(['translations' => function ($q) use ($langId) {
-                        $q->where('language_id', $langId);
-                    }]);
-
-                $home_page_labels = $home_page_labels->get();
+                    $home_page_labels = $home_page_labels->get();
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to get cab booking layouts in UserhomeController', [
+                        'error' => $e->getMessage(),
+                        'database' => \DB::connection()->getDatabaseName()
+                    ]);
+                    // Continue with empty collection - page will load without cab booking layouts
+                    $home_page_labels = collect();
+                }
                 // if nothing in enblead for home page then show all
 
                 //     $home_page_labels = HomePageLabel::with('translations')->where('is_active', 1)->orderBy('order_by')->get();

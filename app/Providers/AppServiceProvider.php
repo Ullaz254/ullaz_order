@@ -215,9 +215,40 @@ class AppServiceProvider extends ServiceProvider
                 }
                 
                 $redisData = json_decode($existRedis);
+                $mainDomain = env('Main_Domain', 'localhost');
+
+                // For main domain, ensure we're using the correct default database from .env
+                if ($domain == $mainDomain || $domain == 'drivarr.com') {
+                    try {
+                        $defaultDbName = env('DB_DATABASE');
+                        if ($defaultDbName && $dbname != $defaultDbName) {
+                            // Switch to the database specified in .env
+                            $default = [
+                                'driver' => env('DB_CONNECTION', 'mysql'),
+                                'host' => env('DB_HOST', '127.0.0.1'),
+                                'port' => env('DB_PORT', '3306'),
+                                'database' => $defaultDbName,
+                                'username' => env('DB_USERNAME', 'root'),
+                                'password' => env('DB_PASSWORD', ''),
+                                'charset' => 'utf8mb4',
+                                'collation' => 'utf8mb4_unicode_ci',
+                                'prefix' => '',
+                                'prefix_indexes' => true,
+                                'strict' => false,
+                                'engine' => null
+                            ];
+                            Config::set("database.connections.$defaultDbName", $default);
+                            DB::setDefaultConnection($defaultDbName);
+                            DB::purge($defaultDbName);
+                            Log::info('Switched to default database for main domain', ['database' => $defaultDbName]);
+                        }
+                    } catch (\Exception $e) {
+                        Log::warning('Failed to switch to default database for main domain', ['error' => $e->getMessage()]);
+                    }
+                }
 
                 if ($redisData && $dbname) {
-                    if ($domain != env('Main_Domain')) {
+                    if ($domain != $mainDomain && $domain != 'drivarr.com') {
                         if ($redisData && $dbname != $redisData->database_name) {
                             try {
                                 $database_name = $redisData->database_name;
