@@ -34,6 +34,19 @@ Route::group(['middleware' => 'languageSwitch'], function () {
             ]);
         })->name('test.route');
         
+        // Direct home route test - if this works, the issue is with frontend.php
+        Route::get('/', function() {
+            try {
+                return app(\App\Http\Controllers\Front\UserhomeController::class)->index(request());
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Controller error: ' . $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ], 500);
+            }
+        })->name('test.home.direct');
+        
         include_once "commonRoute.php";
         include_once "frontend.php";
         include_once "backend.php";
