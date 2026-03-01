@@ -578,7 +578,13 @@ class UserhomeController extends FrontController
                 $client_code = $client_preferences->client_code ?? 'default';
                 $this->loc_key = $this->loc_key.':'.$vendor_type.':'.$client_code;
                 $cacheKey = $this->loc_key;
-                $cachedResult = Redis::get($this->loc_key);
+                $cachedResult = null;
+                try {
+                    $cachedResult = Redis::get($this->loc_key);
+                } catch (\Exception $e) {
+                    // Redis not available, continue without cache
+                    \Log::warning('Redis connection failed in UserhomeController index', ['error' => $e->getMessage()]);
+                }
                 //$cachedResult['cacheKey'] = $cacheKey??'';
                 if ($cachedResult) {
                     $find_key['data'] = json_decode($cachedResult);

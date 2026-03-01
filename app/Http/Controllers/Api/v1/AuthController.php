@@ -40,8 +40,8 @@ class AuthController extends BaseController
     public function __construct()
     {
         try {
-            $code = Client::orderBy('id','asc')->value('code');
-            $this->folderName = '/'.$code.'/user/document';
+        $code = Client::orderBy('id','asc')->value('code');
+        $this->folderName = '/'.$code.'/user/document';
         } catch (\Exception $e) {
             // Database not available, use default
             Log::warning('Database connection failed in AuthController constructor', ['error' => $e->getMessage()]);

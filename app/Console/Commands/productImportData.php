@@ -48,8 +48,8 @@ class productImportData extends Command{
     {
         parent::__construct();
         try {
-            $code = Client::orderBy('id','asc')->value('code');
-            $this->folderName = '/'.$code.'/prods';
+        $code = Client::orderBy('id','asc')->value('code');
+        $this->folderName = '/'.$code.'/prods';
         } catch (\Exception $e) {
             // Database not available, use default
             $this->folderName = '/default/prods';
