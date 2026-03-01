@@ -338,7 +338,10 @@ class FrontController extends Controller
                                 ->where('categories.status', '!=', $status)
                                 ->where('cts.language_id', $lang_id)
                                 ->where(function ($qrt) use($lang_id,$primary){
-                                    $qrt->where('cts.language_id', $lang_id)->orWhere('cts.language_id',$primary->language_id);
+                                    $qrt->where('cts.language_id', $lang_id);
+                                    if ($primary && isset($primary->language_id)) {
+                                        $qrt->orWhere('cts.language_id', $primary->language_id);
+                                    }
                                 })->whereNull('categories.vendor_id')
                               //  ->orderBy('categories.position', 'asc')
                                 ->orderBy('categories.parent_id', 'asc')->groupBy('categories.id');

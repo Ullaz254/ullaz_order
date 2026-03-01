@@ -172,7 +172,7 @@ Route::group(['middleware' => ['domain']], function () {
 
 	//icici payment routes
 	Route::post('payment/gateway/icici', 'Front\IciciPaymentController@payByIcici')->name('payment.payByIcici');
-	Route::post('payment/webhook/icici', 'Front\IciciPaymentController@successPage')->name('payment.icici.success');
+	Route::post('payment/webhook/icici', 'Front\IciciPaymentController@successPage')->name('payment.icici.webhook');
 	Route::post('payment/success/icici', 'Front\IciciPaymentController@successPage')->name('payment.icici.success');
 	Route::post('payment/icici-transection-status', 'Front\IciciPaymentController@iciciTransactionStatus')->name('payment.iciciTransactionStatus');
 	Route::post('payment/icici-success', 'Front\IciciPaymentController@iciciTransactionStatus')->name('transaction.icici.success');
