@@ -44,7 +44,13 @@ class UserhomeController extends FrontController
                 $this->client_preferences = Session::get('preferences');
                 return $next($request);
             }else{
-                $this->client_preferences = ClientPreference::first();
+                try {
+                    $this->client_preferences = ClientPreference::first();
+                } catch (\Exception $e) {
+                    // Database not available, use empty preferences
+                    \Log::warning('Database connection failed in UserhomeController middleware', ['error' => $e->getMessage()]);
+                    $this->client_preferences = null;
+                }
                 return $next($request);
             }
             abort(403);
