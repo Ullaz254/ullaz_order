@@ -19,3 +19,5 @@ package-lock.json
 /storage
 .DS_Store
 /public/storage
+dump.rdb
+*.rdb

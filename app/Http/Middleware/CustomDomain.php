@@ -29,7 +29,13 @@ class CustomDomain
     $domain = $request->getHost();
     $domain = str_replace(array('http://', '.test.com/login'), '', $domain);
     $subDomain = explode('.', $domain);
+    $mainDomain = env('Main_Domain', 'localhost');
     $existRedis = null;
+    
+    // Allow main domain to pass through without client lookup
+    if ($domain == $mainDomain) {
+      return $next($request);
+    }
     
     try {
       $existRedis = Redis::get($domain);
@@ -58,17 +64,17 @@ class CustomDomain
             $existRedis = json_encode($client->toArray());
           }
         } else {
-          // No client found for this domain
+          // No client found for this domain - return 404 view
           \Log::warning('No client found for domain in CustomDomain middleware', ['domain' => $domain]);
-          return redirect()->route('error_404');
+          abort(404);
         }
       } catch (\Exception $e) {
-        // Database connection failed
+        // Database connection failed - return 404 view
         \Log::error('Database connection failed in CustomDomain middleware', [
           'error' => $e->getMessage(),
           'domain' => $domain
         ]);
-        return redirect()->route('error_404');
+        abort(404);
       }
     }
     $callback = '';
@@ -232,7 +238,8 @@ class CustomDomain
         Session::put('login_user_type', 'client');
       }
     } else {
-      return redirect()->route('error_404');
+      // No client data found - return 404
+      abort(404);
     }
     return $next($request);
   }
