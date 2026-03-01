@@ -21,16 +21,25 @@ Route::group(['middleware' => 'languageSwitch'], function () {
     include_once "images.php";
     include_once "godpanel.php";
 
-    // Main domain route (without domain parameter) - fallback for drivarr.com
-    $mainDomain = env('Main_Domain', 'localhost');
-    if ($mainDomain && $mainDomain !== 'localhost') {
-        Route::domain($mainDomain)->middleware(['subdomain'])->group(function() {
-            include_once "commonRoute.php";
-            include_once "frontend.php";
-            include_once "backend.php";
-        });
-    }
+    // Main domain route - explicit route for drivarr.com (must come before {domain})
+    // This ensures drivarr.com matches before the generic {domain} route
+    Route::domain('drivarr.com')->middleware(['subdomain'])->group(function() {
+        // Test route to verify domain routing works
+        Route::get('/test-route', function() {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Domain routing works!',
+                'domain' => request()->getHost(),
+                'path' => request()->path()
+            ]);
+        })->name('test.route');
+        
+        include_once "commonRoute.php";
+        include_once "frontend.php";
+        include_once "backend.php";
+    });
 
+    // Generic domain route for all other domains/subdomains
     Route::domain('{domain}')->middleware(['subdomain'])->group(function() {
         include_once "commonRoute.php";
         include_once "frontend.php";
