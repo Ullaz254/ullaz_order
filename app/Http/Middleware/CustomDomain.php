@@ -33,7 +33,12 @@ class CustomDomain
     $existRedis = null;
     
     // Allow main domain to pass through without client lookup
-    if ($domain == $mainDomain) {
+    // Also handle case where Main_Domain might be cached or not set
+    if ($domain == $mainDomain || $domain == 'drivarr.com') {
+      \Log::info('Main domain detected, allowing request through', [
+        'domain' => $domain,
+        'mainDomain' => $mainDomain
+      ]);
       return $next($request);
     }
     
