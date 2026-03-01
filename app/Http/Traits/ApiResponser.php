@@ -211,22 +211,58 @@ trait ApiResponser
 	public function setCurrencyInSesion(){
 		$currency_id = Session::get('customerCurrency');
 		if(isset($currency_id) && !empty($currency_id)){
-            $all = ClientCurrency::orderBy('is_primary','desc')->where('currency_id',$currency_id)->first();
-            if(empty($all)){
-                $primaryCurrency = ClientCurrency::where('is_primary','=', 1)->first();
-                Session::put('customerCurrency',$primaryCurrency->currency_id);
-				Session::put('currencySymbol',$primaryCurrency->currency->symbol);
-                $currency_id = $primaryCurrency->currency_id ;
-            }else{
-                $currency_id = (int)$currency_id;
-                Session::put('customerCurrency',$currency_id);
+            try {
+                $all = ClientCurrency::orderBy('is_primary','desc')->where('currency_id',$currency_id)->first();
+                if(empty($all)){
+                    $primaryCurrency = ClientCurrency::where('is_primary','=', 1)->first();
+                    if ($primaryCurrency) {
+                        Session::put('customerCurrency',$primaryCurrency->currency_id);
+                        if ($primaryCurrency->currency) {
+                            Session::put('currencySymbol',$primaryCurrency->currency->symbol);
+                        }
+                        $currency_id = $primaryCurrency->currency_id ;
+                    } else {
+                        // No currency found, use default
+                        \Log::warning('No primary currency found in setCurrencyInSesion, using default', []);
+                        $currency_id = 1; // Default currency ID
+                        Session::put('customerCurrency', $currency_id);
+                        Session::put('currencySymbol', '$');
+                    }
+                }else{
+                    $currency_id = (int)$currency_id;
+                    Session::put('customerCurrency',$currency_id);
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Failed to get currency in setCurrencyInSesion', ['error' => $e->getMessage()]);
+                // Use default currency if query fails
+                $currency_id = 1; // Default currency ID
+                Session::put('customerCurrency', $currency_id);
+                Session::put('currencySymbol', '$');
             }
         }
         else{
-            $primaryCurrency = ClientCurrency::where('is_primary','=', 1)->first();
-            Session::put('customerCurrency',$primaryCurrency->currency_id);
-			Session::put('currencySymbol',$primaryCurrency->currency->symbol);
-            $currency_id = $primaryCurrency->currency_id ;
+            try {
+                $primaryCurrency = ClientCurrency::where('is_primary','=', 1)->first();
+                if ($primaryCurrency) {
+                    Session::put('customerCurrency',$primaryCurrency->currency_id);
+                    if ($primaryCurrency->currency) {
+                        Session::put('currencySymbol',$primaryCurrency->currency->symbol);
+                    }
+                    $currency_id = $primaryCurrency->currency_id ;
+                } else {
+                    // No currency found, use default
+                    \Log::warning('No primary currency found in setCurrencyInSesion, using default', []);
+                    $currency_id = 1; // Default currency ID
+                    Session::put('customerCurrency', $currency_id);
+                    Session::put('currencySymbol', '$');
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Failed to get primary currency in setCurrencyInSesion', ['error' => $e->getMessage()]);
+                // Use default currency if query fails
+                $currency_id = 1; // Default currency ID
+                Session::put('customerCurrency', $currency_id);
+                Session::put('currencySymbol', '$');
+            }
         }
 
 		return  $currency_id;
