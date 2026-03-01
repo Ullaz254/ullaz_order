@@ -475,7 +475,12 @@ class UserhomeController extends FrontController
 
             $startTime = microtime(true); // Start time in seconds with microseconds
             $getAdditionalPreference = getAdditionalPreference(['is_rental_weekly_monthly_price']);
-            $client = Client::first();
+            try {
+                $client = Client::first();
+            } catch (\Exception $e) {
+                \Log::error('Failed to get client in UserhomeController index', ['error' => $e->getMessage()]);
+                $client = null;
+            }
             $home = array();
             $vendor_ids = array();
             if ($request->has('ref')) {
@@ -485,13 +490,18 @@ class UserhomeController extends FrontController
             $latitude = Session::get('latitude') ?? null;
             $longitude = Session::get('longitude') ?? null;
             $curId = Session::get('customerCurrency');
-            $langId = Session::get('customerLanguage');
+            $langId = Session::get('customerLanguage') ?? 1; // Default to 1 if not set
             $client_config = Session::get('client_config');
             $selectedAddress = Session::get('selectedAddress');
             $client_preferences = $this->client_preferences;
             $_REQUEST['request_from'] = 1;
 
-            $navCategories = $this->categoryNav($langId);
+            try {
+                $navCategories = $this->categoryNav($langId);
+            } catch (\Exception $e) {
+                \Log::error('Failed to get categories in UserhomeController index', ['error' => $e->getMessage()]);
+                $navCategories = [];
+            }
 
 
             Session::put('navCategories', $navCategories);
@@ -518,17 +528,38 @@ class UserhomeController extends FrontController
                 return redirect()->route('categoryDetail',$categoriesSlug);
             }
 
+            // Handle case where client_preferences might be null
+            if (!$client_preferences) {
+                \Log::warning('No client preferences found in UserhomeController index', [
+                    'domain' => $request->getHost()
+                ]);
+                // Try to get default preferences from database
+                try {
+                    $client_preferences = ClientPreference::first();
+                    if ($client_preferences) {
+                        $this->client_preferences = $client_preferences;
+                        Session::put('preferences', $client_preferences);
+                    } else {
+                        // No preferences at all - return error
+                        return response()->view('errors.404', [], 404);
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Failed to get client preferences in UserhomeController', ['error' => $e->getMessage()]);
+                    return response()->view('errors.404', [], 404);
+                }
+            }
 
-            if($client_preferences->is_hyperlocal == 1) {
-
-                $this->loc_key = $this->loc_key.":hyperlocal:".$vendor_type.":".$client_preferences->client_code;
+            if($client_preferences && isset($client_preferences->is_hyperlocal) && $client_preferences->is_hyperlocal == 1) {
+                $client_code = $client_preferences->client_code ?? 'default';
+                $this->loc_key = $this->loc_key.":hyperlocal:".$vendor_type.":".$client_code;
                 $banners = $this->getBannersForHomePage($client_preferences, 'banners', $latitude, $longitude);
                 $cacheKey = $this->loc_key.":{$latitude}:{$longitude}";
 
                 $find_key = $this->isPointInRadius($latitude, $longitude, $this->radius, $this->loc_key);
                 $mobile_banners = $this->getBannersForHomePage($client_preferences, 'mobile_banners', $latitude, $longitude);
             } else {
-                $this->loc_key = $this->loc_key.':'.$vendor_type.':'.$client_preferences->client_code;
+                $client_code = $client_preferences->client_code ?? 'default';
+                $this->loc_key = $this->loc_key.':'.$vendor_type.':'.$client_code;
                 $cacheKey = $this->loc_key;
                 $cachedResult = Redis::get($this->loc_key);
                 //$cachedResult['cacheKey'] = $cacheKey??'';
@@ -668,7 +699,7 @@ class UserhomeController extends FrontController
                 ];
 
                 $html = view('frontend.'.$view_page)->with($homeData)->render();
-                if($client_preferences->is_hyperlocal == 1) {
+                if($client_preferences && isset($client_preferences->is_hyperlocal) && $client_preferences->is_hyperlocal == 1) {
                     $this->storeLocations($locations,$html,$this->loc_key);
                 }else{
                     Redis::set($this->loc_key, json_encode($html));

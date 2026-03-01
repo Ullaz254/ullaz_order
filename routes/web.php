@@ -21,6 +21,16 @@ Route::group(['middleware' => 'languageSwitch'], function () {
     include_once "images.php";
     include_once "godpanel.php";
 
+    // Main domain route (without domain parameter) - fallback for drivarr.com
+    $mainDomain = env('Main_Domain', 'localhost');
+    if ($mainDomain && $mainDomain !== 'localhost') {
+        Route::domain($mainDomain)->middleware(['subdomain'])->group(function() {
+            include_once "commonRoute.php";
+            include_once "frontend.php";
+            include_once "backend.php";
+        });
+    }
+
     Route::domain('{domain}')->middleware(['subdomain'])->group(function() {
         include_once "commonRoute.php";
         include_once "frontend.php";
