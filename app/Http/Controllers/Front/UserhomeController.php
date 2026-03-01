@@ -629,13 +629,40 @@ class UserhomeController extends FrontController
 
                 //     $home_page_labels = HomePageLabel::with('translations')->where('is_active', 1)->orderBy('order_by')->get();
                 $request->request->add(['type'=>Session::get('vendorType')??'delivery','noTinJson'=>1] );
-                $set_template = WebStylingOption::where('web_styling_id', 1)->where('is_selected', 1)->first();
+                
+                // Get web styling option with error handling
+                $set_template = null;
+                try {
+                    $set_template = WebStylingOption::where('web_styling_id', 1)->where('is_selected', 1)->first();
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to get web styling option in UserhomeController', [
+                        'error' => $e->getMessage(),
+                        'database' => \DB::connection()->getDatabaseName()
+                    ]);
+                    // Continue with null - will use defaults
+                }
 
-                $CabBookingLayout = CabBookingLayout::web()->where('is_active', 1);
-                $home_page_pickup_labels   = clone $CabBookingLayout;
-                $for_no_product_found_html = clone $CabBookingLayout;
-                $enable_layout             = clone $CabBookingLayout;
-                $enable_layout = $enable_layout->orderBy('order_by','asc')->pluck('slug')->toArray();
+                // Get cab booking layouts with error handling
+                $CabBookingLayout = null;
+                $enable_layout = [];
+                try {
+                    $CabBookingLayout = CabBookingLayout::web()->where('is_active', 1);
+                    $home_page_pickup_labels   = clone $CabBookingLayout;
+                    $for_no_product_found_html = clone $CabBookingLayout;
+                    $enable_layout_query       = clone $CabBookingLayout;
+                    $enable_layout = $enable_layout_query->orderBy('order_by','asc')->pluck('slug')->toArray();
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to get cab booking layouts in UserhomeController', [
+                        'error' => $e->getMessage(),
+                        'database' => \DB::connection()->getDatabaseName()
+                    ]);
+                    // Continue with empty arrays - page will load without cab booking layouts
+                    $CabBookingLayout = null;
+                    $home_page_pickup_labels = collect();
+                    $for_no_product_found_html = collect();
+                    $enable_layout = [];
+                }
+                
                 $homePageData = $this->postHomePageData($request, $set_template, $enable_layout, $additionalPreference);
 
                 $home_page_labels = $home_page_labels->map(function($da) use ($homePageData, $navCategories) {
@@ -648,30 +675,61 @@ class UserhomeController extends FrontController
                     return $da;
                 });
 
-                $only_cab_booking = OnboardSetting::where('key_value', 'home_page_cab_booking')->count();
+                // Check onboard settings with error handling
+                $only_cab_booking = 0;
+                try {
+                    $only_cab_booking = OnboardSetting::where('key_value', 'home_page_cab_booking')->count();
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to get onboard settings in UserhomeController', [
+                        'error' => $e->getMessage()
+                    ]);
+                    // Continue with default value
+                }
                 if ($only_cab_booking == 1)
                     return Redirect::route('categoryDetail', 'cabservice');
 
+                // Get pickup labels with error handling
+                if ($CabBookingLayout) {
+                    try {
+                        $home_page_pickup_labels = $home_page_pickup_labels->with('translations')->where('for_no_product_found_html',0)->orderBy('order_by')->get();
+                    } catch (\Exception $e) {
+                        \Log::warning('Failed to get pickup labels in UserhomeController', [
+                            'error' => $e->getMessage()
+                        ]);
+                        $home_page_pickup_labels = collect();
+                    }
 
-
-                $home_page_pickup_labels  = $home_page_pickup_labels->with('translations')->where('for_no_product_found_html',0)->orderBy('order_by')->get();
-
-
-
-                $for_no_product_found_html = $for_no_product_found_html->with('translations')->where('for_no_product_found_html',1)->orderBy('order_by')->get();
+                    try {
+                        $for_no_product_found_html = $for_no_product_found_html->with('translations')->where('for_no_product_found_html',1)->orderBy('order_by')->get();
+                    } catch (\Exception $e) {
+                        \Log::warning('Failed to get no product found HTML in UserhomeController', [
+                            'error' => $e->getMessage()
+                        ]);
+                        $for_no_product_found_html = collect();
+                    }
+                } else {
+                    $home_page_pickup_labels = collect();
+                    $for_no_product_found_html = collect();
+                }
 
                 $categories = [];
-                if(isset($set_template)  && ($set_template->template_id == 8 || $set_template->template_id == 9)){
-                    $categories = Category::with('translation_one')->select('id', 'icon', 'slug', 'type_id', 'is_visible', 'status', 'is_core', 'vendor_id', 'can_add_products', 'parent_id')
-                    ->where('id', '>', '1')
-
-                    ->whereNotIn('type_id', [4, 5])
-                    ->where(function ($q) {
-                        $q->whereNull('vendor_id');
-                    })->orderBy('position', 'asc')
-                    ->orderBy('id', 'asc')
-                    ->where('status', 1)
-                    ->orderBy('parent_id', 'asc')->get();
+                if(isset($set_template) && $set_template && ($set_template->template_id == 8 || $set_template->template_id == 9)){
+                    try {
+                        $categories = Category::with('translation_one')->select('id', 'icon', 'slug', 'type_id', 'is_visible', 'status', 'is_core', 'vendor_id', 'can_add_products', 'parent_id')
+                        ->where('id', '>', '1')
+                        ->whereNotIn('type_id', [4, 5])
+                        ->where(function ($q) {
+                            $q->whereNull('vendor_id');
+                        })->orderBy('position', 'asc')
+                        ->orderBy('id', 'asc')
+                        ->where('status', 1)
+                        ->orderBy('parent_id', 'asc')->get();
+                    } catch (\Exception $e) {
+                        \Log::warning('Failed to get categories in UserhomeController', [
+                            'error' => $e->getMessage()
+                        ]);
+                        $categories = [];
+                    }
                 }
 
 
