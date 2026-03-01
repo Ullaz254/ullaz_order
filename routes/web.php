@@ -24,28 +24,9 @@ Route::group(['middleware' => 'languageSwitch'], function () {
     // Main domain route - explicit route for drivarr.com (must come before {domain})
     // This ensures drivarr.com matches before the generic {domain} route
     Route::domain('drivarr.com')->middleware(['subdomain'])->group(function() {
-        // Test route to verify domain routing works
-        Route::get('/test-route', function() {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Domain routing works!',
-                'domain' => request()->getHost(),
-                'path' => request()->path()
-            ]);
-        })->name('test.route');
-        
-        // Direct home route test - if this works, the issue is with frontend.php
-        Route::get('/', function() {
-            try {
-                return app(\App\Http\Controllers\Front\UserhomeController::class)->index(request());
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Controller error: ' . $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ], 500);
-            }
-        })->name('test.home.direct');
+        // Home route for drivarr.com - defined here to ensure it's registered
+        // This route takes precedence over the one in frontend.php
+        Route::get('/', 'Front\UserhomeController@index')->name('userHome');
         
         include_once "commonRoute.php";
         include_once "frontend.php";
