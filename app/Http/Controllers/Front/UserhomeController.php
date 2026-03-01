@@ -540,12 +540,29 @@ class UserhomeController extends FrontController
                         $this->client_preferences = $client_preferences;
                         Session::put('preferences', $client_preferences);
                     } else {
-                        // No preferences at all - return error
-                        return response()->view('errors.404', [], 404);
+                        // No preferences at all - create minimal default preferences to allow page to load
+                        \Log::warning('No client preferences in database - using defaults', [
+                            'domain' => $request->getHost()
+                        ]);
+                        // Create a minimal client_preferences object with defaults
+                        $client_preferences = (object)[
+                            'client_code' => 'default',
+                            'is_hyperlocal' => 0,
+                            'Default_latitude' => 0,
+                            'Default_longitude' => 0,
+                        ];
+                        $this->client_preferences = $client_preferences;
                     }
                 } catch (\Exception $e) {
                     \Log::error('Failed to get client preferences in UserhomeController', ['error' => $e->getMessage()]);
-                    return response()->view('errors.404', [], 404);
+                    // Create minimal default preferences to allow page to load
+                    $client_preferences = (object)[
+                        'client_code' => 'default',
+                        'is_hyperlocal' => 0,
+                        'Default_latitude' => 0,
+                        'Default_longitude' => 0,
+                    ];
+                    $this->client_preferences = $client_preferences;
                 }
             }
 
