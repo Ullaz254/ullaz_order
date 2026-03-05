@@ -13,7 +13,8 @@ class CreateAddonOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('addon_options', function (Blueprint $table) {
+        if (!Schema::hasTable('addon_options')) {
+            Schema::create('addon_options', function (Blueprint $table) {
             $table->id();
             $table->string('title', 50)->nullable();
             $table->bigInteger('addon_id')->unsigned();
@@ -23,6 +24,7 @@ class CreateAddonOptionsTable extends Migration
 
             $table->foreign('addon_id')->references('id')->on('addon_sets')->onDelete('cascade');
         });
+        }
     }
 
     /**

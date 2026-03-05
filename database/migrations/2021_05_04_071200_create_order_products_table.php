@@ -13,7 +13,8 @@ class CreateOrderProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_products', function (Blueprint $table) {
+        if (!Schema::hasTable('order_products')) {
+            Schema::create('order_products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
@@ -33,6 +34,7 @@ class CreateOrderProductsTable extends Migration
 
             $table->timestamps();
         });
+        }
     }
 
     /**

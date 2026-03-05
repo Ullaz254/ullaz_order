@@ -13,21 +13,21 @@ class CreateNotificationTypesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('notification_types', function(Blueprint $table)
-		{
+		if (!Schema::hasTable('notification_types')) {
+            Schema::create('notification_types', function (Blueprint $table) {
 			$table->id();
 			$table->string('name', 50)->index();
 			$table->timestamps();
 		});
-	}
+        }
+    }
 
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
 	{
 		Schema::drop('notification_types');
 	}

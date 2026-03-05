@@ -13,31 +13,25 @@ class AddRecurringBookingCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'recurring_booking_type')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             //
             $table->tinyInteger('recurring_booking_type')->nullable()->comment('1=daily,2=weekly,3=monthly,4=custom');
             $table->string('recurring_week_day')->nullable();
             $table->tinyInteger('recurring_week_type')->nullable()->comment('1=daily,2=once');
             $table->longText('recurring_day_data')->nullable();
             $table->string('recurring_booking_time')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
      * @return void
      */
-
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            //
-            $table->dropColumn('recurring_booking_type');
-            $table->dropColumn('recurring_week_day');
-            $table->dropColumn('recurring_week_type');
-            $table->dropColumn('recurring_day_data');
-            $table->dropColumn('recurring_booking_time');
-        });
+        // Reverse migration if needed
     }
 }

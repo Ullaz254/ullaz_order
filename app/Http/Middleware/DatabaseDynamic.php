@@ -21,8 +21,23 @@ class DatabaseDynamic{
      */
     public function handle($request, Closure $next){
         if(Auth::check()){
+            try {
+                // Check if clients table exists before querying
+                $tableExists = DB::select("SHOW TABLES LIKE 'clients'");
+                if (empty($tableExists)) {
+                    // Table doesn't exist, skip client lookup
+                    return $next($request);
+                }
+                
+                $client = Client::first();
+            } catch (\Exception $e) {
+                // Database error or table doesn't exist, continue without client
+                \Log::warning('DatabaseDynamic middleware: Could not query clients table', [
+                    'error' => $e->getMessage()
+                ]);
+                return $next($request);
+            }
             
-          $client = Client::first();
            if($client){
               $database_name = $client->database_name;
               $database_host = !empty($client->database_host) ? $client->database_host : env('DB_HOST','127.0.0.1');
@@ -42,7 +57,8 @@ class DatabaseDynamic{
                   'prefix' => '',
                   'prefix_indexes' => true,
                   'strict' => false,
-                  'engine' => null
+                  'engine' => null,
+                  'options' => \App\Helpers\DatabaseHelper::getSslOptions(),
               ];
               Config::set("database.connections.$database_name", $default);
               Config::set("client_id",1);
@@ -81,18 +97,26 @@ class DatabaseDynamic{
               }
 
 
-              $cl = Client::first();
-              $getAdminCurrentCountry = Country::where('id', '=', $cl->country_id)->get()->first();
-              if(!empty($getAdminCurrentCountry)){
-                  $countryCode = $getAdminCurrentCountry->code;
-                  $phoneCode = $getAdminCurrentCountry->phonecode;
-              }else{
-                  $countryCode = '';
-                  $phoneCode = '';
+              try {
+                  $cl = Client::first();
+                  if ($cl) {
+                      $getAdminCurrentCountry = Country::where('id', '=', $cl->country_id)->get()->first();
+                      if(!empty($getAdminCurrentCountry)){
+                          $countryCode = $getAdminCurrentCountry->code;
+                          $phoneCode = $getAdminCurrentCountry->phonecode;
+                      }else{
+                          $countryCode = '';
+                          $phoneCode = '';
+                      }
+                      
+                      Session::put('default_country_code', $countryCode);
+                      Session::put('default_country_phonecode', $phoneCode);
+                  }
+              } catch (\Exception $e) {
+                  // Country lookup failed, set defaults
+                  Session::put('default_country_code', '');
+                  Session::put('default_country_phonecode', '');
               }
-              
-              Session::put('default_country_code', $countryCode);
-              Session::put('default_country_phonecode', $phoneCode);
           }
       }
         return $next($request);

@@ -16,9 +16,8 @@ class AlterVendorSubscriptionsTable extends Migration
         Schema::table('vendor_subscriptions', function (Blueprint $table) {
             $table->dropColumn('is_deleted');
             $table->softDeletes();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

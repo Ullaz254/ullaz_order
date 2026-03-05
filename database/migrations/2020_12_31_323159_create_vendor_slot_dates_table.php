@@ -13,7 +13,8 @@ class CreateVendorSlotDatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_slot_dates', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_slot_dates')) {
+            Schema::create('vendor_slot_dates', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('vendor_id')->unsigned()->nullable();
             $table->bigInteger('category_id')->unsigned()->nullable();
@@ -34,8 +35,8 @@ class CreateVendorSlotDatesTable extends Migration
             $table->index('delivery');
 
         });
+        }
     }
-
 
     /**
      * Reverse the migrations.

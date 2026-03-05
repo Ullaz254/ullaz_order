@@ -13,13 +13,15 @@ class CreateCategoryTagsTable extends Migration
      */
     public function up()
     {
-        Schema::create('category_tags', function (Blueprint $table) {
+        if (!Schema::hasTable('category_tags')) {
+            Schema::create('category_tags', function (Blueprint $table) {
             $table->bigInteger('category_id')->unsigned()->nullable();
             $table->string('tag', 60)->nullable();
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
+        }
     }
 
     /**

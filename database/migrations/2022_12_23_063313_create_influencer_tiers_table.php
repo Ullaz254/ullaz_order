@@ -13,7 +13,8 @@ class CreateInfluencerTiersTable extends Migration
      */
     public function up()
     {
-        Schema::create('influencer_tiers', function (Blueprint $table) {
+        if (!Schema::hasTable('influencer_tiers')) {
+            Schema::create('influencer_tiers', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
             $table->integer('target')->nullable();
@@ -22,6 +23,7 @@ class CreateInfluencerTiersTable extends Migration
             $table->tinyInteger('status')->comment('1=active, 0=Inactive')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,7 +13,8 @@ class CreateProductInquiriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_inquiries', function (Blueprint $table) {
+        if (!Schema::hasTable('product_inquiries')) {
+            Schema::create('product_inquiries', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
             $table->string('email')->nullable();
@@ -24,6 +25,7 @@ class CreateProductInquiriesTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

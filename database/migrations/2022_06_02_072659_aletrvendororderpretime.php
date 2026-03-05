@@ -15,9 +15,8 @@ class Aletrvendororderpretime extends Migration
     {
         Schema::table('vendors', function (Blueprint $table) {
             $table->unsignedInteger('order_pre_time')->nullable()->default(0)->change();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

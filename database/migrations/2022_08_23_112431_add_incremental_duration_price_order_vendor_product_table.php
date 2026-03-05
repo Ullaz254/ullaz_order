@@ -13,12 +13,14 @@ class AddIncrementalDurationPriceOrderVendorProductTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'incremental_price')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             //
             $table->string('incremental_price')->default(0)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddIncrementalDurationPriceOrderVendorProductTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn('incremental_price');
-        });
+        // Reverse migration if needed
     }
 }

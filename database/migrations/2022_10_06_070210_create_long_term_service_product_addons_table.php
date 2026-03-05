@@ -13,13 +13,15 @@ class CreateLongTermServiceProductAddonsTable extends Migration
      */
     public function up()
     {
-        Schema::create('long_term_service_product_addons', function (Blueprint $table) {
+        if (!Schema::hasTable('long_term_service_product_addons')) {
+            Schema::create('long_term_service_product_addons', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('long_term_service_product_id')->unsigned()->nullable();
             $table->bigInteger('addon_id')->unsigned()->nullable();
             $table->bigInteger('option_id')->unsigned()->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

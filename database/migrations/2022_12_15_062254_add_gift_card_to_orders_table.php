@@ -13,12 +13,14 @@ class AddGiftCardToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'gift_card_amount')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->decimal('gift_card_amount', 16, 8)->nullable()->default(0);
             $table->bigInteger('gift_card_id')->unsigned()->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddGiftCardToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('gift_card_amount');
-            $table->dropColumn('gift_card_id');
-        });
+        // Reverse migration if needed
     }
 }

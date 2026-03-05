@@ -50,10 +50,11 @@ class UpdateTransactionsTable extends Migration
                     ->where('payable_id', $wallet->holder_id)
                     ->update(['wallet_id' => $wallet->id]);
             });
-        });
-    }
-
+        }); } 
+    
     /**
+     * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void

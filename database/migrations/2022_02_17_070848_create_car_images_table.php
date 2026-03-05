@@ -13,13 +13,15 @@ class CreateCarImagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('car_images', function (Blueprint $table) {
+        if (!Schema::hasTable('car_images')) {
+            Schema::create('car_images', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('car_id')->unsigned()->comment('user address id is car id');
             $table->foreign('car_id')->references('id')->on('user_addresses')->onDelete('cascade');;
             $table->string('image')->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

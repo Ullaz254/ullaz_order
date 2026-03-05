@@ -13,7 +13,8 @@ class CreateCarDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('car_details', function (Blueprint $table) {
+        if (!Schema::hasTable('car_details')) {
+            Schema::create('car_details', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('car_id')->unsigned()->comment('user address id is car id');
             $table->foreign('car_id')->references('id')->on('user_addresses')->onDelete('cascade');
@@ -23,7 +24,8 @@ class CreateCarDetailsTable extends Migration
             $table->string('registration_number')->nullable();
            // $table->string('model')->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

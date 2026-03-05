@@ -13,7 +13,8 @@ class CreateEstimatedProductCartNew extends Migration
      */
     public function up()
     {
-        Schema::create('estimated_product_cart_new', function (Blueprint $table) {
+        if (!Schema::hasTable('estimated_product_cart_new')) {
+            Schema::create('estimated_product_cart_new', function (Blueprint $table) {
             $table->id();
             $table->string('unique_identifier')->nullable();
             $table->integer('user_id')->nullable();
@@ -21,7 +22,7 @@ class CreateEstimatedProductCartNew extends Migration
             $table->foreignId('currency_id')->nullable();
             $table->timestamps();
         });
-
+        }
     }
 
     /**

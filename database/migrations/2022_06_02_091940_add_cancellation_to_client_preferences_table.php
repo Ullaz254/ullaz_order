@@ -13,12 +13,14 @@ class AddCancellationToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'order_cancellation_time')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->integer('order_cancellation_time')->nullable();
             $table->integer('cancellation_percentage')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddCancellationToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

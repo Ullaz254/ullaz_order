@@ -13,11 +13,13 @@ class AddPriceBifurcationToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'price_bifurcation')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('price_bifurcation')->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPriceBifurcationToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('price_bifurcation');
-        });
+        // Reverse migration if needed
     }
 }

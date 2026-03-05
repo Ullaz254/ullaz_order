@@ -13,14 +13,16 @@ class AddVendorTypesToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'rental_check')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('rental_check')->nullable()->after('delivery_check')->default(0)->comment('0-No, 1-Yes');
             $table->tinyInteger('pick_drop_check')->nullable()->after('rental_check')->default(0)->comment('0-No, 1-Yes');
             $table->tinyInteger('on_demand_check')->nullable()->after('pick_drop_check')->default(0)->comment('0-No, 1-Yes');
             $table->tinyInteger('laundry_check')->nullable()->after('on_demand_check')->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,8 +30,6 @@ class AddVendorTypesToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

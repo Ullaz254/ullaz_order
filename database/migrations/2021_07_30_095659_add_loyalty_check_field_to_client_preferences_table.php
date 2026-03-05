@@ -13,9 +13,11 @@ class AddLoyaltyCheckFieldToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('loyalty_check')->after('enquire_mode')->default(0)->comment('0-Active, 1-Inactive');
-        });
+        if (!Schema::hasColumn('client_preferences', 'loyalty_check')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('loyalty_check')->after('enquire_mode')->default(0)->comment('0-Active, 1-Inactive');
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AddLoyaltyCheckFieldToClientPreferencesTable extends Migration
     public function down()
     {
         Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('loyalty_check');
+            if (Schema::hasColumn('client_preferences', 'loyalty_check')) {
+                $table->dropColumn('loyalty_check');
+            }
         });
     }
 }

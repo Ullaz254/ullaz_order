@@ -13,13 +13,15 @@ class AddProductVariantByRoleIdToCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'product_variant_by_role_id')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             $table->bigInteger('product_variant_by_role_id')->unsigned()->nullable();
 
             $table->foreign('product_variant_by_role_id')->references('id')->on('product_variant_by_roles')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,9 +29,6 @@ class AddProductVariantByRoleIdToCartProductsTable extends Migration
      */
     public function down()
     {
-        
-        Schema::table('cart_products', function (Blueprint $table) {
-            $table->dropColumn('product_variant_by_role_id');
-        });
+        // Reverse migration if needed
     }
 }

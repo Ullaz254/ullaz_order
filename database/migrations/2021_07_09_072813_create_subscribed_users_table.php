@@ -13,7 +13,8 @@ class CreateSubscribedUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscribed_users', function (Blueprint $table) {
+        if (!Schema::hasTable('subscribed_users')) {
+            Schema::create('subscribed_users', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedTinyInteger('subscriber_type')->nullable();
@@ -35,6 +36,7 @@ class CreateSubscribedUsersTable extends Migration
             $table->index('status_id');
             $table->index('payment_method');
         });
+        }
     }
 
     /**

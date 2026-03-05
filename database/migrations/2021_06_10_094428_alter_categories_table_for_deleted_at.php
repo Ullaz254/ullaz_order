@@ -14,9 +14,8 @@ class AlterCategoriesTableForDeletedAt extends Migration
     public function up(){
         Schema::table('categories', function (Blueprint $table) {
             $table->softDeletes()->after('updated_at');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

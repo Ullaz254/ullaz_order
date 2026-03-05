@@ -13,11 +13,13 @@ class AlterPickupAddressToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'shiprocket_pickup_name')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->string('shiprocket_pickup_name')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterPickupAddressToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

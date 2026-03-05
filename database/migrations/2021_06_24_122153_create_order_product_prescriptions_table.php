@@ -13,7 +13,8 @@ class CreateOrderProductPrescriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_product_prescriptions', function (Blueprint $table) {
+        if (!Schema::hasTable('order_product_prescriptions')) {
+            Schema::create('order_product_prescriptions', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_id')->unsigned()->nullable();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
@@ -22,6 +23,7 @@ class CreateOrderProductPrescriptionsTable extends Migration
             $table->string('prescription')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

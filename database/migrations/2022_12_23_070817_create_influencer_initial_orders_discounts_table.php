@@ -13,7 +13,8 @@ class CreateInfluencerInitialOrdersDiscountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('influencer_initial_orders_discounts', function (Blueprint $table) {
+        if (!Schema::hasTable('influencer_initial_orders_discounts')) {
+            Schema::create('influencer_initial_orders_discounts', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('influencer_user_id')->unsigned()->nullable();
             $table->integer('order_count')->comment("number of first orders for discount")->nullable();
@@ -24,6 +25,7 @@ class CreateInfluencerInitialOrdersDiscountsTable extends Migration
 
             $table->foreign('influencer_user_id')->references('id')->on('influencer_users')->onDelete('cascade');
         });
+        }
     }
 
     /**

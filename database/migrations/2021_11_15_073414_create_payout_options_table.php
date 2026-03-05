@@ -13,7 +13,8 @@ class CreatePayoutOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payout_options', function (Blueprint $table) {
+        if (!Schema::hasTable('payout_options')) {
+            Schema::create('payout_options', function (Blueprint $table) {
             $table->id();
             $table->string('code');
             $table->string('path');
@@ -23,7 +24,8 @@ class CreatePayoutOptionsTable extends Migration
             $table->unsignedTinyInteger('off_site')->nullable()->default(0)->comment('0 = on-site, 1 = off-site');
             $table->unsignedTinyInteger('test_mode')->default(0)->comment('0 = false, 1 = true');
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

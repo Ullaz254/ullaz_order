@@ -13,11 +13,13 @@ class AddMarkupPriceToOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'total_markup_price')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->decimal('total_markup_price', 12, 2)->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddMarkupPriceToOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn('total_markup_price');
-        });
+        // Reverse migration if needed
     }
 }

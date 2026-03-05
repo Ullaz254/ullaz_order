@@ -13,7 +13,8 @@ class CreatePaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payments', function (Blueprint $table) {
+        if (!Schema::hasTable('payments')) {
+            Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->integer('amount');
             $table->string('transaction_id');
@@ -24,6 +25,7 @@ class CreatePaymentsTable extends Migration
             $table->foreign('cart_id')->references('id')->on('carts')->onDelete('set null');
             $table->timestamps();
         });
+        }
     }
 
     /**

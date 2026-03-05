@@ -13,7 +13,8 @@ class Webstylingoptionstable extends Migration
      */
     public function up()
     {
-        Schema::create('web_styling_options', function (Blueprint $table) {
+        if (!Schema::hasTable('web_styling_options')) {
+            Schema::create('web_styling_options', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('web_styling_id')->unsigned()->nullable();
             $table->foreign('web_styling_id')->references('id')->on('web_stylings')->onDelete('cascade');
@@ -22,7 +23,8 @@ class Webstylingoptionstable extends Migration
             $table->tinyInteger('is_selected')->comment('1-yes, 2-no')->default('1');
             $table->tinyInteger('template_id')->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

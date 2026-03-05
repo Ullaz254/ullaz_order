@@ -13,12 +13,14 @@ class AddCategoryIdFieldToOrderProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'category_id')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->bigInteger('category_id')->unsigned()->nullable();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddCategoryIdFieldToOrderProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_products', function (Blueprint $table) {
-            $table->dropColumn('category_id');
-        });
+        // Reverse migration if needed
     }
 }

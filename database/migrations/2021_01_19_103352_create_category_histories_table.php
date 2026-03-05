@@ -13,7 +13,8 @@ class CreateCategoryHistoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('category_histories', function (Blueprint $table) {
+        if (!Schema::hasTable('category_histories')) {
+            Schema::create('category_histories', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('category_id')->unsigned();
             $table->string('action', 20)->default('add')->comment('add, update, delete, block, active');
@@ -24,6 +25,7 @@ class CreateCategoryHistoriesTable extends Migration
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
+        }
     }
 
     /**

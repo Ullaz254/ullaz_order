@@ -13,11 +13,13 @@ class AddKycToInfluencerCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::table('influencer_categories', function (Blueprint $table) {
+        if (!Schema::hasColumn('influencer_categories', 'kyc')) {
+            Schema::table('influencer_categories', function (Blueprint $table) {
             $table->tinyInteger('kyc')->comment('1=yes, 0=No')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddKycToInfluencerCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::table('influencer_categories', function (Blueprint $table) {
-            $table->dropColumn('kyc');
-        });
+        // Reverse migration if needed
     }
 }

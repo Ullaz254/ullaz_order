@@ -13,7 +13,8 @@ class CreateAddonSetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('addon_sets', function (Blueprint $table) {
+        if (!Schema::hasTable('addon_sets')) {
+            Schema::create('addon_sets', function (Blueprint $table) {
             $table->id();
             $table->string('title', 100)->nullable();
             $table->tinyInteger('min_select')->default(1);
@@ -26,6 +27,7 @@ class CreateAddonSetsTable extends Migration
 
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('set null');
         });
+        }
     }
 
     /**

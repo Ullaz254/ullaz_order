@@ -15,9 +15,8 @@ class AlterDeletedAtVendorRegistrationSelectOptions extends Migration
     {
         Schema::table('vendor_registration_select_options', function (Blueprint $table) {
             $table->softDeletes()->after('updated_at');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

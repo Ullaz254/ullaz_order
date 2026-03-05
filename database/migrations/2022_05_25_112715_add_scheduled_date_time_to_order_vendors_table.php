@@ -15,9 +15,8 @@ class AddScheduledDateTimeToOrderVendorsTable extends Migration
     {
         Schema::table('order_vendors', function (Blueprint $table) {
             $table->dateTimeTz('scheduled_date_time')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

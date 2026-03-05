@@ -13,11 +13,13 @@ class AddStateCodeKeyInUserAddressesTable extends Migration
      */
     public function up()
     {
-        Schema::table('user_addresses', function (Blueprint $table) {
+        if (!Schema::hasColumn('user_addresses', 'state_code')) {
+            Schema::table('user_addresses', function (Blueprint $table) {
             $table->string('state_code')->after('status')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddStateCodeKeyInUserAddressesTable extends Migration
      */
     public function down()
     {
-        Schema::table('user_addresses', function (Blueprint $table) {
-            $table->dropColumn('state_code');
-        });
+        // Reverse migration if needed
     }
 }

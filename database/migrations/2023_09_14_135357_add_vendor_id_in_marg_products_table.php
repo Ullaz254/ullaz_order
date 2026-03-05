@@ -15,9 +15,8 @@ class AddVendorIdInMargProductsTable extends Migration
     {
         Schema::table('marg_products', function (Blueprint $table) {
             $table->foreignId('vendor_id');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

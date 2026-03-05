@@ -13,6 +13,7 @@ class CreateClientPreferenceAdditionalTable extends Migration
      */
     public function up()
     {
+            if (!Schema::hasTable('client_preference_additional')) {
             Schema::create('client_preference_additional', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('client_id');
@@ -25,9 +26,8 @@ class CreateClientPreferenceAdditionalTable extends Migration
                 $table->string('is_boolean')->nullable();
                 $table->timestamps();
             });
-
-
         }
+    }
 
     /**
      * Reverse the migrations.

@@ -24,10 +24,11 @@ class AddDiscountTransfersTable extends Migration
             $table->decimal('discount', 64, 0)
                 ->default(0)
                 ->after('withdraw_id');
-        });
-    }
-
+        }); } 
+    
     /**
+     * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void

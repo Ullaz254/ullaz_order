@@ -13,7 +13,8 @@ class CreateMeasurementTable extends Migration
      */
     public function up()
     {
-        Schema::create('measurements', function (Blueprint $table) {
+        if (!Schema::hasTable('measurements')) {
+            Schema::create('measurements', function (Blueprint $table) {
             $table->id();
             $table->string('key')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
@@ -21,6 +22,7 @@ class CreateMeasurementTable extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

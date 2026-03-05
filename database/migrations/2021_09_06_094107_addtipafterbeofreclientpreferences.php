@@ -6,17 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 class Addtipafterbeofreclientpreferences extends Migration
 {
-   /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('tip_before_order')->nullable()->default(0)->comment('0-No, 1-Yes');
-            $table->tinyInteger('tip_after_order')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
+        if (!Schema::hasColumn('client_preferences', 'tip_after')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('tip_after')->after('enquire_mode')->default(0);
+            });
+        }
     }
 
     /**
@@ -27,8 +28,9 @@ class Addtipafterbeofreclientpreferences extends Migration
     public function down()
     {
         Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('tip_before_order');
-            $table->dropColumn('tip_after_order');
+            if (Schema::hasColumn('client_preferences', 'tip_after')) {
+                $table->dropColumn('tip_after');
+            }
         });
     }
 }

@@ -13,7 +13,8 @@ class CreateUserAddressesTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_addresses', function (Blueprint $table) {
+        if (!Schema::hasTable('user_addresses')) {
+            Schema::create('user_addresses', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->string('address')->nullable();
@@ -30,6 +31,7 @@ class CreateUserAddressesTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+        }
     }
 
     /**

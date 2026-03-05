@@ -23,9 +23,8 @@ class AddColumnTableOrders extends Migration
             if(!Schema::hasColumn('orders','name_sign_board')){
                 $table->string('name_sign_board')->nullable();
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

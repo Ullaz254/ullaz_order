@@ -13,13 +13,15 @@ class AddLoyaltyPointsEarnedOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'loyalty_points_used')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->decimal('loyalty_points_used', $precision = 10, $scale = 2)->after('currency_id')->nullable();
             $table->decimal('loyalty_amount_saved', $precision = 10, $scale = 2)->after('loyalty_points_used')->nullable();
             $table->decimal('loyalty_points_earned', $precision = 10, $scale = 2)->after('loyalty_amount_saved')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,6 +29,6 @@ class AddLoyaltyPointsEarnedOrdersTable extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

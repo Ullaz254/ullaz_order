@@ -13,7 +13,8 @@ class CreateMobileBannerServiceAreasTable extends Migration
      */
     public function up()
     {
-        Schema::create('mobile_banner_service_areas', function (Blueprint $table) {
+        if (!Schema::hasTable('mobile_banner_service_areas')) {
+            Schema::create('mobile_banner_service_areas', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('banner_id')->nullable();
             $table->unsignedBigInteger('service_area_id')->nullable()->comment('id from service area for banners');
@@ -21,6 +22,7 @@ class CreateMobileBannerServiceAreasTable extends Migration
 
             $table->foreign('service_area_id')->references('id')->on('service_area_for_banners')->onDelete('cascade');
         });
+        }
     }
 
     /**

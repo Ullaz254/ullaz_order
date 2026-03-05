@@ -13,11 +13,13 @@ class AddIsEditedToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'is_edited')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->tinyInteger('is_edited')->default(0)->comment('1 for yes, 0 for no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsEditedToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

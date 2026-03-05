@@ -13,14 +13,15 @@ class CreateVendorSectionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_sections', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_sections')) {
+            Schema::create('vendor_sections', function (Blueprint $table) {
             $table->id();
             $table->mediumText('slug');
             $table->unsignedBigInteger('vendor_id');
             $table->tinyInteger('order_by')->default(0);
             $table->timestamps();
         });
-        
+        }
     }
 
     /**

@@ -13,7 +13,8 @@ class CreateInfluencerUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('influencer_users', function (Blueprint $table) {
+        if (!Schema::hasTable('influencer_users')) {
+            Schema::create('influencer_users', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->bigInteger('influencer_tier_id')->unsigned()->nullable();
@@ -27,6 +28,7 @@ class CreateInfluencerUsersTable extends Migration
             $table->foreign('influencer_tier_id')->references('id')->on('influencer_tiers')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+        }
     }
 
     /**

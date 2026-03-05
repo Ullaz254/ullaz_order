@@ -13,13 +13,15 @@ class CreateTimezonesTable extends Migration
      */
     public function up()
     {
-        Schema::create('timezones', function (Blueprint $table) {
+        if (!Schema::hasTable('timezones')) {
+            Schema::create('timezones', function (Blueprint $table) {
             $table->id();
             $table->string('timezone');
             $table->string('offset');
             $table->string('diff_from_gtm');
             $table->timestamps();
         });
+        }
     }
 
     /**

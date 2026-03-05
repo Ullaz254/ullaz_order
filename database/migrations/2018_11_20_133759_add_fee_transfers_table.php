@@ -24,10 +24,11 @@ class AddFeeTransfersTable extends Migration
             $table->decimal('fee', 64, 0)
                 ->default(0)
                 ->after('withdraw_id');
-        });
-    }
-
+        }); } 
+    
     /**
+     * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void

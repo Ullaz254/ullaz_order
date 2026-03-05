@@ -63,7 +63,8 @@ class DbChooserApi
               'prefix' => '',
               'prefix_indexes' => true,
               'strict' => false,
-              'engine' => null
+              'engine' => null,
+              'options' => \App\Helpers\DatabaseHelper::getSslOptions(),
             ];
 
             if (isset($database_name)) {

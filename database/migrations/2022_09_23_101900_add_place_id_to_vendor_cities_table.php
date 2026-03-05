@@ -13,11 +13,13 @@ class AddPlaceIdToVendorCitiesTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_cities', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_cities', 'place_id')) {
+            Schema::table('vendor_cities', function (Blueprint $table) {
             $table->string('place_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPlaceIdToVendorCitiesTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_cities', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

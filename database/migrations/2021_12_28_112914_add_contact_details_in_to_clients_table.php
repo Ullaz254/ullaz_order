@@ -13,13 +13,15 @@ class AddContactDetailsInToClientsTable extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
+        if (!Schema::hasColumn('clients', 'contact_email')) {
+            Schema::table('clients', function (Blueprint $table) {
             $table->string('contact_email')->nullable()->after('code');
             $table->string('contact_address')->nullable()->after('contact_email');
             $table->string('contact_phone_number')->nullable()->after('contact_address');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class AddContactDetailsInToClientsTable extends Migration
      */
     public function down()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

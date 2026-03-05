@@ -13,7 +13,8 @@ class CreateAttributeCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('attribute_categories', function (Blueprint $table) {
+        if (!Schema::hasTable('attribute_categories')) {
+            Schema::create('attribute_categories', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('attribute_id')->unsigned();
             $table->bigInteger('category_id')->unsigned();
@@ -22,6 +23,7 @@ class CreateAttributeCategoriesTable extends Migration
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
+        }
     }
 
     /**

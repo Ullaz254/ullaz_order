@@ -13,11 +13,13 @@ class AddGiftingToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'gifting')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('gifting')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,9 +27,6 @@ class AddGiftingToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-            $table->dropColumn('gifting');
-        });
+        // Reverse migration if needed
     }
 }

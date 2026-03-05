@@ -13,11 +13,13 @@ class AddCutOffTimeToDeliverySlotsTable extends Migration
      */
     public function up()
     {
-        Schema::table('delivery_slots', function (Blueprint $table) {
+        if (!Schema::hasColumn('delivery_slots', 'cutOff_time')) {
+            Schema::table('delivery_slots', function (Blueprint $table) {
             $table->string('cutOff_time')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCutOffTimeToDeliverySlotsTable extends Migration
      */
     public function down()
     {
-        Schema::table('delivery_slots', function (Blueprint $table) {
-            $table->dropColumn('cutOff_time');
-        });
+        // Reverse migration if needed
     }
 }

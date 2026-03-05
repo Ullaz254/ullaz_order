@@ -13,11 +13,13 @@ class AddShiipingDeliveryTypeToCartTable extends Migration
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('carts', 'shipping_delivery_type')) {
+            Schema::table('carts', function (Blueprint $table) {
             $table->string('shipping_delivery_type')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddShiipingDeliveryTypeToCartTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

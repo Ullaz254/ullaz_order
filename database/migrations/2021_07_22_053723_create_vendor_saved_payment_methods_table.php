@@ -13,7 +13,8 @@ class CreateVendorSavedPaymentMethodsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_saved_payment_methods', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_saved_payment_methods')) {
+            Schema::create('vendor_saved_payment_methods', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('vendor_id');
             $table->unsignedInteger('payment_option_id')->nullable();
@@ -28,6 +29,7 @@ class CreateVendorSavedPaymentMethodsTable extends Migration
             $table->index('vendor_id');
             $table->index('payment_option_id');
         });
+        }
     }
 
     /**

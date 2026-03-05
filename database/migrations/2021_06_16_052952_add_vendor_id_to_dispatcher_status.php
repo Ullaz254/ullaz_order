@@ -13,13 +13,15 @@ class AddVendorIdToDispatcherStatus extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_order_dispatcher_statuses', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_order_dispatcher_statuses', 'vendor_id')) {
+            Schema::table('vendor_order_dispatcher_statuses', function (Blueprint $table) {
             //
             $table->bigInteger('vendor_id')->unsigned()->nullable();
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,9 +29,6 @@ class AddVendorIdToDispatcherStatus extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_order_dispatcher_statuses', function (Blueprint $table) {
-            //
-            $table->dropColumn('vendor_id');
-        });
+        // Reverse migration if needed
     }
 }

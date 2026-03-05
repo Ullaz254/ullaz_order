@@ -13,13 +13,15 @@ class AddVendorIdToPincodesTable extends Migration
      */
     public function up()
     {
-        Schema::table('pincodes', function (Blueprint $table) {
+        if (!Schema::hasColumn('pincodes', 'vendor_id')) {
+            Schema::table('pincodes', function (Blueprint $table) {
             $table->bigInteger('vendor_id')->unsigned()->nullable();
 
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class AddVendorIdToPincodesTable extends Migration
      */
     public function down()
     {
-        Schema::table('pincodes', function (Blueprint $table) {
-            $table->dropColumn('vendor_id');
-        });
+        // Reverse migration if needed
     }
 }

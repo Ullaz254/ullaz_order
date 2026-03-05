@@ -13,11 +13,13 @@ class AddIsPostpayToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'is_postpay')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->tinyInteger('is_postpay')->default(0)->nullable()->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsPostpayToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

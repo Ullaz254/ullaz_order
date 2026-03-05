@@ -13,7 +13,8 @@ class CreateOrderDriverRatingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_driver_ratings', function (Blueprint $table) {
+        if (!Schema::hasTable('order_driver_ratings')) {
+            Schema::create('order_driver_ratings', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_id')->unsigned()->nullable();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
@@ -22,7 +23,8 @@ class CreateOrderDriverRatingsTable extends Migration
             $table->integer('rating')->nullable();
             $table->string('review', 500)->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

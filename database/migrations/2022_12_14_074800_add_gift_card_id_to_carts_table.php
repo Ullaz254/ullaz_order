@@ -13,11 +13,13 @@ class AddGiftCardIdToCartsTable extends Migration
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('carts', 'gift_card_id')) {
+            Schema::table('carts', function (Blueprint $table) {
             $table->bigInteger('gift_card_id')->unsigned()->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddGiftCardIdToCartsTable extends Migration
      */
     public function down()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->dropColumn('gift_card_id');
-        });
+        // Reverse migration if needed
     }
 }

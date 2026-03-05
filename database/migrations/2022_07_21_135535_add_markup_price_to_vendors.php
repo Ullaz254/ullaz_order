@@ -13,11 +13,13 @@ class AddMarkupPriceToVendors extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'add_markup_price')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('add_markup_price')->default('0')->comment('0 - no, 1 - yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddMarkupPriceToVendors extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('add_markup_price');
-        });
+        // Reverse migration if needed
     }
 }

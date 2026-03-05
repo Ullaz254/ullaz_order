@@ -13,12 +13,14 @@ class AddVendorIdFieldToOrderProductPrescriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_product_prescriptions', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_product_prescriptions', 'vendor_id')) {
+            Schema::table('order_product_prescriptions', function (Blueprint $table) {
             $table->bigInteger('vendor_id')->unsigned()->nullable();
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddVendorIdFieldToOrderProductPrescriptionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_product_prescriptions', function (Blueprint $table) {
-            $table->dropColumn('vendor_id');
-        });
+        // Reverse migration if needed
     }
 }

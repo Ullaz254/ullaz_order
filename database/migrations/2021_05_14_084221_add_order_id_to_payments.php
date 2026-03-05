@@ -16,9 +16,8 @@ class AddOrderIdToPayments extends Migration
         Schema::table('payments', function (Blueprint $table) {
             $table->unsignedBigInteger('order_id')->nullable();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('set null');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

@@ -13,11 +13,13 @@ class AddAppointmentToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'appointment_check')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('appointment_check')->nullable()->after('laundry_check')->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAppointmentToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

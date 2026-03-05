@@ -13,7 +13,8 @@ class CreateReferAndEarnsTable extends Migration
      */
     public function up()
     {
-        Schema::create('refer_and_earns', function (Blueprint $table) {
+        if (!Schema::hasTable('refer_and_earns')) {
+            Schema::create('refer_and_earns', function (Blueprint $table) {
             $table->id();
 
             $table->decimal('reffered_by_amount')->nullable();
@@ -24,6 +25,7 @@ class CreateReferAndEarnsTable extends Migration
 
             $table->timestamps();
         });
+        }
     }
 
     /**

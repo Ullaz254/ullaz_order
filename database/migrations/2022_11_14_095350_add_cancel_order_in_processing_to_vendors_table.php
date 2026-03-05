@@ -13,11 +13,13 @@ class AddCancelOrderInProcessingToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'cancel_order_in_processing')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('cancel_order_in_processing')->default(0)->comment('1 for yes, 0 for no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCancelOrderInProcessingToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('cancel_order_in_processing');
-        });
+        // Reverse migration if needed
     }
 }

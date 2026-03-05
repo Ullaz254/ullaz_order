@@ -17,9 +17,8 @@ class AddViewestimationColumnToClientPreferences extends Migration
             if (!Schema::hasColumn('client_preferences', 'view_get_estimation_in_category')) {
              $table->tinyInteger('view_get_estimation_in_category')->nullable()->default(0)->after('get_estimations')->comment('0-off, 1-on');
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

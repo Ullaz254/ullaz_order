@@ -13,11 +13,13 @@ class AddClosedStoreScheduledToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'closed_store_order_scheduled')) {
+            Schema::table('vendors', function (Blueprint $table) {
            $table->tinyInteger('closed_store_order_scheduled')->default('0');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddClosedStoreScheduledToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->tinyInteger('closed_store_order_scheduled');
-        });
+        // Reverse migration if needed
     }
 }

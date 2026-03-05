@@ -13,12 +13,14 @@ class AddDeliveryDurationCartDeliveryFeeTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_vendor_delivery_fee', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_vendor_delivery_fee', 'delivery_duration')) {
+            Schema::table('cart_vendor_delivery_fee', function (Blueprint $table) {
             $table->tinyInteger('delivery_duration')->nullable()->after('delivery_fee');
             $table->decimal('delivery_distance', 16, 2)->nullable()->after('delivery_duration');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddDeliveryDurationCartDeliveryFeeTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_vendor_delivery_fee', function (Blueprint $table) {
-
-        });
+        // Reverse migration if needed
     }
 }

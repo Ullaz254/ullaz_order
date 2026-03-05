@@ -6,18 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 class DelayOrderinclientPreftable extends Migration
 {
-   /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'delay_order')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('delay_order')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class DelayOrderinclientPreftable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('delay_order');
-        });
+        // Reverse migration if needed
     }
 }

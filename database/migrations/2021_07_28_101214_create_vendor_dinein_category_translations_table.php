@@ -13,7 +13,8 @@ class CreateVendorDineinCategoryTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_dinein_category_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_dinein_category_translations')) {
+            Schema::create('vendor_dinein_category_translations', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->bigInteger('category_id')->unsigned()->nullable();
@@ -22,6 +23,7 @@ class CreateVendorDineinCategoryTranslationsTable extends Migration
             $table->foreign('language_id')->references('id')->on('languages')->onDelete('cascade');;
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,11 +13,12 @@ class AlterOrderVendorsTableForCouponCode extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'coupon_code')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->string('coupon_code')->after('coupon_id')->nullable();;
-        });
-    }
-
+                    });
+        }
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +26,6 @@ class AlterOrderVendorsTableForCouponCode extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn('coupon_code');
-        });
+        // Reverse migration if needed
     }
 }

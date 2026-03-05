@@ -1,8 +1,12 @@
 @php
 $clientData = \App\Models\Client::select('id', 'logo')->where('id', '>', 0)->first();
 $urlImg = $clientData ? $clientData->logo['original'] : ' ';
-$languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
-$currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
+$languageList = \App\Models\ClientLanguage::with('language')->orderBy('is_primary', 'desc')->get()->filter(function($item) {
+    return $item->language !== null;
+});
+$currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get()->filter(function($item) {
+    return $item->currency !== null;
+});
 $pages = \App\Models\Page::with(['translations' => function($q) {$q->where('language_id', session()->get('customerLanguage') ??1);}])->whereHas('translations', function($q) {$q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguage') ??1]);})->orderBy('order_by','ASC')->get();
 $preference = $client_preference_detail;
 @endphp
@@ -77,9 +81,9 @@ $preference = $client_preference_detail;
                                 @if(isset($last_mile_common_set) && $last_mile_common_set != false)
                                 <li>
                                     <a href="{{route('extrapage',['slug' => $page->slug])}}">
-                                        @if(isset($page->translations) && $page->translations->first()->title != null)
+                                        @if(isset($page->translations) && $page->translations->first() && $page->translations->first()->title != null)
                                         {{ __($page->translations->first()->title) ?? ''}}
-                                        @else
+                                        @elseif(isset($page->primary) && $page->primary->title)
                                         {{ __($page->primary->title) ?? ''}}
                                         @endif
                                     </a>
@@ -88,9 +92,9 @@ $preference = $client_preference_detail;
                                 @else
                                 <li>
                                     <a href="{{route('extrapage',['slug' => $page->slug])}}" target="_blank">
-                                        @if(isset($page->translations) && $page->translations->first()->title != null)
+                                        @if(isset($page->translations) && $page->translations->first() && $page->translations->first()->title != null)
                                         {{ __($page->translations->first()->title) ?? ''}}
-                                        @else
+                                        @elseif(isset($page->primary) && $page->primary->title)
                                         {{ __($page->primary->title) ?? ''}}
                                         @endif
                                     </a>
@@ -108,13 +112,15 @@ $preference = $client_preference_detail;
                         </a>
                         <ul class="onhover-show-div">
                             @foreach($languageList as $key => $listl)
-                                <li class="{{$applocale ==  $listl->language->sort_code ?  'active' : ''}}">
-                                    <a href="javascript:void(0)" class="customerLang" langId="{{$listl->language_id}}">{{$listl->language->name}}
-                                        @if($listl->language->id != 1)
-                                            ({{$listl->language->nativeName}})
+                                @if($listl->language)
+                                <li class="{{$applocale ==  ($listl->language->sort_code ?? '') ?  'active' : ''}}">
+                                    <a href="javascript:void(0)" class="customerLang" langId="{{$listl->language_id}}">{{$listl->language->name ?? ''}}
+                                        @if(isset($listl->language->id) && $listl->language->id != 1)
+                                            ({{$listl->language->nativeName ?? ''}})
                                         @endif
                                     </a>
                                 </li>
+                                @endif
                             @endforeach
                         </ul>
                     </li>
@@ -125,9 +131,11 @@ $preference = $client_preference_detail;
                         <span class="currency ml-1">{{ __('currency') }}</span> </a>
                         <ul class="onhover-show-div">
                             @foreach($currencyList as $key => $listc)
-                                <li class="{{session()->get('iso_code') ==  $listc->currency->iso_code ?  'active' : ''}}">
-                                    <a href="javascript:void(0)" currId="{{$listc->currency_id}}" class="customerCurr " currSymbol="{{$listc->currency->symbol}}">{{$listc->currency->iso_code}}</a>
+                                @if($listc->currency)
+                                <li class="{{session()->get('iso_code') ==  ($listc->currency->iso_code ?? '') ?  'active' : ''}}">
+                                    <a href="javascript:void(0)" currId="{{$listc->currency_id}}" class="customerCurr " currSymbol="{{$listc->currency->symbol ?? ''}}">{{$listc->currency->iso_code ?? ''}}</a>
                                 </li>
+                                @endif
                             @endforeach
                         </ul>
                     </li>

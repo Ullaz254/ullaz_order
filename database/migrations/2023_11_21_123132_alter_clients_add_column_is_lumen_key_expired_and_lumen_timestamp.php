@@ -13,12 +13,14 @@ class AlterClientsAddColumnIsLumenKeyExpiredAndLumenTimestamp extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
+        if (!Schema::hasColumn('clients', 'is_lumen_key_expired')) {
+            Schema::table('clients', function (Blueprint $table) {
             $table->dateTime('lumen_timestamp')->nullable();
             $table->tinyInteger('is_lumen_key_expired')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AlterClientsAddColumnIsLumenKeyExpiredAndLumenTimestamp extends Migration
      */
     public function down()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            $table->dropColumn('lumen_timestamp');
-            $table->dropColumn('is_lumen_key_expired');
-        });
+        // Reverse migration if needed
     }
 }

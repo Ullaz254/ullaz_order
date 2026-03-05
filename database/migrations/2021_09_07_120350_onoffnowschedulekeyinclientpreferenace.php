@@ -13,9 +13,19 @@ class Onoffnowschedulekeyinclientpreferenace extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->renameColumn('auto_accept_order', 'off_scheduling_at_cart');
-        });
+        // Check if the column exists before renaming
+        if (Schema::hasColumn('client_preferences', 'auto_accept_order')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->renameColumn('auto_accept_order', 'off_scheduling_at_cart');
+            });
+        } else {
+            // If the column doesn't exist, just add the new column
+            if (!Schema::hasColumn('client_preferences', 'off_scheduling_at_cart')) {
+                Schema::table('client_preferences', function (Blueprint $table) {
+                    $table->tinyInteger('off_scheduling_at_cart')->nullable()->default(0)->comment('0-No, 1-Yes');
+                });
+            }
+        }
     }
 
     /**
@@ -25,8 +35,14 @@ class Onoffnowschedulekeyinclientpreferenace extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->renameColumn('off_scheduling_at_cart', 'auto_accept_order');
-        });
+        if (Schema::hasColumn('client_preferences', 'off_scheduling_at_cart')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                if (Schema::hasColumn('client_preferences', 'auto_accept_order')) {
+                    $table->renameColumn('off_scheduling_at_cart', 'auto_accept_order');
+                } else {
+                    $table->dropColumn('off_scheduling_at_cart');
+                }
+            });
+        }
     }
 }

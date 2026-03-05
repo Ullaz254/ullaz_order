@@ -13,12 +13,14 @@ class CreateDispatcherTemplateTypeOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('dispatcher_template_type_options', function (Blueprint $table) {
+        if (!Schema::hasTable('dispatcher_template_type_options')) {
+            Schema::create('dispatcher_template_type_options', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->tinyInteger('status')->default(0)->comment('0 for inactive and 1 for active');
             $table->timestamps();
         });
+        }
     }
 
     /**

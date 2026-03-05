@@ -1,6 +1,6 @@
 @extends('layouts.store', ['title' => __('Home')]) @section('content')
 @section('css-links')
-<link rel="stylesheet/less" type="text/css" href="{{ asset('front-assets/css/shimmer-less.less') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/shimmer-less.css') }}">
 {{--
 <link rel="stylesheet"  href="{{asset('css/aos.css')}}">
 --}}

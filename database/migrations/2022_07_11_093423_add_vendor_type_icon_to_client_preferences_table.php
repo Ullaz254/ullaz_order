@@ -13,14 +13,16 @@ class AddVendorTypeIconToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'rentalicon')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('rentalicon')->nullable()->after('takewayicon');
             $table->string('pick_dropicon')->nullable()->after('rentalicon');
             $table->string('on_demandicon')->nullable()->after('pick_dropicon');
             $table->string('laundryicon')->nullable()->after('on_demandicon');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,8 +30,6 @@ class AddVendorTypeIconToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

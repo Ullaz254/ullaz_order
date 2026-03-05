@@ -13,11 +13,13 @@ class AddSubscriptionDiscountPercentToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'subscription_discount_percent')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->decimal('subscription_discount_percent', 5, 2)->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSubscriptionDiscountPercentToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

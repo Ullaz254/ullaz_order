@@ -13,13 +13,15 @@ class CreateWoocommercesTable extends Migration
      */
     public function up()
     {
-        Schema::create('woocommerces', function (Blueprint $table) {
-            $table->id();
-            $table->mediumText('url')->nullable();
-            $table->mediumText('consumer_key')->nullable();
-            $table->mediumText('consumer_secret')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('woocommerces')) {
+            Schema::create('woocommerces', function (Blueprint $table) {
+                $table->id();
+                $table->mediumText('url')->nullable();
+                $table->mediumText('consumer_key')->nullable();
+                $table->mediumText('consumer_secret')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

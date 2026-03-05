@@ -13,12 +13,14 @@ class CreateTrackEventsTable extends Migration
      */
     public function up()
     {
-        Schema::create('track_events', function (Blueprint $table) {
+        if (!Schema::hasTable('track_events')) {
+            Schema::create('track_events', function (Blueprint $table) {
             $table->id();
             $table->string('location');
             $table->text('details');
             $table->timestamps();
         });
+        }
     }
 
     /**

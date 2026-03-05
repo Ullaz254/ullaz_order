@@ -13,12 +13,14 @@ class AddKeysInProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'transmission')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->string('transmission')->nullable();
             $table->string('fuel_type')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddKeysInProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['transmission','fuel_type']);
-        });
+        // Reverse migration if needed
     }
 }

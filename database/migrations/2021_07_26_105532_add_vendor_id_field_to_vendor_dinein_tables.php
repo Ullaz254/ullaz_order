@@ -13,12 +13,13 @@ class AddVendorIdFieldToVendorDineinTables extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_dinein_tables', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_dinein_tables', 'vendor_id')) {
+            Schema::table('vendor_dinein_tables', function (Blueprint $table) {
             $table->bigInteger('vendor_id')->after('image')->unsigned()->nullable();
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');;
-        });
-    }
-
+                    });
+        }
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +27,6 @@ class AddVendorIdFieldToVendorDineinTables extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_dinein_tables', function (Blueprint $table) {
-            $table->dropColumn('vendor_id');
-        });
+        // Reverse migration if needed
     }
 }

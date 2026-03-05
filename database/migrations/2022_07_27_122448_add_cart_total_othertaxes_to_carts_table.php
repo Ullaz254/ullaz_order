@@ -13,11 +13,13 @@ class AddCartTotalOthertaxesToCartsTable extends Migration
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('carts', 'total_other_taxes')) {
+            Schema::table('carts', function (Blueprint $table) {
            $table->text('total_other_taxes')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCartTotalOthertaxesToCartsTable extends Migration
      */
     public function down()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

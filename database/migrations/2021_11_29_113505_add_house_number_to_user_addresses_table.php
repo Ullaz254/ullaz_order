@@ -13,11 +13,13 @@ class AddHouseNumberToUserAddressesTable extends Migration
      */
     public function up()
     {
-        Schema::table('user_addresses', function (Blueprint $table) {
+        if (!Schema::hasColumn('user_addresses', 'house_number')) {
+            Schema::table('user_addresses', function (Blueprint $table) {
             $table->string('house_number', 100)->nullable()->after('user_id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddHouseNumberToUserAddressesTable extends Migration
      */
     public function down()
     {
-        Schema::table('user_addresses', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

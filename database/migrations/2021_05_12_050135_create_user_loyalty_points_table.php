@@ -13,7 +13,8 @@ class CreateUserLoyaltyPointsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_loyalty_points', function (Blueprint $table) {
+        if (!Schema::hasTable('user_loyalty_points')) {
+            Schema::create('user_loyalty_points', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->integer('points')->default(0)->nullable();
@@ -25,6 +26,7 @@ class CreateUserLoyaltyPointsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('loyalty_card_id')->references('id')->on('loyalty_cards')->onDelete('set null');
         });
+        }
     }
 
     /**

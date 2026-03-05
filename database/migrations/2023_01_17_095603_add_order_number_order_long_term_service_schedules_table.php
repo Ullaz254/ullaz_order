@@ -13,13 +13,15 @@ class AddOrderNumberOrderLongTermServiceSchedulesTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_long_term_service_schedules', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_long_term_service_schedules', 'order_number')) {
+            Schema::table('order_long_term_service_schedules', function (Blueprint $table) {
             //
             $table->string('order_number')->nullable();
 
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,9 +29,6 @@ class AddOrderNumberOrderLongTermServiceSchedulesTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_long_term_service_schedules', function (Blueprint $table) {
-            //
-            $table->dropColumn('order_number');
-        });
+        // Reverse migration if needed
     }
 }

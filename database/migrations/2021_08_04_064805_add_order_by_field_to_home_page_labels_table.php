@@ -13,9 +13,11 @@ class AddOrderByFieldToHomePageLabelsTable extends Migration
      */
     public function up()
     {
-        Schema::table('home_page_labels', function (Blueprint $table) {
-            $table->tinyInteger('order_by')->after('is_active')->nullable();
-        });
+        if (!Schema::hasColumn('home_page_labels', 'order_by')) {
+            Schema::table('home_page_labels', function (Blueprint $table) {
+                $table->tinyInteger('order_by')->after('is_active')->nullable();
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AddOrderByFieldToHomePageLabelsTable extends Migration
     public function down()
     {
         Schema::table('home_page_labels', function (Blueprint $table) {
-            $table->dropColumn('order_by');
+            if (Schema::hasColumn('home_page_labels', 'order_by')) {
+                $table->dropColumn('order_by');
+            }
         });
     }
 }

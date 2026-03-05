@@ -1,12 +1,29 @@
 @extends('layouts.store', ['title' => __('Home')]) @section('content')
 @section('css-links')
-<link rel="stylesheet/less" type="text/css" href="{{ asset('front-assets/css/shimmer-less.less') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/shimmer-less.css') }}">
 {{--
 <link rel="stylesheet"  href="{{asset('css/aos.css')}}">
 --}}
 @endsection
 @php
-$preference = $client_preference_detail;
+// Use client_preference_detail if available, otherwise create safe default
+$preference = $client_preference_detail ?? new class {
+    public function __get($name) { return null; }
+    public function __isset($name) { return false; }
+    public $business_type = '';
+    public $rating_check = 0;
+    public $show_icons = 0;
+    public $hide_nav_bar = 0;
+    public $Default_location_name = null;
+    public $Default_latitude = 0;
+    public $Default_longitude = 0;
+    public $client_code = 'default';
+    public $is_hyperlocal = 0;
+    public $web_template_id = 1;
+    public $app_template_id = 1;
+    public $age_restriction = 0;
+    public $age_restriction_title = null;
+};
 @endphp
 @section('css')
 <style>

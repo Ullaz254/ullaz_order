@@ -13,7 +13,8 @@ class CreateCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('cart_products', function (Blueprint $table) {
+        if (!Schema::hasTable('cart_products')) {
+            Schema::create('cart_products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('cart_id');
             $table->unsignedBigInteger('product_id');
@@ -36,6 +37,7 @@ class CreateCartProductsTable extends Migration
             $table->index('is_tax_applied');
             
         });
+        }
     }
 
     /**

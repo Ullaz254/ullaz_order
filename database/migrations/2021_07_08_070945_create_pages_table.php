@@ -12,16 +12,18 @@ class CreatePagesTable extends Migration
      * @return void
      */
     public function up(){
-        Schema::create('pages', function (Blueprint $table) {
-            $table->id();
-            $table->mediumText('title');
-            $table->mediumText('slug');
-            $table->longText('description');
-            $table->mediumText('meta_title')->nullable();
-            $table->mediumText('meta_keyword')->nullable();;
-            $table->mediumText('meta_description')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('pages')) {
+            Schema::create('pages', function (Blueprint $table) {
+                $table->id();
+                $table->mediumText('title');
+                $table->mediumText('slug');
+                $table->longText('description');
+                $table->mediumText('meta_title')->nullable();
+                $table->mediumText('meta_keyword')->nullable();;
+                $table->mediumText('meta_description')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

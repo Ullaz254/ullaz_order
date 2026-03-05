@@ -13,11 +13,13 @@ class ChangeDatatypeInAddonOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('addon_options', function (Blueprint $table) {
+        if (!Schema::hasColumn('addon_options', 'price')) {
+            Schema::table('addon_options', function (Blueprint $table) {
             $table->decimal('price', 16, 8)->nullable()->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class ChangeDatatypeInAddonOptionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('addon_options', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

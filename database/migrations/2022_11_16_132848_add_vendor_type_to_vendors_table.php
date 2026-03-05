@@ -13,11 +13,13 @@ class AddVendorTypeToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'is_seller')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('is_seller')->default(0)->comment('1 for Seller, 0 for Vendor');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddVendorTypeToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('is_seller');
-        });
+        // Reverse migration if needed
     }
 }

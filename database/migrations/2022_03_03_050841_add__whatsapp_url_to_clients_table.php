@@ -13,11 +13,13 @@ class AddWhatsappUrlToClientsTable extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
+        if (!Schema::hasColumn('clients', 'whatsapp_url')) {
+            Schema::table('clients', function (Blueprint $table) {
             $table->string('whatsapp_url')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddWhatsappUrlToClientsTable extends Migration
      */
     public function down()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

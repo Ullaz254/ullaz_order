@@ -13,13 +13,15 @@ class AddCoulmnCompanyInOrderTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'company_id')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->integer('company_id')->nullable();
             $table->tinyInteger('company_payment_status')->default(0);
             $table->dateTime('company_payment_date')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,10 +29,6 @@ class AddCoulmnCompanyInOrderTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('company_id');
-            $table->dropColumn('company_payment_status');
-            $table->dropColumn('company_payment_date');
-        });
+        // Reverse migration if needed
     }
 }

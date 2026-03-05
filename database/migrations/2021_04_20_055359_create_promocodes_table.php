@@ -13,7 +13,8 @@ class CreatePromocodesTable extends Migration
      */
     public function up()
     {
-        Schema::create('promocodes', function (Blueprint $table) {
+        if (!Schema::hasTable('promocodes')) {
+            Schema::create('promocodes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->decimal('amount',12,2)->unsigned()->nullable();
@@ -41,6 +42,7 @@ class CreatePromocodesTable extends Migration
             $table->index('paid_by_vendor_admin');
             $table->index('is_deleted');
         });
+        }
     }
 
     /**

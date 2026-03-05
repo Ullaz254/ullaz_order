@@ -13,11 +13,13 @@ class AddPayAmountInCartsTable extends Migration
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('carts', 'payable_amount')) {
+            Schema::table('carts', function (Blueprint $table) {
             $table->decimal('payable_amount', 64, 0)->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPayAmountInCartsTable extends Migration
      */
     public function down()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->dropColumn('payable_amount');
-        });
+        // Reverse migration if needed
     }
 }

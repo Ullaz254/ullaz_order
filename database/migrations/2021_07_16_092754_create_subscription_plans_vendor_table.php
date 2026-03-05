@@ -13,7 +13,8 @@ class CreateSubscriptionPlansVendorTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscription_plans_vendor', function (Blueprint $table) {
+        if (!Schema::hasTable('subscription_plans_vendor')) {
+            Schema::create('subscription_plans_vendor', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('slug')->nullable();
@@ -27,6 +28,7 @@ class CreateSubscriptionPlansVendorTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+        }
     }
 
     /**

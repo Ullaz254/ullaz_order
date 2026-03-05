@@ -13,11 +13,13 @@ class AddServiceTypeToTypesTable extends Migration
      */
     public function up()
     {
-        Schema::table('types', function (Blueprint $table) {
+        if (!Schema::hasColumn('types', 'service_type')) {
+            Schema::table('types', function (Blueprint $table) {
             $table->string('service_type')->default('products_service')->after('id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddServiceTypeToTypesTable extends Migration
      */
     public function down()
     {
-        Schema::table('types', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddIsVendorAppToUserDevicesTable extends Migration
      */
     public function up()
     {
-        Schema::table('user_devices', function (Blueprint $table) {
+        if (!Schema::hasColumn('user_devices', 'is_vendor_app')) {
+            Schema::table('user_devices', function (Blueprint $table) {
             $table->tinyInteger('is_vendor_app')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsVendorAppToUserDevicesTable extends Migration
      */
     public function down()
     {
-        Schema::table('user_devices', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

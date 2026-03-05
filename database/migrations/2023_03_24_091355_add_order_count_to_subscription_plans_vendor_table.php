@@ -15,9 +15,8 @@ class AddOrderCountToSubscriptionPlansVendorTable extends Migration
     {
         Schema::table('subscription_plans_vendor', function (Blueprint $table) {
             $table->BigInteger('order_count')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

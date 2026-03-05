@@ -13,13 +13,15 @@ class CreateDispatcherStatusOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('dispatcher_status_options', function (Blueprint $table) {
+        if (!Schema::hasTable('dispatcher_status_options')) {
+            Schema::create('dispatcher_status_options', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->tinyInteger('type')->default(0)->comment('1 - for order, 2 - fordispatch');
             $table->tinyInteger('status')->default(0)->comment('1 - active, 0 - inactive');
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,7 +13,8 @@ class CreateNotificationTemplatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('notification_templates', function (Blueprint $table) {
+        if (!Schema::hasTable('notification_templates')) {
+            Schema::create('notification_templates', function (Blueprint $table) {
             $table->id();
             $table->mediumText('slug')->nullable();
             $table->mediumText('tags')->nullable();
@@ -21,7 +22,8 @@ class CreateNotificationTemplatesTable extends Migration
             $table->longText('content')->nullable();
             $table->mediumText('subject')->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

@@ -13,12 +13,14 @@ class CreateVendorDocsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_docs', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_docs')) {
+            Schema::create('vendor_docs', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('vendor_id')->unsigned();
             $table->mediumText('file_name')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

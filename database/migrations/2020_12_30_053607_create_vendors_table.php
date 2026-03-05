@@ -13,7 +13,8 @@ class CreateVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendors', function (Blueprint $table) {
+        if (!Schema::hasTable('vendors')) {
+            Schema::create('vendors', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
             $table->text('desc')->nullable();
@@ -49,6 +50,7 @@ class CreateVendorsTable extends Migration
             $table->index('add_category');
 
         });
+        }
     }
 
     /**

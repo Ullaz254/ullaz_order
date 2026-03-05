@@ -13,13 +13,15 @@ class CreateOnboardSettingstable extends Migration
      */
     public function up()
     {
-        Schema::create('onboard_settings', function (Blueprint $table) {
+        if (!Schema::hasTable('onboard_settings')) {
+            Schema::create('onboard_settings', function (Blueprint $table) {
             $table->id();
             $table->string('key_value')->nullable();
             $table->tinyInteger('enable_from')->comment('1 : For GodPanel','2:For on Admin')->default(1);
             $table->tinyInteger('on_off')->comment('0 : For off','1:For on')->default(0);
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

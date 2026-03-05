@@ -13,7 +13,8 @@ class CreatePromoUsagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('promo_usages', function (Blueprint $table) {
+        if (!Schema::hasTable('promo_usages')) {
+            Schema::create('promo_usages', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('promocode_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
@@ -23,6 +24,7 @@ class CreatePromoUsagesTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
+        }
     }
 
     /**

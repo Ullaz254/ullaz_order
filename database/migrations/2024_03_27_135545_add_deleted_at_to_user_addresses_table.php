@@ -15,9 +15,8 @@ class AddDeletedAtToUserAddressesTable extends Migration
     {
         Schema::table('user_addresses', function (Blueprint $table) {
             $table->softDeletes();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

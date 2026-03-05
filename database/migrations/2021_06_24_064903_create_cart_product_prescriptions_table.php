@@ -13,7 +13,8 @@ class CreateCartProductPrescriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('cart_product_prescriptions', function (Blueprint $table) {
+        if (!Schema::hasTable('cart_product_prescriptions')) {
+            Schema::create('cart_product_prescriptions', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('cart_id')->unsigned()->nullable();
             $table->foreign('cart_id')->references('id')->on('carts')->onDelete('cascade');
@@ -22,6 +23,7 @@ class CreateCartProductPrescriptionsTable extends Migration
             $table->string('prescription')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

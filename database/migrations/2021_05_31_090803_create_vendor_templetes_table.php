@@ -13,16 +13,16 @@ class CreateVendorTempletesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_templetes', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_templetes')) {
+            Schema::create('vendor_templetes', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->string('type')->nullable();
             $table->tinyInteger('status')->default(0)->comment('1 - active, 0 - inactive');
             $table->timestamps();
         });
+        }
     }
-
-
 
     /**
      * Reverse the migrations.

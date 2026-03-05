@@ -13,12 +13,14 @@ class AddOrderVendorProductIdToOrderCancelRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_cancel_requests', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_cancel_requests', 'order_vendor_product_id')) {
+            Schema::table('order_cancel_requests', function (Blueprint $table) {
             $table->bigInteger('order_vendor_product_id')->unsigned()->nullable();
             $table->foreign('order_vendor_product_id')->references('id')->on('order_vendor_products')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddOrderVendorProductIdToOrderCancelRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_cancel_requests', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class ChangeDatatypeInRidersTable extends Migration
      */
     public function up()
     {
-        Schema::table('riders', function (Blueprint $table) {
+        if (!Schema::hasColumn('riders', 'phone_number')) {
+            Schema::table('riders', function (Blueprint $table) {
             $table->string('phone_number')->nullable()->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class ChangeDatatypeInRidersTable extends Migration
      */
     public function down()
     {
-        Schema::table('riders', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

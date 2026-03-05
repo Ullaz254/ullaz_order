@@ -13,13 +13,15 @@ class AlterTableProductFaqsSelectOptionTranslation extends Migration
      */
     public function up()
     {
-        Schema::create('product_faq_select_option_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('product_faq_select_option_translations')) {
+            Schema::create('product_faq_select_option_translations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('product_faq_select_option_id');
             $table->unsignedBigInteger('language_id');
             $table->timestamps();
         });
+        }
     }
 
     /**

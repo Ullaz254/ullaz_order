@@ -17,9 +17,8 @@ class AlterTableAttributes extends Migration
             if(!Schema::hasColumn('attributes', 'icon')){
                 $table->string('icon')->nullable();
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

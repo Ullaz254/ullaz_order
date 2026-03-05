@@ -13,13 +13,15 @@ class CreateUserVerificationResourcesTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_verification_resources', function (Blueprint $table) {
+        if (!Schema::hasTable('user_verification_resources')) {
+            Schema::create('user_verification_resources', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_verification_id')->unsigned();
             $table->string('type');
             $table->json('datapoints')->nullable()->comment('datapoints in json format');
             $table->timestamps();
         });
+        }
     }
 
     /**

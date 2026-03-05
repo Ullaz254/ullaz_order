@@ -13,7 +13,8 @@ class CreateVendorSocialMediaUrlsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_social_media_urls', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_social_media_urls')) {
+            Schema::create('vendor_social_media_urls', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('vendor_id')->unsigned();
             $table->string('url');
@@ -22,6 +23,7 @@ class CreateVendorSocialMediaUrlsTable extends Migration
 
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
         });
+        }
     }
 
     /**

@@ -13,7 +13,8 @@ class CreateCartsTable extends Migration
      */
     public function up()
     {
-        Schema::create('carts', function (Blueprint $table) {
+        if (!Schema::hasTable('carts')) {
+            Schema::create('carts', function (Blueprint $table) {
             $table->id();
             $table->string('unique_identifier')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
@@ -27,6 +28,7 @@ class CreateCartsTable extends Migration
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('set null');
             $table->timestamps();
         });
+        }
     }
 
     /**

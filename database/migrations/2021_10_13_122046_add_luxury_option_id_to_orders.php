@@ -15,9 +15,8 @@ class AddLuxuryOptionIdToOrders extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->unsignedInteger('luxury_option_id')->nullable()->after('loyalty_membership_id');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

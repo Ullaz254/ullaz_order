@@ -13,11 +13,13 @@ class AddFrequencyToSubscriptionPlansUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('subscription_plans_user', function (Blueprint $table) {
+        if (!Schema::hasColumn('subscription_plans_user', 'frequency')) {
+            Schema::table('subscription_plans_user', function (Blueprint $table) {
             $table->string('frequency')->after('period');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddFrequencyToSubscriptionPlansUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('subscription_plans_user', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

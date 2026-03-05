@@ -13,12 +13,14 @@ class AddSuperadminInUser extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'is_superadmin')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->tinyInteger('is_superadmin')->default(0)->comment('1 for yes, 0 for no');
             $table->tinyInteger('is_admin')->default(0)->comment('1 for yes, 0 for no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddSuperadminInUser extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('is_superadmin');
-            $table->dropColumn('is_admin');
-        });
+        // Reverse migration if needed
     }
 }

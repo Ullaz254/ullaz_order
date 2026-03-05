@@ -13,17 +13,14 @@ class AddBidIdCartProductsAndOrderTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'bid_number')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             $table->integer('bid_number')->nullable();
             $table->integer('bid_discount')->nullable();
-        });
+                    });
+        }
 
-        Schema::table('orders', function (Blueprint $table) {
-            $table->integer('bid_number')->nullable();
-            $table->integer('bid_discount')->nullable();
-        });
-    }
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -31,14 +28,6 @@ class AddBidIdCartProductsAndOrderTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            $table->dropColumn('bid_discount');
-            $table->dropColumn('bid_number');
-        });
-
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('bid_number');
-            $table->dropColumn('bid_discount');
-        });
+        // Reverse migration if needed
     }
 }

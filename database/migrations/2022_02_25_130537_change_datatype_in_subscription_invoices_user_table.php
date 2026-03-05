@@ -13,13 +13,15 @@ class ChangeDatatypeInSubscriptionInvoicesUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('subscription_invoices_user', function (Blueprint $table) {
+        if (!Schema::hasColumn('subscription_invoices_user', 'subscription_amount')) {
+            Schema::table('subscription_invoices_user', function (Blueprint $table) {
             $table->decimal('subscription_amount', 16, 8)->nullable()->change();
             $table->decimal('discount_amount', 16, 8)->nullable()->change();
             $table->decimal('paid_amount', 16, 8)->nullable()->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class ChangeDatatypeInSubscriptionInvoicesUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('subscription_invoices_user', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

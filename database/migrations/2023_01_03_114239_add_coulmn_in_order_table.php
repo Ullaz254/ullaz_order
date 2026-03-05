@@ -13,16 +13,14 @@ class AddCoulmnInOrderTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'bid_number')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->integer('bid_number')->nullable();
             $table->integer('bid_discount')->nullable();
-        });
+                    });
+        }
 
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->integer('bid_discount')->nullable();
-        });
-    }
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -30,14 +28,6 @@ class AddCoulmnInOrderTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn('bid_discount');
-            $table->dropColumn('bid_number');
-        });
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn('bid_discount');
-        });
-
-
+        // Reverse migration if needed
     }
 }

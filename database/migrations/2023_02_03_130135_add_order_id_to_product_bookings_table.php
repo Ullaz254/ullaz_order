@@ -13,13 +13,15 @@ class AddOrderIdToProductBookingsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_bookings', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_bookings', 'order_id')) {
+            Schema::table('product_bookings', function (Blueprint $table) {
             $table->bigInteger('order_id')->unsigned()->nullable();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class AddOrderIdToProductBookingsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_bookings', function (Blueprint $table) {
-            $table->dropColumn('order_id');
-        });
+        // Reverse migration if needed
     }
 }

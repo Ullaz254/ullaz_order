@@ -13,11 +13,13 @@ class CreateFaciltiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('facilties', function (Blueprint $table) {
+        if (!Schema::hasTable('facilties')) {
+            Schema::create('facilties', function (Blueprint $table) {
             $table->id();
             $table->string('image')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

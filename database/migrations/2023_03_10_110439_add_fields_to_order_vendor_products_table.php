@@ -13,12 +13,14 @@ class AddFieldsToOrderVendorProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'order_status_option_id')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->tinyInteger('order_status_option_id')->nullable();
             $table->tinyInteger('dispatcher_status_option_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddFieldsToOrderVendorProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn('order_status_option_id');
-            $table->dropColumn('dispatcher_status_option_id');
-        });
+        // Reverse migration if needed
     }
 }

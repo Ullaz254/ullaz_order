@@ -13,12 +13,26 @@ class Addserviceskeyinconfigtable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->string('need_dispacher_home_other_service')->nullable();
-            $table->string('dispacher_home_other_service_key')->nullable();
-            $table->string('dispacher_home_other_service_key_url')->nullable();
-            $table->string('dispacher_home_other_service_key_code')->nullable();
-        });
+        if (!Schema::hasColumn('client_preferences', 'need_dispacher_home_other_service')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->string('need_dispacher_home_other_service')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('client_preferences', 'dispacher_home_other_service_key')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->string('dispacher_home_other_service_key')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('client_preferences', 'dispacher_home_other_service_key_url')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->string('dispacher_home_other_service_key_url')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('client_preferences', 'dispacher_home_other_service_key_code')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->string('dispacher_home_other_service_key_code')->nullable();
+            });
+        }
     } 
 
     /**

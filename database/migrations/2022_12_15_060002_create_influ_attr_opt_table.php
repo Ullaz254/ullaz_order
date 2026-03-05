@@ -13,7 +13,8 @@ class CreateInfluAttrOptTable extends Migration
      */
     public function up()
     {
-        Schema::create('influ_attr_opt', function (Blueprint $table) {
+        if (!Schema::hasTable('influ_attr_opt')) {
+            Schema::create('influ_attr_opt', function (Blueprint $table) {
             $table->id();
             $table->string('title', 150)->nullable();
             $table->bigInteger('attribute_id')->unsigned()->nullable();
@@ -24,6 +25,7 @@ class CreateInfluAttrOptTable extends Migration
             $table->index('position');
             $table->foreign('attribute_id')->references('id')->on('influ_attributes')->onDelete('cascade');
         });
+        }
     }
 
     /**

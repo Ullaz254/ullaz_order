@@ -13,12 +13,14 @@ class CreateVendorUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_users', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_users')) {
+            Schema::create('vendor_users', function (Blueprint $table) {
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->bigInteger('vendor_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
         });
+        }
     }
 
     /**

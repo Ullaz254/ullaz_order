@@ -13,7 +13,8 @@ class CreateVendorOrderProductStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_order_product_statuses', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_order_product_statuses')) {
+            Schema::create('vendor_order_product_statuses', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_id')->unsigned()->nullable();
             $table->bigInteger('order_vendor_id')->unsigned()->nullable();
@@ -27,6 +28,7 @@ class CreateVendorOrderProductStatusesTable extends Migration
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('order_status_option_id')->references('id')->on('order_status_options')->onDelete('cascade');
         });
+        }
     }
 
     /**

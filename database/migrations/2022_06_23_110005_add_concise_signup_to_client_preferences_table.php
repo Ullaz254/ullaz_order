@@ -13,11 +13,13 @@ class AddConciseSignupToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'concise_signup')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('concise_signup')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddConciseSignupToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddFrequencyToSubscriptionPlansVendorTable extends Migration
      */
     public function up()
     {
-        Schema::table('subscription_plans_vendor', function (Blueprint $table) {
+        if (!Schema::hasColumn('subscription_plans_vendor', 'frequency')) {
+            Schema::table('subscription_plans_vendor', function (Blueprint $table) {
             $table->string('frequency')->after('period');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddFrequencyToSubscriptionPlansVendorTable extends Migration
      */
     public function down()
     {
-        Schema::table('subscription_plans_vendor', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

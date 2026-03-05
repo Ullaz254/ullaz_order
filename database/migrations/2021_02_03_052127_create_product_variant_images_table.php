@@ -13,7 +13,8 @@ class CreateProductVariantImagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_variant_images', function (Blueprint $table) {
+        if (!Schema::hasTable('product_variant_images')) {
+            Schema::create('product_variant_images', function (Blueprint $table) {
             $table->bigInteger('product_variant_id')->unsigned()->nullable();
             $table->bigInteger('product_image_id')->unsigned()->nullable();
             $table->timestamps();
@@ -21,6 +22,7 @@ class CreateProductVariantImagesTable extends Migration
             $table->foreign('product_variant_id')->references('id')->on('product_variants')->onDelete('cascade');
             $table->foreign('product_image_id')->references('id')->on('product_images')->onDelete('cascade');
         });
+        }
     }
 
     /**

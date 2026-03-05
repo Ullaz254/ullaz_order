@@ -15,9 +15,8 @@ class AddDriverIdToCartProductsTable extends Migration
     {
         Schema::table('cart_products', function (Blueprint $table) {
             $table->unsignedBigInteger('dispatch_agent_id')->nullable()->comment('driver id')->after('schedule_slot');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

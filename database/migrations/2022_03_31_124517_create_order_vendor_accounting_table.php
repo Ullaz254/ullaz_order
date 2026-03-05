@@ -13,13 +13,15 @@ class CreateOrderVendorAccountingTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_vendor_accounting', function (Blueprint $table) {
+        if (!Schema::hasTable('order_vendor_accounting')) {
+            Schema::create('order_vendor_accounting', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_vendor_id')->unsigned();
             $table->integer('third_party_accounting_id')->unsigned(); 
             $table->string('invoice_id');
             $table->timestamps(); 
         });
+        }
     }
 
     /**

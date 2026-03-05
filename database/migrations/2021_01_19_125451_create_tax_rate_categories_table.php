@@ -13,7 +13,8 @@ class CreateTaxRateCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('tax_rate_categories', function (Blueprint $table) {
+        if (!Schema::hasTable('tax_rate_categories')) {
+            Schema::create('tax_rate_categories', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('tax_cate_id')->unsigned();
             $table->bigInteger('tax_rate_id')->unsigned();
@@ -22,6 +23,7 @@ class CreateTaxRateCategoriesTable extends Migration
             $table->foreign('tax_cate_id')->references('id')->on('tax_categories')->onDelete('cascade');
             $table->foreign('tax_rate_id')->references('id')->on('tax_rates')->onDelete('cascade');
         });
+        }
     }
 
     /**

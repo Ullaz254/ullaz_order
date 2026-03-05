@@ -13,12 +13,14 @@ class AddOrderVendorStatusOptionIdToOrderVendorProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'order_vendor_status_option_id')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->bigInteger('order_vendor_status_option_id')->unsigned()->nullable();
             $table->foreign('order_vendor_status_option_id')->references('id')->on('order_status_options')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddOrderVendorStatusOptionIdToOrderVendorProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn('order_vendor_status_option_id');
-        });
+        // Reverse migration if needed
     }
 }

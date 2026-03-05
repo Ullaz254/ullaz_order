@@ -13,11 +13,13 @@ class AddAgentPriceToCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'dispatch_agent_price')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             $table->decimal('dispatch_agent_price',16,4)->default(0)->nullable()->after('dispatch_agent_id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAgentPriceToCartProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

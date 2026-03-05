@@ -13,12 +13,14 @@ class CreateCategoryKycDocumentMappingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('category_kyc_document_mappings', function (Blueprint $table) {
+        if (!Schema::hasTable('category_kyc_document_mappings')) {
+            Schema::create('category_kyc_document_mappings', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('category_kyc_document_id')->unsigned();
             $table->bigInteger('category_id')->unsigned();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

@@ -13,11 +13,13 @@ class CreateTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('types', function (Blueprint $table) {
+        if (!Schema::hasTable('types')) {
+            Schema::create('types', function (Blueprint $table) {
             $table->id();
             $table->string('title', 60);
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

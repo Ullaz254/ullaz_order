@@ -13,12 +13,14 @@ class CreateUserAllergicItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_allergic_items', function (Blueprint $table) {
+        if (!Schema::hasTable('user_allergic_items')) {
+            Schema::create('user_allergic_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('allergic_item_id');
             $table->timestamps();
         });
+        }
     }
 
     /**

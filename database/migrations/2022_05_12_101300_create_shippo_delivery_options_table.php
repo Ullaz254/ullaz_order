@@ -13,7 +13,8 @@ class CreateShippoDeliveryOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('shippo_delivery_options', function (Blueprint $table) {
+        if (!Schema::hasTable('shippo_delivery_options')) {
+            Schema::create('shippo_delivery_options', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
             $table->string('vendor_id');
@@ -23,6 +24,7 @@ class CreateShippoDeliveryOptionsTable extends Migration
             $table->text('json');
             $table->timestamps();
         });
+        }
     }
 
     /**

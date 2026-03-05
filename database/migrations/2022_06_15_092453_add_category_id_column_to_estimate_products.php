@@ -15,9 +15,8 @@ class AddCategoryIdColumnToEstimateProducts extends Migration
     {
         Schema::table('estimate_products', function (Blueprint $table) {
             $table->foreignId('category_id')->nullable()->references('id')->on('categories');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

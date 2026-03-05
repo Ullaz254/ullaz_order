@@ -13,11 +13,13 @@ class AddColumnAdminEmailToClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'admin_email')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('admin_email', 100)->nullable()->comment('mainly used for orders and place in cc');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddColumnAdminEmailToClientPreferences extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('admin_email');
-        });
+        // Reverse migration if needed
     }
 }

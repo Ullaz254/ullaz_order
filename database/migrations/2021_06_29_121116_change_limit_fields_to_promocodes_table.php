@@ -13,12 +13,14 @@ class ChangeLimitFieldsToPromocodesTable extends Migration
      */
     public function up()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
+        if (!Schema::hasColumn('promocodes', 'limit_per_user')) {
+            Schema::table('promocodes', function (Blueprint $table) {
             $table->integer('limit_per_user')->change();
             $table->integer('limit_total')->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class ChangeLimitFieldsToPromocodesTable extends Migration
      */
     public function down()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
-            $table->dropColumn('limit_per_user');
-            $table->dropColumn('limit_total');
-        });
+        // Reverse migration if needed
     }
 }

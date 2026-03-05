@@ -13,11 +13,13 @@ class AddCancelOrderByUserToPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'is_cancel_order_user')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('is_cancel_order_user')->nullable()->default(1)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCancelOrderByUserToPreferences extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('is_cancel_order_user');
-        });
+        // Reverse migration if needed
     }
 }

@@ -12,11 +12,13 @@ class AlterUserUserIdFieldForOrderVendorsTable extends Migration
      * @return void
      */
     public function up(){
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'user_id')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->bigInteger('user_id')->after('vendor_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -24,6 +26,6 @@ class AlterUserUserIdFieldForOrderVendorsTable extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

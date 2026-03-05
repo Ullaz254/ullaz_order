@@ -13,11 +13,13 @@ class AlterClientPreferencesAddColumnIsHourlyPickupRental extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'is_hourly_pickup_rental')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('is_hourly_pickup_rental')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,9 +27,6 @@ class AlterClientPreferencesAddColumnIsHourlyPickupRental extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('is_hourly_pickup_rental');
-        });
+        // Reverse migration if needed
     }
-	
 }

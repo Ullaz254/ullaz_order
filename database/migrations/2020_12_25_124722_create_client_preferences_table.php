@@ -13,7 +13,8 @@ class CreateClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::create('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasTable('client_preferences')) {
+            Schema::create('client_preferences', function (Blueprint $table) {
             $table->id();
             $table->string('client_code', 10)->unique()->nullable();
             $table->string('theme_admin', 25)->default('light')->comment('Light, Dark');
@@ -86,6 +87,7 @@ class CreateClientPreferencesTable extends Migration
              $table->index('mail_type');
 
         });
+        }
     }
 
     /**

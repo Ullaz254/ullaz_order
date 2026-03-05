@@ -13,11 +13,13 @@ class AddAreaTypeToServiceAreasTable extends Migration
      */
     public function up()
     {
-        Schema::table('service_areas', function (Blueprint $table) {
+        if (!Schema::hasColumn('service_areas', 'area_type')) {
+            Schema::table('service_areas', function (Blueprint $table) {
             $table->tinyInteger('area_type')->nullable()->default(1)->comment('1-vendor, 0-Admin');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAreaTypeToServiceAreasTable extends Migration
      */
     public function down()
     {
-        Schema::table('service_areas', function (Blueprint $table) {
-            $table->dropColumn('area_type');
-        });
+        // Reverse migration if needed
     }
 }

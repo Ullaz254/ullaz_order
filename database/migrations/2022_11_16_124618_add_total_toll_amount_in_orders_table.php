@@ -13,11 +13,13 @@ class AddTotalTollAmountInOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'total_toll_amount')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->decimal('total_toll_amount', 16, 8)->nullable()->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddTotalTollAmountInOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

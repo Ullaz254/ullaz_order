@@ -13,9 +13,11 @@ class AddDarkModeToggleToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('show_dark_mode')->after('enquire_mode')->default(2);
-        });
+        if (!Schema::hasColumn('client_preferences', 'show_dark_mode')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('show_dark_mode')->after('enquire_mode')->default(2);
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AddDarkModeToggleToClientPreferencesTable extends Migration
     public function down()
     {
         Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('show_dark_mode');
+            if (Schema::hasColumn('client_preferences', 'show_dark_mode')) {
+                $table->dropColumn('show_dark_mode');
+            }
         });
     }
 }

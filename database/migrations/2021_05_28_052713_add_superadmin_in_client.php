@@ -13,11 +13,13 @@ class AddSuperadminInClient extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
+        if (!Schema::hasColumn('clients', 'is_superadmin')) {
+            Schema::table('clients', function (Blueprint $table) {
             $table->tinyInteger('is_superadmin')->default(1)->comment('1 for yes, 0 for no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSuperadminInClient extends Migration
      */
     public function down()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            $table->dropColumn('is_superadmin');
-        });
+        // Reverse migration if needed
     }
 }

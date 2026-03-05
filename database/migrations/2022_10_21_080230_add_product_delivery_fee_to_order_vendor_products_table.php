@@ -13,11 +13,13 @@ class AddProductDeliveryFeeToOrderVendorProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'product_delivery_fee')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->decimal('product_delivery_fee', 16, 8)->nullable()->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddProductDeliveryFeeToOrderVendorProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

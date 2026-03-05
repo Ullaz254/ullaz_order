@@ -13,11 +13,13 @@ class CreatePincodeTable extends Migration
      */
     public function up()
     {
-        Schema::create('pincodes', function (Blueprint $table) {
+        if (!Schema::hasTable('pincodes')) {
+            Schema::create('pincodes', function (Blueprint $table) {
             $table->id();
             $table->unsignedMediumInteger('pincode')->length(6);
             $table->timestamps();
         });
+        }
     }
 
     /**

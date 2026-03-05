@@ -13,7 +13,7 @@ class AddTableBookingOption extends Migration
      */
     public function up()
     {
-        if (!checkTableExists('booking_options')) {
+        if (!Schema::hasTable('booking_options')) {
             Schema::create('booking_options', function (Blueprint $table) {
                 $table->id();
                 $table->string('title', 32);

@@ -15,9 +15,8 @@ class RenamePhoneCodeInUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->renameColumn('phone_code', 'dial_code');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

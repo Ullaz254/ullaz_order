@@ -13,12 +13,14 @@ class AddColumnToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'rental_protection_amount')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->decimal('rental_protection_amount', 16, 8)->nullable();
             $table->decimal('booking_option_price', 16, 8)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddColumnToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn(['rental_protection_amount', 'booking_option_price']);
-        });
+        // Reverse migration if needed
     }
 }
-    

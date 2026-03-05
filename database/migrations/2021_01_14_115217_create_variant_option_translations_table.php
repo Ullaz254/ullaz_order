@@ -13,7 +13,8 @@ class CreateVariantOptionTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('variant_option_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('variant_option_translations')) {
+            Schema::create('variant_option_translations', function (Blueprint $table) {
             $table->id();
             $table->string('title', 150)->nullable();
             $table->bigInteger('variant_option_id')->unsigned()->nullable();
@@ -23,6 +24,7 @@ class CreateVariantOptionTranslationsTable extends Migration
             $table->foreign('variant_option_id')->references('id')->on('variant_options')->onDelete('cascade');
             $table->foreign('language_id')->references('language_id')->on('client_languages')->onDelete('cascade');
         });
+        }
     }
 
     /**

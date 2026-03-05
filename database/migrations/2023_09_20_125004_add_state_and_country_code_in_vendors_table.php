@@ -13,12 +13,14 @@ class AddStateAndCountryCodeInVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'state_code')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->string('state_code')->after('state')->nullable();
             $table->string('country_code')->after('state')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddStateAndCountryCodeInVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn(['state_code','country_code']);
-        });
+        // Reverse migration if needed
     }
 }

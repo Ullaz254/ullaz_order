@@ -13,7 +13,8 @@ class CreateDispatcherStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('dispatcher_statuses', function (Blueprint $table) {
+        if (!Schema::hasTable('dispatcher_statuses')) {
+            Schema::create('dispatcher_statuses', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('dispatcher_id')->unsigned()->nullable();
             $table->bigInteger('order_id')->unsigned()->nullable();
@@ -22,6 +23,7 @@ class CreateDispatcherStatusesTable extends Migration
             $table->foreign('dispatcher_status_option_id')->references('id')->on('dispatcher_status_options')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

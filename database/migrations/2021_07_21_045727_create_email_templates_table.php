@@ -13,7 +13,8 @@ class CreateEmailTemplatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('email_templates', function (Blueprint $table) {
+        if (!Schema::hasTable('email_templates')) {
+            Schema::create('email_templates', function (Blueprint $table) {
             $table->id();
             $table->mediumText('slug')->nullable();
             $table->mediumText('tags')->nullable();
@@ -22,6 +23,7 @@ class CreateEmailTemplatesTable extends Migration
             $table->mediumText('subject')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

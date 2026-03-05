@@ -13,11 +13,13 @@ class AddOrdersPerSlotColumnToVendors extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'orders_per_slot')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('orders_per_slot')->nullable()->default(0)->after('slot_minutes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddOrdersPerSlotColumnToVendors extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('orders_per_slot');
-        });
+        // Reverse migration if needed
     }
 }

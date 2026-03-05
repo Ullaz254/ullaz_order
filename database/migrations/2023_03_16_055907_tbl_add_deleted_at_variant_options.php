@@ -15,9 +15,8 @@ class TblAddDeletedAtVariantOptions extends Migration
     {
         Schema::table('variant_options', function (Blueprint $table) {
             $table->softDeletes();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

@@ -13,7 +13,8 @@ class CreateCelebritiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('celebrities', function (Blueprint $table) {
+        if (!Schema::hasTable('celebrities')) {
+            Schema::create('celebrities', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
             $table->string('email', 60)->unique()->nullable();
@@ -23,6 +24,7 @@ class CreateCelebritiesTable extends Migration
             $table->tinyInteger('status')->default(0)->comment('0 - pending, 1 - active, 2 - inactive, 3 - deleted');
             $table->timestamps();
         });
+        }
     }
 
     /**

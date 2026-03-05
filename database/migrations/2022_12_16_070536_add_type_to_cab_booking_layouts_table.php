@@ -13,11 +13,13 @@ class AddTypeToCabBookingLayoutsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cab_booking_layouts', function (Blueprint $table) {
+        if (!Schema::hasColumn('cab_booking_layouts', 'type')) {
+            Schema::table('cab_booking_layouts', function (Blueprint $table) {
             $table->tinyInteger('type')->default(1)->comment('1 = web, 2 = app')->after('is_active');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddTypeToCabBookingLayoutsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cab_booking_layouts', function (Blueprint $table) {
-            $table->dropColumn('type');
-        });
+        // Reverse migration if needed
     }
 }

@@ -15,9 +15,8 @@ class AddSubscriptionInvoiceIdToPayments extends Migration
     {
         Schema::table('payments', function (Blueprint $table) {
             $table->unsignedBigInteger('user_subscription_invoice_id')->nullable()->after('cart_id');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

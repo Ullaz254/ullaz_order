@@ -17,9 +17,8 @@ class AddStartEndTimeCartProductTable extends Migration
             //
             $table->dateTime('start_date_time')->nullable();
             $table->dateTime('end_date_time')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

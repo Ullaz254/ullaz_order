@@ -23,9 +23,8 @@ class AddColumnToProducts extends Migration
             if(!Schema::hasColumn('products','captain_description')){
                 $table->string('captain_description', 255)->nullable();
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

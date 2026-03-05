@@ -13,7 +13,8 @@ class CreateCmsTable extends Migration
      */
     public function up()
     {
-        Schema::create('cms', function (Blueprint $table) {
+        if (!Schema::hasTable('cms')) {
+            Schema::create('cms', function (Blueprint $table) {
             $table->id();
             $table->smallInteger('sorting')->default(1);
             $table->string('title', 60)->unique();
@@ -32,6 +33,7 @@ class CreateCmsTable extends Migration
             $table->foreign('language_id')->references('language_id')->on('client_languages')->onDelete('cascade');
             $table->index('title');
         });
+        }
     }
 
     /**

@@ -13,14 +13,16 @@ class AddAppointmentServerToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'need_appointment_service')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('need_appointment_service')->nullable();
             $table->string('appointment_service_key')->nullable();
             $table->string('appointment_service_key_url')->nullable();
             $table->string('appointment_service_key_code')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,11 +30,6 @@ class AddAppointmentServerToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('need_appointment_service');
-            $table->dropColumn('appointment_service_key');
-            $table->dropColumn('appointment_service_key_url');
-            $table->dropColumn('appointment_service_key_code');
-        });
+        // Reverse migration if needed
     }
 }

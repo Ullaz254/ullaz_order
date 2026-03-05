@@ -20,9 +20,8 @@ class AlterTableProductBooking extends Migration
             if(!Schema::hasColumn('product_bookings', 'booking_option_id')){
                 $table->integer('booking_option_id')->nullable();
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

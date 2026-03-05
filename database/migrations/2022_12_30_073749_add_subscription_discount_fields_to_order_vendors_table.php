@@ -13,12 +13,14 @@ class AddSubscriptionDiscountFieldsToOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'subscription_discount_admin')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->decimal('subscription_discount_admin', 10, 2)->default(0);
             $table->decimal('subscription_discount_vendor', 10, 2)->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddSubscriptionDiscountFieldsToOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

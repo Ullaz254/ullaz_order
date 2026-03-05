@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class Addschedulecolumnsinorderproducts extends Migration
 {
-     /**
+    /**
      * Run the migrations.
      *
      * @return void
@@ -14,9 +14,12 @@ class Addschedulecolumnsinorderproducts extends Migration
     public function up()
     {
         Schema::table('order_vendor_products', function (Blueprint $table) {
-            //
-            $table->string('schedule_type',100)->nullable()->after('product_dispatcher_tag');
-            $table->dateTime('scheduled_date_time')->nullable()->after('schedule_type');
+            if (!Schema::hasColumn('order_vendor_products', 'schedule_type')) {
+                $table->string('schedule_type')->nullable();
+            }
+            if (!Schema::hasColumn('order_vendor_products', 'scheduled_date_time')) {
+                $table->dateTime('scheduled_date_time')->nullable();
+            }
         });
     }
 
@@ -28,9 +31,12 @@ class Addschedulecolumnsinorderproducts extends Migration
     public function down()
     {
         Schema::table('order_vendor_products', function (Blueprint $table) {
-            //
-            $table->dropColumn('schedule_type');
-            $table->dropColumn('scheduled_date_time');
+            if (Schema::hasColumn('order_vendor_products', 'schedule_type')) {
+                $table->dropColumn('schedule_type');
+            }
+            if (Schema::hasColumn('order_vendor_products', 'scheduled_date_time')) {
+                $table->dropColumn('scheduled_date_time');
+            }
         });
     }
 }

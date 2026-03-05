@@ -52,19 +52,30 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://localhost'),
+    'url' => env('APP_ENV') === 'local' 
+        ? 'http://localhost:8000' 
+        : env('APP_URL', 'http://localhost'),
 
-    'IMG_URL1' => env('IMG_URL1', 'https://images.royoorders.com/insecure/fill/'),
+    // Use HTTP for local development, HTTPS for production
+    // Get URL from env, then convert HTTPS to HTTP for local
+    'IMG_URL1' => env('APP_ENV') === 'local' 
+        ? str_replace('https://', 'http://', env('IMG_URL1', 'https://images.royoorders.com/insecure/fill/'))
+        : env('IMG_URL1', 'https://images.royoorders.com/insecure/fill/'),
 
-    'FIT_URl' => env('FIT_URl', 'https://images.royoorders.com/insecure/fit/'),
-    'FILL_URL' => env('FILL_URL', 'https://images.royoorders.com/insecure/fit/'),
-    //'FILL_URL' => 'https://images.royoorders.com/insecure/fill/',
+    'FIT_URl' => env('APP_ENV') === 'local'
+        ? str_replace('https://', 'http://', env('FIT_URl', 'https://images.royoorders.com/insecure/fit/'))
+        : env('FIT_URl', 'https://images.royoorders.com/insecure/fit/'),
+    'FILL_URL' => env('APP_ENV') === 'local'
+        ? str_replace('https://', 'http://', env('FILL_URL', 'https://images.royoorders.com/insecure/fit/'))
+        : env('FILL_URL', 'https://images.royoorders.com/insecure/fit/'),
 
     'IMG_URL2' => env('IMG_URL2', '/sm/0/plain'),
 
     'asset_url' => env('ASSET_URL', null),
 
-    'FIT_URL' => env('FIT_URL', 'https://images.royoorders.com/insecure/fill/'),
+    'FIT_URL' => env('APP_ENV') === 'local'
+        ? str_replace('https://', 'http://', env('FIT_URL', 'https://images.royoorders.com/insecure/fill/'))
+        : env('FIT_URL', 'https://images.royoorders.com/insecure/fill/'),
 
     'AWS_ACCESS_KEY_ID_CHAT' => env('AWS_ACCESS_KEY_ID_CHAT',''),
     'AWS_SECRET_ACCESS_KEY_CHAT' => env('AWS_SECRET_ACCESS_KEY_CHAT',''),

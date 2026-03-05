@@ -15,9 +15,8 @@ class AddOrderCountToSubscriptionInvoicesVendorTable extends Migration
     {
         Schema::table('subscription_invoices_vendor', function (Blueprint $table) {
             $table->BigInteger('order_count')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

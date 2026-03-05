@@ -15,9 +15,8 @@ class AddMarkupPriceTaxIdToVendorsTable extends Migration
     {
         Schema::table('vendors', function (Blueprint $table) {
             $table->unsignedBigInteger('markup_price_tax_id')->default(0);
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

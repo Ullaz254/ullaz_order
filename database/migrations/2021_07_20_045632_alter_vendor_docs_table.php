@@ -13,11 +13,13 @@ class AlterVendorDocsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_docs', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_docs', 'vendor_registration_document_id')) {
+            Schema::table('vendor_docs', function (Blueprint $table) {
              $table->bigInteger('vendor_registration_document_id')->unsigned()->after('vendor_id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AlterVendorDocsTable extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

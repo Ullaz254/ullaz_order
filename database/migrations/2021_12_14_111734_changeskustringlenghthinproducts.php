@@ -13,12 +13,14 @@ class Changeskustringlenghthinproducts extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'sku')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->string('sku', 500)->change();
             $table->string('title', 120)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,6 +28,6 @@ class Changeskustringlenghthinproducts extends Migration
      */
     public function down()
     {
-        
+        // Reverse migration if needed
     }
 }

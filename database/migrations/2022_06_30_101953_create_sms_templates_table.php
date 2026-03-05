@@ -13,7 +13,8 @@ class CreateSmsTemplatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('sms_templates', function (Blueprint $table) {
+        if (!Schema::hasTable('sms_templates')) {
+            Schema::create('sms_templates', function (Blueprint $table) {
             $table->id();
             $table->mediumText('slug')->nullable();
             $table->mediumText('tags')->nullable();
@@ -22,6 +23,7 @@ class CreateSmsTemplatesTable extends Migration
             $table->mediumText('subject')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

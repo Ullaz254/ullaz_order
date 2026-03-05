@@ -13,11 +13,13 @@ class AddSquareModifierOptionIdToAddonOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('addon_options', function (Blueprint $table) {
+        if (!Schema::hasColumn('addon_options', 'square_modifier_option_id')) {
+            Schema::table('addon_options', function (Blueprint $table) {
             $table->string('square_modifier_option_id', 150)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSquareModifierOptionIdToAddonOptionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('addon_options', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

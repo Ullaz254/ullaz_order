@@ -16,9 +16,8 @@ class Alterdelayorderhrs extends Migration
         Schema::table('products', function (Blueprint $table) {
             $table->Integer('delay_order_hrs')->default(0);
             $table->Integer('delay_order_min')->default(0);
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

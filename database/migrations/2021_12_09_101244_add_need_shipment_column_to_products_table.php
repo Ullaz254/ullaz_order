@@ -15,9 +15,8 @@ class AddNeedShipmentColumnToProductsTable extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
              $table->Integer('need_shipment')->default(0);
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

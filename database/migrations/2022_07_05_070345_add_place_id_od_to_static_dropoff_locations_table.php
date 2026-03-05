@@ -13,11 +13,13 @@ class AddPlaceIdOdToStaticDropoffLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::table('static_dropoff_locations', function (Blueprint $table) {
+        if (!Schema::hasColumn('static_dropoff_locations', 'place_id')) {
+            Schema::table('static_dropoff_locations', function (Blueprint $table) {
             $table->string('place_id')->nullable()->after('longitude');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPlaceIdOdToStaticDropoffLocationsTable extends Migration
      */
     public function down()
     {
-        Schema::table('static_dropoff_locations', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

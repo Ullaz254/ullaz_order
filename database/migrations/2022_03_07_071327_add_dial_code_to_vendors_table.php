@@ -13,11 +13,13 @@ class AddDialCodeToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'dial_code')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->string('dial_code')->nullable()->after('phone_no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddDialCodeToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,15 +13,13 @@ class AddIsActiveForVendorSlot extends Migration
      */
     public function up()
     {
-        Schema::table('service_areas', function (Blueprint $table) {
+        if (!Schema::hasColumn('service_areas', 'is_active_for_vendor_slot')) {
+            Schema::table('service_areas', function (Blueprint $table) {
             $table->tinyInteger('is_active_for_vendor_slot')->nullable()->default(0)->comments('0=Inactive, 1=Active');
-        });
+                    });
+        }
 
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->tinyInteger('cron_for_service_area')->nullable()->default(0)->comments('0=Inactive, 1=Active');
-        });
-    }
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -29,12 +27,6 @@ class AddIsActiveForVendorSlot extends Migration
      */
     public function down()
     {
-        Schema::table('service_areas', function (Blueprint $table) {
-            $table->dropColumn('is_active_for_vendor_slot');
-        });
-
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('cron_for_service_area');
-        });
+        // Reverse migration if needed
     }
 }

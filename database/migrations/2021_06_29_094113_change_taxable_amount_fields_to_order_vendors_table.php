@@ -17,9 +17,8 @@ class ChangeTaxableAmountFieldsToOrderVendorsTable extends Migration
             if (!Schema::hasColumn('order_vendors', 'taxable_amount')) {
                 $table->decimal('taxable_amount', 10, 2)->nullable()->after('coupon_code');
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

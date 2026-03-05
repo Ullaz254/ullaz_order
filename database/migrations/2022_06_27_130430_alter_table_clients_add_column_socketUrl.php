@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterTableClientsAddColumnsocketUrl extends Migration
+class AlterTableClientsAddColumnSocketUrl extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class AlterTableClientsAddColumnsocketUrl extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
+        if (!Schema::hasColumn('clients', 'socket_url')) {
+            Schema::table('clients', function (Blueprint $table) {
             $table->string('socket_url')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterTableClientsAddColumnsocketUrl extends Migration
      */
     public function down()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            $table->dropColumn('socket_url');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,7 +13,8 @@ class CreateLoyaltyCardsTable extends Migration
      */
     public function up()
     {
-        Schema::create('loyalty_cards', function (Blueprint $table) {
+        if (!Schema::hasTable('loyalty_cards')) {
+            Schema::create('loyalty_cards', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('description');
@@ -26,6 +27,7 @@ class CreateLoyaltyCardsTable extends Migration
             $table->enum('status', ['0', '1', '2'])->comment('0-Active, 1-Deactive, 2-Deleted');
             $table->timestamps();
         });
+        }
     }
 
     /**

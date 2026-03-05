@@ -13,7 +13,8 @@ class CreateVendorBankDetails extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_bank_details', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_bank_details')) {
+            Schema::create('vendor_bank_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('vendor_id')->nullable();
             $table->string('name', 56)->nullable();
@@ -22,6 +23,7 @@ class CreateVendorBankDetails extends Migration
             $table->string('address')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -15,9 +15,8 @@ class AlterTableOrdersChangeTipAmount extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->unsignedDecimal('tip_amount', 8, 2)->change();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

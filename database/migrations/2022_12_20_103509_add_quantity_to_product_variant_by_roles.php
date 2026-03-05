@@ -13,11 +13,13 @@ class AddQuantityToProductVariantByRoles extends Migration
      */
     public function up()
     {
-        Schema::table('product_variant_by_roles', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variant_by_roles', 'quantity')) {
+            Schema::table('product_variant_by_roles', function (Blueprint $table) {
              $table->integer('quantity')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddQuantityToProductVariantByRoles extends Migration
      */
     public function down()
     {
-        Schema::table('product_variant_by_roles', function (Blueprint $table) {
-            $table->dropColumn('quantity');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,14 +13,16 @@ class CreateTableLumenClients extends Migration
      */
     public function up()
     {
-        Schema::create('lumen_clients', function (Blueprint $table) {
+        if (!Schema::hasTable('lumen_clients')) {
+            Schema::create('lumen_clients', function (Blueprint $table) {
             $table->id();
             $table->string('database_name',50);
             $table->string('domain',50)->nullable();
             $table->string('code',10);
             $table->string('lumen_access_token',60)->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

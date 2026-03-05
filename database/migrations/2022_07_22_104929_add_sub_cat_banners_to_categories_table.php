@@ -13,11 +13,13 @@ class AddSubCatBannersToCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::table('categories', function (Blueprint $table) {
+        if (!Schema::hasColumn('categories', 'sub_cat_banners')) {
+            Schema::table('categories', function (Blueprint $table) {
             $table->string('sub_cat_banners')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSubCatBannersToCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::table('categories', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

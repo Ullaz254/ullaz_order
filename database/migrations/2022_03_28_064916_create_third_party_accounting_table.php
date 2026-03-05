@@ -13,7 +13,8 @@ class CreateThirdPartyAccountingTable extends Migration
      */
     public function up()
     {
-        Schema::create('third_party_accounting', function (Blueprint $table) {
+        if (!Schema::hasTable('third_party_accounting')) {
+            Schema::create('third_party_accounting', function (Blueprint $table) {
             $table->id();
             $table->string('code');
             $table->string('path')->nullable();
@@ -23,6 +24,7 @@ class CreateThirdPartyAccountingTable extends Migration
             $table->unsignedTinyInteger('test_mode')->default(0)->comment('0 = false, 1 = true');
             $table->timestamps(); 
         });
+        }
     }
 
     /**

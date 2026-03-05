@@ -13,7 +13,7 @@ class CreateTableCartBookingOption extends Migration
      */
     public function up()
     {
-        if (!checkTableExists('cart_booking_options')) {
+        if (!Schema::hasTable('cart_booking_options')) {
             Schema::create('cart_booking_options', function (Blueprint $table) {
                 $table->id();
                 $table->integer('product_id');

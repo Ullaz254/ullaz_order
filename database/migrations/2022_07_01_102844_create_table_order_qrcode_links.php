@@ -13,7 +13,8 @@ class CreateTableOrderQrcodeLinks extends Migration
      */
     public function up()
     {
-        Schema::create('order_qrcode_links', function (Blueprint $table) {
+        if (!Schema::hasTable('order_qrcode_links')) {
+            Schema::create('order_qrcode_links', function (Blueprint $table) {
             $table->id();
             $table->integer('order_id');
             $table->integer('qrcode_id');
@@ -21,6 +22,7 @@ class CreateTableOrderQrcodeLinks extends Migration
             $table->string('code');
             $table->timestamps();
         });
+        }
     }
 
     /**

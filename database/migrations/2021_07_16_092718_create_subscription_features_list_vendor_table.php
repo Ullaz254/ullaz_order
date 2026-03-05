@@ -13,13 +13,15 @@ class CreateSubscriptionFeaturesListVendorTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscription_features_list_vendor', function (Blueprint $table) {
+        if (!Schema::hasTable('subscription_features_list_vendor')) {
+            Schema::create('subscription_features_list_vendor', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->longText('Description')->nullable();
             $table->tinyInteger('status')->unsigned()->default(1)->comment('0=Inactive, 1=Active');
             $table->timestamps();
         });
+        }
     }
 
     /**

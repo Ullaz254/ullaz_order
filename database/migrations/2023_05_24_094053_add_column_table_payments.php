@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnTablepayments extends Migration
+class AddColumnTablePayments extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class AddColumnTablepayments extends Migration
      */
     public function up()
     {
-        Schema::table('payments', function (Blueprint $table) {
+        if (!Schema::hasColumn('payments', 'payment_detail')) {
+            Schema::table('payments', function (Blueprint $table) {
             $table->text('payment_detail')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddColumnTablepayments extends Migration
      */
     public function down()
     {
-        Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn('payment_detail');
-        });
+        // Reverse migration if needed
     }
 }

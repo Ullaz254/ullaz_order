@@ -13,7 +13,8 @@ class CreateOrderStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_statuses', function (Blueprint $table) {
+        if (!Schema::hasTable('order_statuses')) {
+            Schema::create('order_statuses', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_id')->unsigned()->nullable();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
@@ -21,6 +22,7 @@ class CreateOrderStatusesTable extends Migration
             $table->foreign('order_status_option_id')->references('id')->on('order_status_options')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

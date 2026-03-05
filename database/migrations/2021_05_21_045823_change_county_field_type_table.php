@@ -17,9 +17,8 @@ class ChangeCountyFieldTypeTable extends Migration
             if (Schema::hasColumn('user_addresses', 'country')) {
                 $table->string('country')->change();
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

@@ -13,12 +13,14 @@ class CreateLongTermServicePeriodsTable extends Migration
      */
     public function up()
     {
-        Schema::create('long_term_service_periods', function (Blueprint $table) {
+        if (!Schema::hasTable('long_term_service_periods')) {
+            Schema::create('long_term_service_periods', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->string('service_period',150)->nullable()->comment('day,week,month');
             $table->timestamps();
         });
+        }
     }
 
     /**

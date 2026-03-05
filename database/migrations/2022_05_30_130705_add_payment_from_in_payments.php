@@ -15,9 +15,8 @@ class AddPaymentFromInPayments extends Migration
     {
         Schema::table('payments', function (Blueprint $table) {
             $table->String('payment_from','100')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

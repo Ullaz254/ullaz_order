@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class AddReturnReasonToOrderCancelRequestsTable extends Migration
@@ -14,13 +13,15 @@ class AddReturnReasonToOrderCancelRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_cancel_requests', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_cancel_requests', 'return_reason_id')) {
+            Schema::table('order_cancel_requests', function (Blueprint $table) {
             $table->bigInteger('return_reason_id')->unsigned()->nullable();
 
             $table->foreign('return_reason_id')->references('id')->on('return_reasons')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,9 +29,6 @@ class AddReturnReasonToOrderCancelRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_cancel_requests', function (Blueprint $table) {
-            DB::statement('ALTER TABLE order_cancel_requests DROP FOREIGN KEY order_cancel_requests_return_reason_id_foreign');
-            $table->dropColumn('return_reason_id');
-        });
+        // Reverse migration if needed
     }
 }

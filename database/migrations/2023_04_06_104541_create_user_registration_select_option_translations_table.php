@@ -13,13 +13,15 @@ class CreateUserRegistrationSelectOptionTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_registration_select_option_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('user_registration_select_option_translations')) {
+            Schema::create('user_registration_select_option_translations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('user_registration_select_option_id');
             $table->unsignedBigInteger('language_id');
             $table->timestamps();
         });
+        }
     }
 
     /**

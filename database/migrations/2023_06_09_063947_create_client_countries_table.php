@@ -13,7 +13,8 @@ class CreateClientCountriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('client_countries', function (Blueprint $table) {
+        if (!Schema::hasTable('client_countries')) {
+            Schema::create('client_countries', function (Blueprint $table) {
             $table->id();
             $table->string('client_code', 10)->nullable();
             $table->bigInteger('country_id')->unsigned()->nullable();
@@ -24,6 +25,7 @@ class CreateClientCountriesTable extends Migration
             $table->foreign('client_code')->references('code')->on('clients')->onUpdate('cascade')->onDelete('set null');
             $table->foreign('country_id')->references('id')->on('countries')->onUpdate('cascade')->onDelete('set null');
         });
+        }
     }
 
     /**

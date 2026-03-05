@@ -6,20 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 class Altercartspickupdropoffcomment extends Migration
 {
-     /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('carts', 'comment_for_pickup_driver')) {
+            Schema::table('carts', function (Blueprint $table) {
             $table->mediumText('comment_for_pickup_driver')->nullable();
             $table->mediumText('comment_for_dropoff_driver')->nullable();
             $table->mediumText('comment_for_vendor')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,10 +29,6 @@ class Altercartspickupdropoffcomment extends Migration
      */
     public function down()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->dropColumn('comment_for_pickup_driver');
-            $table->dropColumn('comment_for_dropoff_driver');
-            $table->dropColumn('comment_for_vendor');
-        });
+        // Reverse migration if needed
     }
 }

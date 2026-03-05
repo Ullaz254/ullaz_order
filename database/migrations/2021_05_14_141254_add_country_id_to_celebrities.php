@@ -16,9 +16,8 @@ class AddCountryIdToCelebrities extends Migration
         Schema::table('celebrities', function (Blueprint $table) {
             $table->unsignedBigInteger('country_id')->nullable();
             $table->foreign('country_id')->references('id')->on('countries')->onDelete('set null');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

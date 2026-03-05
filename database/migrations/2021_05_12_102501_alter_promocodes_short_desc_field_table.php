@@ -13,11 +13,13 @@ class AlterPromocodesShortDescFieldTable extends Migration
      */
     public function up()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
+        if (!Schema::hasColumn('promocodes', 'short_desc')) {
+            Schema::table('promocodes', function (Blueprint $table) {
             $table->mediumText('short_desc')->after('name')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterPromocodesShortDescFieldTable extends Migration
      */
     public function down()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
-            $table->dropColumn('short_desc');
-        });
+        // Reverse migration if needed
     }
 }

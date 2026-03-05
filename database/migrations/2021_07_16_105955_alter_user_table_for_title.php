@@ -13,11 +13,13 @@ class AlterUserTableForTitle extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'title')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->string('title')->after('is_admin')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AlterUserTableForTitle extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

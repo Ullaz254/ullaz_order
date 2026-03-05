@@ -13,11 +13,13 @@ class AlterVendorRegistrationDocumentTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_registration_document_translations', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_registration_document_translations', 'slug')) {
+            Schema::table('vendor_registration_document_translations', function (Blueprint $table) {
             $table->mediumText('slug')->after('name');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AlterVendorRegistrationDocumentTranslationsTable extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

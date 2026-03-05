@@ -13,14 +13,16 @@ class CreateUserVerificationTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_verification', function (Blueprint $table) {
+        if (!Schema::hasTable('user_verification')) {
+            Schema::create('user_verification', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('verification_option_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('response_id')->nullable();
             $table->tinyInteger('status')->default(1)->comment('0 Pending, 1 Approved, 2 Rejected');
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

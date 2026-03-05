@@ -13,11 +13,13 @@ class AddEnablePricingToRolesTable extends Migration
      */
     public function up()
     {
-        Schema::table('roles', function (Blueprint $table) {
+        if (!Schema::hasColumn('roles', 'is_enable_pricing')) {
+            Schema::table('roles', function (Blueprint $table) {
             $table->boolean('is_enable_pricing')->default(0)->after('status');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddEnablePricingToRolesTable extends Migration
      */
     public function down()
     {
-        Schema::table('roles', function (Blueprint $table) {
-            Schema::dropIfExists('roles');
-        });
+        // Reverse migration if needed
     }
 }

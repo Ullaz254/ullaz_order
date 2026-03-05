@@ -13,7 +13,8 @@ class CreateOrderProductDispatchReturnRoutesTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_product_dispatch_return_routes', function (Blueprint $table) {
+        if (!Schema::hasTable('order_product_dispatch_return_routes')) {
+            Schema::create('order_product_dispatch_return_routes', function (Blueprint $table) {
             $table->id()->comment('id based on product quantity');
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('order_vendor_id');
@@ -24,7 +25,8 @@ class CreateOrderProductDispatchReturnRoutesTable extends Migration
             $table->string('dispatcher_status_option_id')->nullable()->comment('single product dispatch');
             $table->string('order_status_option_id')->nullable()->comment('single product dispatch');
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

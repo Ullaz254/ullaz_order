@@ -13,11 +13,13 @@ class AddColumnIsRequiredToVendorRegistration extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_registration_documents', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_registration_documents', 'is_required')) {
+            Schema::table('vendor_registration_documents', function (Blueprint $table) {
             $table->integer('is_required')->default(1)->after('file_type')->comment('0 means not required, 1 means required');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddColumnIsRequiredToVendorRegistration extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_registration_documents', function (Blueprint $table) {
-            $table->dropColumn('is_required');
-        });
+        // Reverse migration if needed
     }
 }

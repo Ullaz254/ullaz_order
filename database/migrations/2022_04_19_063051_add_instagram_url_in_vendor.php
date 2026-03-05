@@ -13,11 +13,13 @@ class AddInstagramUrlInVendor extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'instagram_url')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->string('instagram_url')->nullable()->comment('vendor instagram page link');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddInstagramUrlInVendor extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('instagram_url');
-        });
+        // Reverse migration if needed
     }
 }

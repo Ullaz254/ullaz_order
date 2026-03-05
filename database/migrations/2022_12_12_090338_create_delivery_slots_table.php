@@ -14,7 +14,8 @@ class CreateDeliverySlotsTable extends Migration
     public function up()
     {
         
-        Schema::create('delivery_slots', function (Blueprint $table) {
+        if (!Schema::hasTable('delivery_slots')) {
+            Schema::create('delivery_slots', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('start_time');
@@ -23,6 +24,7 @@ class CreateDeliverySlotsTable extends Migration
             $table->tinyInteger('status')->default(0)->comment('0 for enabled, 1 for disabled');
             $table->timestamps();
         });
+        }
     }
 
     /**

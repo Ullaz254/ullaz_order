@@ -13,7 +13,8 @@ class CreateVendorOrderProductDispatcherStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_order_product_dispatcher_statuses', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_order_product_dispatcher_statuses')) {
+            Schema::create('vendor_order_product_dispatcher_statuses', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('dispatcher_id')->unsigned()->nullable();
             $table->bigInteger('order_id')->unsigned()->nullable();
@@ -24,6 +25,7 @@ class CreateVendorOrderProductDispatcherStatusesTable extends Migration
             $table->enum('type', ['1', '2','3'])->default('1')->comment('1 : pickup , 2 : drop , 3 : Appointment');
             $table->timestamps();
         });
+        }
     }
 
     /**

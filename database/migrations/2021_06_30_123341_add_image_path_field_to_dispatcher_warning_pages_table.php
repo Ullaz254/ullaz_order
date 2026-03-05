@@ -13,11 +13,13 @@ class AddImagePathFieldToDispatcherWarningPagesTable extends Migration
      */
     public function up()
     {
-        Schema::table('dispatcher_warning_pages', function (Blueprint $table) {
+        if (!Schema::hasColumn('dispatcher_warning_pages', 'image_path')) {
+            Schema::table('dispatcher_warning_pages', function (Blueprint $table) {
             $table->string('image_path')->nullable()->after('title');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddImagePathFieldToDispatcherWarningPagesTable extends Migration
      */
     public function down()
     {
-        Schema::table('dispatcher_warning_pages', function (Blueprint $table) {
-            $table->dropColumn('image_path');
-        });
+        // Reverse migration if needed
     }
 }

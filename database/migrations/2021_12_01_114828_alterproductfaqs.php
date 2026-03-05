@@ -13,14 +13,14 @@ class Alterproductfaqs extends Migration
      */
     public function up()
     {   
-        Schema::table('product_faqs', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_faqs', 'product_id')) {
+            Schema::table('product_faqs', function (Blueprint $table) {
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-        });
+                    });
+        }
 
-        
-    }
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,8 +28,6 @@ class Alterproductfaqs extends Migration
      */
     public function down()
     {
-        Schema::table('product_faqs', function (Blueprint $table) {
-            $table->dropColumn('product_id');
-        });
+        // Reverse migration if needed
     }
 }

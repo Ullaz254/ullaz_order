@@ -13,7 +13,8 @@ class Orderproductratingstable extends Migration
      */
     public function up()
     {
-        Schema::create('order_product_ratings', function (Blueprint $table) {
+        if (!Schema::hasTable('order_product_ratings')) {
+            Schema::create('order_product_ratings', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_vendor_product_id')->unsigned()->nullable();
             $table->bigInteger('order_id')->unsigned()->nullable();
@@ -26,6 +27,7 @@ class Orderproductratingstable extends Migration
             $table->foreign('order_vendor_product_id')->references('id')->on('order_vendor_products')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

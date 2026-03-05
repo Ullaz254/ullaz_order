@@ -13,11 +13,13 @@ class AddAddressStatusInUserAddresses extends Migration
      */
     public function up()
     {
-        Schema::table('user_addresses', function (Blueprint $table) {
+        if (!Schema::hasColumn('user_addresses', 'status')) {
+            Schema::table('user_addresses', function (Blueprint $table) {
             $table->tinyInteger('status')->default(1)->after('extra_instruction')->comment('0 deleted, 1 not deleted');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAddressStatusInUserAddresses extends Migration
      */
     public function down()
     {
-        Schema::table('user_addresses', function (Blueprint $table) {
-            $table->dropColumn('status');
-        });
+        // Reverse migration if needed
     }
 }

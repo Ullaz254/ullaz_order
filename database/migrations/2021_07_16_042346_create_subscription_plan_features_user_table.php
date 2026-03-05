@@ -13,7 +13,8 @@ class CreateSubscriptionPlanFeaturesUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscription_plan_features_user', function (Blueprint $table) {
+        if (!Schema::hasTable('subscription_plan_features_user')) {
+            Schema::create('subscription_plan_features_user', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('subscription_plan_id')->unsigned();
             $table->foreign('subscription_plan_id')->references('id')->on('subscription_plans_user');
@@ -21,6 +22,7 @@ class CreateSubscriptionPlanFeaturesUserTable extends Migration
             $table->foreign('feature_id')->references('id')->on('subscription_features_list_user');
             $table->timestamps();
         });
+        }
     }
 
     /**

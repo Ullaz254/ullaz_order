@@ -13,12 +13,14 @@ class AddWeeklyMonthlyPriceToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'latitude')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->decimal('latitude', 16, 12)->nullable();
             $table->decimal('longitude', 16, 12)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddWeeklyMonthlyPriceToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

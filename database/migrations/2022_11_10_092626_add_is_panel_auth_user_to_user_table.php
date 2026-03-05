@@ -13,11 +13,13 @@ class AddIsPanelAuthUserToUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'is_panel_auth_user')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->tinyInteger('is_panel_auth_user')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsPanelAuthUserToUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('is_panel_auth_user');
-        });
+        // Reverse migration if needed
     }
 }

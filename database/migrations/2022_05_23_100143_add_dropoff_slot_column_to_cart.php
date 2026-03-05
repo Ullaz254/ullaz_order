@@ -13,11 +13,13 @@ class AddDropoffSlotColumnToCart extends Migration
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('carts', 'dropoff_scheduled_slot')) {
+            Schema::table('carts', function (Blueprint $table) {
             $table->string('dropoff_scheduled_slot')->nullable()->comment('dropoff slot for laundry');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddDropoffSlotColumnToCart extends Migration
      */
     public function down()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->dropColumn('dropoff_scheduled_slot');
-        });
+        // Reverse migration if needed
     }
 }

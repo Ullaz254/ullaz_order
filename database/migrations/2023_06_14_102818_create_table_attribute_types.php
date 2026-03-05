@@ -13,7 +13,8 @@ class CreateTableAttributeTypes extends Migration
      */
     public function up()
     {
-        Schema::create('attribute_types', function (Blueprint $table) {
+        if (!Schema::hasTable('attribute_types')) {
+            Schema::create('attribute_types', function (Blueprint $table) {
             $table->id();
             $table->string('title', 128);
             $table->enum('status', [
@@ -23,6 +24,7 @@ class CreateTableAttributeTypes extends Migration
             $table->string('description', 256)->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

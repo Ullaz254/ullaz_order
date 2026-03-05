@@ -13,11 +13,13 @@ class AddproductVariantSetsincartproductorderproducts extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'product_variant_sets')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->string('product_variant_sets',500)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddproductVariantSetsincartproductorderproducts extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn('product_variant_sets');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,13 +13,15 @@ class CreateAllergicItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('allergic_items', function (Blueprint $table) {
+        if (!Schema::hasTable('allergic_items')) {
+            Schema::create('allergic_items', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->tinyInteger('status')->default(1);
             $table->foreignId('vendor_id')->default(0);
             $table->timestamps();
         });
+        }
     }
 
     /**

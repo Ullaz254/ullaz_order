@@ -13,7 +13,8 @@ class CreateRidersTable extends Migration
      */
     public function up()
     {
-        Schema::create('riders', function (Blueprint $table) {
+        if (!Schema::hasTable('riders')) {
+            Schema::create('riders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('first_name')->nullable();
@@ -22,6 +23,7 @@ class CreateRidersTable extends Migration
             $table->integer('phone_number')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

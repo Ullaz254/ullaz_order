@@ -11,14 +11,15 @@ class AlterWalletsChangeBalanceType extends Migration
      *
      * @return void
      */
-   
     public function up()
     {
-        Schema::table('wallets', function (Blueprint $table) {
+        if (!Schema::hasColumn('wallets', 'balance')) {
+            Schema::table('wallets', function (Blueprint $table) {
             $table->decimal('balance',16,2)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +27,6 @@ class AlterWalletsChangeBalanceType extends Migration
      */
     public function down()
     {
-        Schema::table('wallets', function (Blueprint $table) {
-            $table->string('balance');
-        });
+        // Reverse migration if needed
     }
 }

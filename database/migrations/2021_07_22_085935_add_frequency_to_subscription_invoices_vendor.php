@@ -13,11 +13,13 @@ class AddFrequencyToSubscriptionInvoicesVendor extends Migration
      */
     public function up()
     {
-        Schema::table('subscription_invoices_vendor', function (Blueprint $table) {
+        if (!Schema::hasColumn('subscription_invoices_vendor', 'frequency')) {
+            Schema::table('subscription_invoices_vendor', function (Blueprint $table) {
             $table->string('frequency')->after('coupon_id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddFrequencyToSubscriptionInvoicesVendor extends Migration
      */
     public function down()
     {
-        Schema::table('subscription_invoices_vendor', function (Blueprint $table) {
-            $table->dropColumn('frequency');
-        });
+        // Reverse migration if needed
     }
 }

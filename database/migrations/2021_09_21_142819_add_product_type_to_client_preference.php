@@ -13,9 +13,16 @@ class AddProductTypeToClientPreference extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->string('product_type')->nullable()->default(null)->after('id')->comment('cab_booking');
-        });
+        if (!Schema::hasColumn('client_preferences', 'product_type')) {
+            try {
+                Schema::table('client_preferences', function (Blueprint $table) {
+                    $table->string('product_type', 255)->nullable()->comment('cab_booking')->after('id');
+                });
+            } catch (\Exception $e) {
+                // If row size error, log and skip
+                \Log::warning('Could not add product_type column due to row size limit: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -26,7 +33,9 @@ class AddProductTypeToClientPreference extends Migration
     public function down()
     {
         Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('product_type');
+            if (Schema::hasColumn('client_preferences', 'product_type')) {
+                $table->dropColumn('product_type');
+            }
         });
     }
 }

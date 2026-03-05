@@ -13,11 +13,13 @@ class ChangeDatatypeInUserVerificationTable extends Migration
      */
     public function up()
     {
-        Schema::table('user_verification', function (Blueprint $table) {
+        if (!Schema::hasColumn('user_verification', 'status')) {
+            Schema::table('user_verification', function (Blueprint $table) {
             $table->string('status')->nullable()->default('pending')->comment('')->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class ChangeDatatypeInUserVerificationTable extends Migration
      */
     public function down()
     {
-        Schema::table('user_verification', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

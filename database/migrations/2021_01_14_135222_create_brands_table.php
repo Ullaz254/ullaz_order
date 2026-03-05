@@ -13,7 +13,8 @@ class CreateBrandsTable extends Migration
      */
     public function up()
     {
-        Schema::create('brands', function (Blueprint $table) {
+        if (!Schema::hasTable('brands')) {
+            Schema::create('brands', function (Blueprint $table) {
             $table->id();
             $table->string('title', 100)->nullable();
             $table->string('image', 150)->nullable();
@@ -24,6 +25,7 @@ class CreateBrandsTable extends Migration
             $table->index('position');
             $table->index('status');
         });
+        }
     }
 
     /**

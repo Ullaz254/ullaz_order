@@ -13,9 +13,8 @@ class AlterOrdersTableForScheduledDateTime extends Migration{
     public function up(){
         Schema::table('orders', function (Blueprint $table) {
             $table->dateTimeTz('scheduled_date_time')->after('order_number')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

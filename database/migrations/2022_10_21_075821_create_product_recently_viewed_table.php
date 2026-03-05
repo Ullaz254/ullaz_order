@@ -13,13 +13,15 @@ class CreateProductRecentlyViewedTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_recently_viewed', function (Blueprint $table) {
+        if (!Schema::hasTable('product_recently_viewed')) {
+            Schema::create('product_recently_viewed', function (Blueprint $table) {
             $table->id();
             $table->integer('product_id')->nullable();
             $table->string('token_id')->nullable();
             $table->integer('user_id')->default(0);
             $table->timestamps();
         });
+        }
     }
 
     /**

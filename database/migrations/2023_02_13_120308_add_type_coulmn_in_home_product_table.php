@@ -13,11 +13,13 @@ class AddTypeCoulmnInHomeProductTable extends Migration
      */
     public function up()
     {
-        Schema::table('home_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('home_products', 'type')) {
+            Schema::table('home_products', function (Blueprint $table) {
             $table->tinyInteger('type')->default(0)->comment('0 - Web, 1 - App');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddTypeCoulmnInHomeProductTable extends Migration
      */
     public function down()
     {
-        Schema::table('home_products', function (Blueprint $table) {
-            $table->removeColumn('type');
-        });
+        // Reverse migration if needed
     }
 }

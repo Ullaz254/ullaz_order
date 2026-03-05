@@ -13,7 +13,8 @@ class CreateFaciltyTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('facilty_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('facilty_translations')) {
+            Schema::create('facilty_translations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('facilties_id');
             $table->unsignedBigInteger('language_id');
@@ -21,6 +22,7 @@ class CreateFaciltyTranslationsTable extends Migration
             $table->string('name');
             $table->timestamps();
         });
+        }
     }
 
     /**

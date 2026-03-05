@@ -13,11 +13,13 @@ class ChangeTypeOfCompareAtPriceInProductVariantsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'compare_at_price')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             $table->decimal('compare_at_price', 12, 4)->nullable()->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class ChangeTypeOfCompareAtPriceInProductVariantsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

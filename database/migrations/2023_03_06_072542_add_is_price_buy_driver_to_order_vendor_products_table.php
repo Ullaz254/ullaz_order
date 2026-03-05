@@ -13,11 +13,13 @@ class AddIsPriceBuyDriverToOrderVendorProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'is_price_buy_driver')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->tinyInteger('is_price_buy_driver')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsPriceBuyDriverToOrderVendorProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn('is_price_buy_driver');
-        });
+        // Reverse migration if needed
     }
 }

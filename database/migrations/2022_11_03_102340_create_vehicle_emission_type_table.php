@@ -13,12 +13,14 @@ class CreateVehicleEmissionTypeTable extends Migration
      */
     public function up()
     {
-        Schema::create('vehicle_emission_type', function (Blueprint $table) {
+        if (!Schema::hasTable('vehicle_emission_type')) {
+            Schema::create('vehicle_emission_type', function (Blueprint $table) {
             $table->id();
             $table->string('emission_type', 200);
             $table->string('desc', 500);
             $table->timestamps();
         });
+        }
     }
 
     /**

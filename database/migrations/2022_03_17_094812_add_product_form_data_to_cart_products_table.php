@@ -13,11 +13,13 @@ class AddProductFormDataToCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'user_product_order_form')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             $table->text('user_product_order_form')->nullable()->after('tax_rate_id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddProductFormDataToCartProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

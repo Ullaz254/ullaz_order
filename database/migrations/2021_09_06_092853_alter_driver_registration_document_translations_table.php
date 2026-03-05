@@ -13,10 +13,11 @@ class AlterDriverRegistrationDocumentTranslationsTable extends Migration
      */
     public function up()
     {
-        //
-        Schema::table('driver_registration_document_translations', function (Blueprint $table) {
-            $table->mediumText('slug')->after('name');
-        });
+        if (!Schema::hasColumn('driver_registration_document_translations', 'slug')) {
+            Schema::table('driver_registration_document_translations', function (Blueprint $table) {
+                $table->mediumText('slug')->after('name');
+            });
+        }
     }
 
     /**
@@ -26,6 +27,10 @@ class AlterDriverRegistrationDocumentTranslationsTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('driver_registration_document_translations', function (Blueprint $table) {
+            if (Schema::hasColumn('driver_registration_document_translations', 'slug')) {
+                $table->dropColumn('slug');
+            }
+        });
     }
 }

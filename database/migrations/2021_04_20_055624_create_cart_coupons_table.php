@@ -13,7 +13,8 @@ class CreateCartCouponsTable extends Migration
      */
     public function up()
     {
-        Schema::create('cart_coupons', function (Blueprint $table) {
+        if (!Schema::hasTable('cart_coupons')) {
+            Schema::create('cart_coupons', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('cart_id');
             $table->unsignedBigInteger('coupon_id')->nullable();
@@ -21,6 +22,7 @@ class CreateCartCouponsTable extends Migration
             $table->foreign('coupon_id')->references('id')->on('promocodes')->onDelete('set null');
             $table->timestamps();
         });
+        }
     }
 
     /**

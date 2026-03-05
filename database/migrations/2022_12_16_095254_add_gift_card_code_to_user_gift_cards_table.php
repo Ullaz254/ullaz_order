@@ -13,11 +13,13 @@ class AddGiftCardCodeToUserGiftCardsTable extends Migration
      */
     public function up()
     {
-        Schema::table('user_gift_cards', function (Blueprint $table) {
+        if (!Schema::hasColumn('user_gift_cards', 'gift_card_code')) {
+            Schema::table('user_gift_cards', function (Blueprint $table) {
             $table->string('gift_card_code')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddGiftCardCodeToUserGiftCardsTable extends Migration
      */
     public function down()
     {
-        Schema::table('user_gift_cards', function (Blueprint $table) {
-            $table->dropColumn('gift_card_code');
-        });
+        // Reverse migration if needed
     }
 }

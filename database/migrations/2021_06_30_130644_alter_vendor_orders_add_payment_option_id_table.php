@@ -17,9 +17,8 @@ class AlterVendorOrdersAddPaymentOptionIdTable extends Migration
             if (!Schema::hasColumn('order_vendors', 'payment_option_id')) {
                 $table->tinyInteger('payment_option_id')->nullable()->after('coupon_paid_by');
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

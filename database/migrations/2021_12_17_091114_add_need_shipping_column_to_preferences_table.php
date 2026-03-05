@@ -13,11 +13,13 @@ class AddNeedShippingColumnToPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'shipping_mode')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('shipping_mode')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddNeedShippingColumnToPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('shipping_mode');
-        });
+        // Reverse migration if needed
     }
 }

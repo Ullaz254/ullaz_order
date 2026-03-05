@@ -17,9 +17,8 @@ class AddDropoffSlotColumnToOrders extends Migration
             if (!Schema::hasColumn('orders', 'dropoff_scheduled_slot')) {
                 $table->string('dropoff_scheduled_slot')->nullable()->comment('dropoff slot for laundry');
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

@@ -58,7 +58,8 @@ class ConnectDbFromDispatcher
                 'prefix' => '',
                 'prefix_indexes' => true,
                 'strict' => false,
-                'engine' => null
+                'engine' => null,
+                'options' => \App\Helpers\DatabaseHelper::getSslOptions(),
             ];
             Config::set("database.connections.$database_name", $default);
             DB::setDefaultConnection($database_name);

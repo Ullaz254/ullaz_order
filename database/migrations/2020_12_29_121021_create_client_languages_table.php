@@ -13,7 +13,8 @@ class CreateClientLanguagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('client_languages', function (Blueprint $table) {
+        if (!Schema::hasTable('client_languages')) {
+            Schema::create('client_languages', function (Blueprint $table) {
             $table->string('client_code', 10)->nullable();
             $table->bigInteger('language_id')->unsigned()->nullable();
             $table->tinyInteger('is_primary')->default(0)->comment('1 for yes, 0 for no');
@@ -25,6 +26,7 @@ class CreateClientLanguagesTable extends Migration
             $table->foreign('client_code')->references('code')->on('clients')->onUpdate('cascade')->onDelete('set null');
             $table->foreign('language_id')->references('id')->on('languages')->onUpdate('cascade')->onDelete('set null');
         });
+        }
     }
 
     /**

@@ -13,7 +13,8 @@ class CreateOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasTable('order_vendors')) {
+            Schema::create('order_vendors', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('vendor_id')->nullable();
@@ -23,6 +24,7 @@ class CreateOrderVendorsTable extends Migration
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('set null');
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,7 +13,8 @@ class CreateProductAvailabilityTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_availability', function (Blueprint $table) {
+        if (!Schema::hasTable('product_availability')) {
+            Schema::create('product_availability', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->dateTime('date_time')->nullable();
@@ -21,6 +22,7 @@ class CreateProductAvailabilityTable extends Migration
             $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
+        }
     }
 
     /**

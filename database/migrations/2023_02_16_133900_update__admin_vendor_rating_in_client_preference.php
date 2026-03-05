@@ -13,11 +13,13 @@ class UpdateAdminVendorRatingInClientPreference extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'admin_rating')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->decimal('admin_rating',  4, 2)->nullable()->after('rating')->comment('vendor rating by Admin.');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,9 +27,6 @@ class UpdateAdminVendorRatingInClientPreference extends Migration
      */
     public function down()
     {
-      
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('admin_rating');
-        });
+        // Reverse migration if needed
     }
 }

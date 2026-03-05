@@ -13,13 +13,15 @@ class AlterSubscriptionInvoicesUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('subscription_invoices_user', function (Blueprint $table) {
+        if (!Schema::hasColumn('subscription_invoices_user', 'start_date')) {
+            Schema::table('subscription_invoices_user', function (Blueprint $table) {
             $table->date('start_date')->change();
             $table->date('next_date')->change();
             $table->date('end_date')->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class AlterSubscriptionInvoicesUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('subscription_invoices_user', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

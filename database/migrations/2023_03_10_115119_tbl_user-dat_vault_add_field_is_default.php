@@ -13,9 +13,11 @@ class TblUserDatVaultAddFieldIsDefault extends Migration
      */
     public function up()
     {
-        Schema::table('user_data_vault', function (Blueprint $table) {
-            $table->tinyInteger('is_default')->after('card_hint')->default(0);
-        });
+        if (Schema::hasTable('user_data_vaults') && !Schema::hasColumn('user_data_vaults', 'is_default')) {
+            Schema::table('user_data_vaults', function (Blueprint $table) {
+                $table->tinyInteger('is_default')->default(0)->comment('0-No, 1-Yes');
+            });
+        }
     }
 
     /**
@@ -25,8 +27,10 @@ class TblUserDatVaultAddFieldIsDefault extends Migration
      */
     public function down()
     {
-        Schema::table('user_data_vault', function (Blueprint $table) {
-            $table->dropColumn('is_default');
+        Schema::table('user_data_vaults', function (Blueprint $table) {
+            if (Schema::hasColumn('user_data_vaults', 'is_default')) {
+                $table->dropColumn('is_default');
+            }
         });
     }
 }

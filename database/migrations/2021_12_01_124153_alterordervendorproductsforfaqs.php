@@ -13,13 +13,13 @@ class Alterordervendorproductsforfaqs extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'user_product_order_form')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->text('user_product_order_form')->nullable();
-        });
-    }
+                    });
+        }
 
-    
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +27,6 @@ class Alterordervendorproductsforfaqs extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn('user_product_order_form');
-        });
+        // Reverse migration if needed
     }
 }

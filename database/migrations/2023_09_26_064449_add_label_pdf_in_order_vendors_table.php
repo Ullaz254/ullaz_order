@@ -13,12 +13,14 @@ class AddLabelPdfInOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'label_id')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->string('label_id')->nullable();
             $table->string('label_pdf')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddLabelPdfInOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn(['label_id','label_pdf']);
-        });
+        // Reverse migration if needed
     }
 }

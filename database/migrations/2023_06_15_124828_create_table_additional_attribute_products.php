@@ -1,11 +1,11 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateTableAdditionalAttributeProducts extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -13,7 +13,8 @@ class CreateTableAdditionalAttributeProducts extends Migration
      */
     public function up()
     {
-        Schema::create('additional_attribute_products', function (Blueprint $table) {
+        if (!Schema::hasTable('additional_attribute_products')) {
+            Schema::create('additional_attribute_products', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->nullable();
             $table->bigInteger('additional_attribute_id')->unsigned();
@@ -22,9 +23,10 @@ class CreateTableAdditionalAttributeProducts extends Migration
             $table->timestamps();
 
             $table->foreign('additional_attribute_id', 'fk_additional_attribute_products_additional_attribute_id')->references('id')->on('additional_attributes')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -32,9 +34,6 @@ class CreateTableAdditionalAttributeProducts extends Migration
      */
     public function down()
     {
-        Schema::table('additional_attribute_products', function (Blueprint $table) {
-            $table->dropForeign('fk_additional_attribute_products_additional_attribute_id');
-            $table->drop();
-        });
+        // Reverse migration if needed
     }
 }

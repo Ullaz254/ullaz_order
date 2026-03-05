@@ -13,12 +13,14 @@ class AddFieldsToProductVariantsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'square_variant_id')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             $table->string('square_variant_id', 150)->nullable();
             $table->string('square_variant_version', 100)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddFieldsToProductVariantsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

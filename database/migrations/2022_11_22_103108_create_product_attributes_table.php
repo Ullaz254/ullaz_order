@@ -13,7 +13,8 @@ class CreateProductAttributesTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_attributes', function (Blueprint $table) {
+        if (!Schema::hasTable('product_attributes')) {
+            Schema::create('product_attributes', function (Blueprint $table) {
             $table->id();
             // $table->bigInteger('product_id')->unsigned()->nullable();
             // $table->bigInteger('type')->nullable();
@@ -30,6 +31,7 @@ class CreateProductAttributesTable extends Migration
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
             $table->foreign('attribute_option_id')->references('id')->on('attribute_options')->onDelete('cascade');
         });
+        }
     }
 
     /**

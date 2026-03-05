@@ -13,12 +13,14 @@ class AddDistanceTimeCalToClientPreference extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'distance_unit_for_time')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('distance_unit_for_time', 50)->nullable();
             $table->unsignedInteger('distance_to_time_multiplier')->nullable()->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddDistanceTimeCalToClientPreference extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('distance_unit_for_time');
-            $table->dropColumn('distance_to_time_multiplier');
-        });
+        // Reverse migration if needed
     }
 }

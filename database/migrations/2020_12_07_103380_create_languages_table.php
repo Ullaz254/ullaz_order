@@ -13,24 +13,23 @@ class CreateLanguagesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('languages', function(Blueprint $table)
-		{
+		if (!Schema::hasTable('languages')) {
+            Schema::create('languages', function (Blueprint $table) {
 			$table->id();
 			$table->string('sort_code', 4)->unique();
 			$table->string('name', 100)->unique();
 			$table->string('nativeName')->nullable();
 			$table->timestamps();
 		});
+        }
+    }
 
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
 	{
 		Schema::drop('languages');
 	}

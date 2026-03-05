@@ -13,7 +13,8 @@ class CreateProductAddonsTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_addons', function (Blueprint $table) {
+        if (!Schema::hasTable('product_addons')) {
+            Schema::create('product_addons', function (Blueprint $table) {
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->bigInteger('addon_id')->unsigned()->nullable();
             $table->timestamps();
@@ -21,6 +22,7 @@ class CreateProductAddonsTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('addon_id')->references('id')->on('addon_sets')->onDelete('cascade');
         });
+        }
     }
 
     /**

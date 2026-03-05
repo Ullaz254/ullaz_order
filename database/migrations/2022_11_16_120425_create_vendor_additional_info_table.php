@@ -13,7 +13,8 @@ class CreateVendorAdditionalInfoTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_additional_info', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_additional_info')) {
+            Schema::create('vendor_additional_info', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('vendor_id')->unsigned();
             $table->string('company_name')->nullable();
@@ -26,6 +27,7 @@ class CreateVendorAdditionalInfoTable extends Migration
 
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
         });
+        }
     }
 
     /**

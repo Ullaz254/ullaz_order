@@ -13,7 +13,8 @@ class CreateUserSubscriptionFeaturesTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_subscription_features', function (Blueprint $table) {
+        if (!Schema::hasTable('user_subscription_features')) {
+            Schema::create('user_subscription_features', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('subscription_id')->unsigned();
             $table->foreign('subscription_id')->references('id')->on('user_subscriptions')->onDelete('cascade');
@@ -21,6 +22,7 @@ class CreateUserSubscriptionFeaturesTable extends Migration
             $table->foreign('feature_id')->references('id')->on('subscription_features_list')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

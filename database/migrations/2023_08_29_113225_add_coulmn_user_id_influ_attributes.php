@@ -14,11 +14,13 @@ class AddCoulmnUserIdInfluAttributes extends Migration
     public function up()
     {
 
-        Schema::table('influ_attributes', function (Blueprint $table) {
+        if (!Schema::hasColumn('influ_attributes', 'user_id')) {
+            Schema::table('influ_attributes', function (Blueprint $table) {
             $table->integer('user_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,6 +28,6 @@ class AddCoulmnUserIdInfluAttributes extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

@@ -15,9 +15,8 @@ class AddPercentValueToSubPlanFeatures extends Migration
     {
         Schema::table('subscription_plan_features_user', function (Blueprint $table) {
             $table->unsignedDecimal('percent_value', 5, 2)->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

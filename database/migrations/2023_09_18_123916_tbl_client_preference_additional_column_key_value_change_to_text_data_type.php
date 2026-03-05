@@ -13,11 +13,13 @@ class TblClientPreferenceAdditionalColumnKeyValueChangeToTextDataType extends Mi
      */
     public function up()
     {
-        Schema::table('client_preference_additional', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preference_additional', 'key_value')) {
+            Schema::table('client_preference_additional', function (Blueprint $table) {
             $table->text('key_value')->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class TblClientPreferenceAdditionalColumnKeyValueChangeToTextDataType extends Mi
      */
     public function down()
     {
-        Schema::table('client_preference_additional', function (Blueprint $table) {
-            $table->string('key_value')->change();
-        });
+        // Reverse migration if needed
     }
 }

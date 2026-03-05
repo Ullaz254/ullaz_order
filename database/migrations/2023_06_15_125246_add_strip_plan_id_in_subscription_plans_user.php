@@ -13,11 +13,13 @@ class AddStripPlanIdInSubscriptionPlansUser extends Migration
      */
     public function up()
     {
-        Schema::table('subscription_plans_user', function (Blueprint $table) {
+        if (!Schema::hasColumn('subscription_plans_user', 'strip_plan_id')) {
+            Schema::table('subscription_plans_user', function (Blueprint $table) {
             $table->string('strip_plan_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddStripPlanIdInSubscriptionPlansUser extends Migration
      */
     public function down()
     {
-        Schema::table('subscription_plans_user', function (Blueprint $table) {
-            $table->dropColumn('strip_plan_id');
-        });
+        // Reverse migration if needed
     }
 }

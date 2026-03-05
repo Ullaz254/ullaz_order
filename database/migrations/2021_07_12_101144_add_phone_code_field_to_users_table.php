@@ -13,11 +13,13 @@ class AddPhoneCodeFieldToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'phone_code')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->string('phone_code')->after('phone_number')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPhoneCodeFieldToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('phone_code');
-        });
+        // Reverse migration if needed
     }
 }

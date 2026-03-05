@@ -15,9 +15,8 @@ class AddPercentValueToSubscriptionInvoice extends Migration
     {
         Schema::table('subscription_invoice_features_user', function (Blueprint $table) {
             $table->unsignedDecimal('percent_value', 5, 2)->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

@@ -13,11 +13,13 @@ class AddFixedFeeAmountToOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'fixed_fee')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
            $table->decimal('fixed_fee',12,4)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddFixedFeeAmountToOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn('fixed_fee');
-        });
+        // Reverse migration if needed
     }
 }

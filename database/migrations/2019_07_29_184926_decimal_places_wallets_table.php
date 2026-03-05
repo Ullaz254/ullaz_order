@@ -24,10 +24,11 @@ class DecimalPlacesWalletsTable extends Migration
             $table->smallInteger('decimal_places')
                 ->default(2)
                 ->after('balance');
-        });
-    }
-
+        }); } 
+    
     /**
+     * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void

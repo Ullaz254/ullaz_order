@@ -13,12 +13,14 @@ class AlterProductsAddColumnPerHourPriceAndKmIncluded extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'per_hour_price')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->decimal('per_hour_price', 16, 8)->nullable();
             $table->integer('km_included')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AlterProductsAddColumnPerHourPriceAndKmIncluded extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('per_hour_price');
-            $table->dropColumn('km_included');
-        });
+        // Reverse migration if needed
     }
 }

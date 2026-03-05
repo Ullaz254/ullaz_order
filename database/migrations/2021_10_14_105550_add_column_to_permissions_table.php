@@ -13,12 +13,14 @@ class AddColumnToPermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('permissions', function (Blueprint $table) {
+        if (!Schema::hasColumn('permissions', 'status')) {
+            Schema::table('permissions', function (Blueprint $table) {
             //
             $table->tinyInteger('status')->default(1)->after('slug');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddColumnToPermissionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('permissions', function (Blueprint $table) {
-            //
-            $table->dropColumn('status');
-        });
+        // Reverse migration if needed
     }
 }

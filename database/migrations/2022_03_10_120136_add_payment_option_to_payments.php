@@ -16,9 +16,8 @@ class AddPaymentOptionToPayments extends Migration
         Schema::table('payments', function (Blueprint $table) {
             $table->unsignedBigInteger('payment_option_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

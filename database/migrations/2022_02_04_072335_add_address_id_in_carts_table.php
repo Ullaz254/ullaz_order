@@ -13,11 +13,13 @@ class AddAddressIdInCartsTable extends Migration
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('carts', 'address_id')) {
+            Schema::table('carts', function (Blueprint $table) {
             $table->integer('address_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAddressIdInCartsTable extends Migration
      */
     public function down()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

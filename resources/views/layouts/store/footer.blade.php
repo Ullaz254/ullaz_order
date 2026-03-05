@@ -249,7 +249,7 @@ gtag('config', 'G-5LPF1QP3Y3');
 @endif
 </script>
 <!-- End googletagmanager -->
-    @if(isset($analytics['fpixel_id']))
+    @if(!empty($analytics['fpixel_id']))
     <!-- Meta Pixel Code -->
         <script>
         !function(f,b,e,v,n,t,s)
@@ -290,6 +290,26 @@ if($showSubscriptionPlanPopUp == 1){
     @endphp
 
      is_service_product_price_from_dispatch_forOnDemand ="{{ $is_service_product_price_from_dispatch_forOnDemand  }}";
+    @php
+        // Define URL variables BEFORE first use (local vs domain)
+        $appEnv = config('app.env', env('APP_ENV', 'production'));
+        $isLocal = ($appEnv === 'local' || $appEnv === 'development' || request()->getHost() === 'localhost' || request()->getHost() === '127.0.0.1');
+        if ($isLocal) {
+            $baseUrl = 'http://localhost:8000';
+            $cartProductsUrl = $baseUrl . '/cartProducts';
+            $configGetUrl = $baseUrl . '/getConfig';
+            $homePageDataUrl = $baseUrl . '/homePageData';
+            $homePageDataUrlNew = $baseUrl . '/homePageDataNew';
+            $homePageDataCategoryMenuUrl = $baseUrl . '/homePageDataCategoryMenu';
+        } else {
+            $baseUrl = config('app.url');
+            $cartProductsUrl = route('getCartProducts');
+            $configGetUrl = route('config.get');
+            $homePageDataUrl = route('homePageData');
+            $homePageDataUrlNew = route('homePageDataNew');
+            $homePageDataCategoryMenuUrl = route('homePageDataCategoryMenu');
+        }
+    @endphp
     var autocomplete_url = "{{ route('autocomplete') }}";
     let stripe_publishable_key = '{{ $stripe_publishable_key }}';
     let stripe_fpx_publishable_key = '{{ $stripe_fpx_publishable_key }}';
@@ -307,11 +327,11 @@ if($showSubscriptionPlanPopUp == 1){
     let home_page_url2 = home_page_url.concat("/");
     var add_to_whishlist_url = "{{ route('addWishlist') }}";
     var show_cart_url = "{{ route('showCart') }}";
-    var home_page_data_url = "{{ route('homePageData') }}";
-    var home_page_data_url_new = "{{ route('homePageDataNew') }}";
+    var home_page_data_url = "{{ $homePageDataUrl }}";
+    var home_page_data_url_new = "{{ $homePageDataUrlNew }}";
     var postHomePageDataSingle = "{{ route('postHomePageDataSingle') }}";
     var home_page_banners_url = "{{ route('postHomePageDataBanners') }}";
-    var home_page_data_url_category_menu = "{{ route('homePageDataCategoryMenu') }}";
+    var home_page_data_url_category_menu = "{{ $homePageDataCategoryMenuUrl }}";
     var client_preferences_url = "{{ route('getClientPreferences') }}";
     var check_isolate_single_vendor_url = "{{ route('checkIsolateSingleVendor') }}";
     let empty_cart_url = "{{route('emptyCartData')}}";
@@ -319,11 +339,11 @@ if($showSubscriptionPlanPopUp == 1){
     var session_vendor_type = "{{Session::get('vendorType')}}";
     var delete_cart_url = "{{ route('emptyCartData') }}";
     var user_checkout_url= "{{ route('user.checkout') }}";
-    var cart_product_url= "{{ route('getCartProducts') }}";
+    var cart_product_url= "{{ $cartProductsUrl }}";
     var delete_cart_product_url= "{{ route('deleteCartProduct') }}";
     var change_primary_data_url = "{{ route('changePrimaryData') }}";
     var url1 = "{{ route('config.update') }}";
-    var url2 = "{{ route('config.get') }}";
+    var url2 = "{{ $configGetUrl }}";
     var razorpay_complete_payment_url = "{{ route('payment.razorpayCompletePurchase') }}";
     var payment_razorpay_url = "{{route('payment.razorpayPurchase')}}";
     var pyment_totalpay_url= "{{ route('make.payment') }}";
@@ -397,9 +417,9 @@ if($showSubscriptionPlanPopUp == 1){
     var stop_accepting_orders = "{{Session::get('preferences')->stop_order_acceptance_for_users ?? 0}}";
 
 // Client Detail
-    var client_company_name = "{{Session::get('clientdata')->company_name}}";
-    var client_logo_url = "{{Session::get('clientdata')->logo_image_url}}";
-    var digit_count = "{{$client_preference_detail->digit_after_decimal}}";
+    var client_company_name = "{{Session::get('clientdata') ? (Session::get('clientdata')->company_name ?? '') : ''}}";
+    var client_logo_url = "{{Session::get('clientdata') ? (Session::get('clientdata')->logo_image_url ?? '') : ''}}";
+    var digit_count = "{{$client_preference_detail->digit_after_decimal ?? 2}}";
 
 //////////////Telr payment Routes
     var skipcash = "{{route('payment.skipcash')}}";
@@ -460,18 +480,23 @@ if($showSubscriptionPlanPopUp == 1){
 
     var bindLatlng, bindmapProp, bindMap = '';
     function bindLatestCoords(userLatitude, userLongitude){
+        if (typeof google === 'undefined' || !google.maps) return;
+        var el = document.getElementById("nearmap");
+        if (!el) return;
         bindLatlng = new google.maps.LatLng(userLatitude, userLongitude);
         bindmapProp = {
             center:bindLatlng,
             zoom:13,
             mapTypeId:google.maps.MapTypeId.ROADMAP
         };
-        bindMap=new google.maps.Map(document.getElementById("nearmap"), bindmapProp);
+        bindMap=new google.maps.Map(el, bindmapProp);
     }
-    bindLatestCoords(userLatitude, userLongitude);
+    if (typeof google !== 'undefined' && google.maps && document.getElementById("nearmap")) {
+        bindLatestCoords(userLatitude, userLongitude);
+    }
 
     // || $set_common_business_type == 'taxi'
-    @if($client_preference_detail->hide_nav_bar == 1)
+    @if($client_preference_detail && isset($client_preference_detail->hide_nav_bar) && $client_preference_detail->hide_nav_bar == 1)
       $('.main-menu').addClass('d-none').removeClass('d-block');
       $('.menu-navigation').addClass('d-none').removeClass('d-block');
     @endif

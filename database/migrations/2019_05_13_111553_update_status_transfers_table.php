@@ -55,10 +55,11 @@ class UpdateStatusTransfersTable extends Migration
             $table->string('status_last')
                 ->nullable()
                 ->change();
-        });
-    }
-
+        }); } 
+    
     /**
+     * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void

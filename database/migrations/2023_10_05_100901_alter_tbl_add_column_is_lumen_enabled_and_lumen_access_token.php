@@ -13,12 +13,14 @@ class AlterTblAddColumnIsLumenEnabledAndLumenAccessToken extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
+        if (!Schema::hasColumn('clients', 'is_lumen_enabled')) {
+            Schema::table('clients', function (Blueprint $table) {
             $table->tinyInteger('is_lumen_enabled')->default(0);
             $table->string('lumen_access_token', 60)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AlterTblAddColumnIsLumenEnabledAndLumenAccessToken extends Migration
      */
     public function down()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            $table->dropColumn('is_lumen_enabled');
-            $table->dropColumn('lumen_access_token');
-        });
+        // Reverse migration if needed
     }
 }

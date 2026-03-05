@@ -34,8 +34,8 @@ class CustomDomain
     
     // Allow main domain to pass through without client lookup
     // Also handle case where Main_Domain might be cached or not set
-    if ($domain == $mainDomain || $domain == 'drivarr.com') {
-      \Log::info('Main domain detected, allowing request through', [
+    if ($domain == $mainDomain || $domain == 'drivarr.com' || $domain == 'localhost' || $domain == '127.0.0.1' || strpos($domain, 'localhost') !== false) {
+      \Log::info('Main domain or localhost detected, allowing request through', [
         'domain' => $domain,
         'mainDomain' => $mainDomain
       ]);
@@ -53,6 +53,15 @@ class CustomDomain
       try {
         // Check if database connection is available
         DB::connection()->getPdo();
+        
+        // Check if clients table exists
+        $tableExists = DB::select("SHOW TABLES LIKE 'clients'");
+        if (empty($tableExists)) {
+          // Table doesn't exist, allow request to continue with default connection
+          \Log::info('clients table does not exist, using default connection', ['domain' => $domain]);
+          return $next($request);
+        }
+        
         $client = Client::select('name', 'email', 'phone_number', 'is_deleted', 'is_blocked', 'logo', 'company_name', 'company_address', 'status', 'code', 'database_name', 'database_host', 'database_port', 'database_username', 'database_password', 'custom_domain', 'sub_domain')
           ->where(function ($q) use ($domain, $subDomain) {
             $q->where('custom_domain', $domain)
@@ -69,17 +78,17 @@ class CustomDomain
             $existRedis = json_encode($client->toArray());
           }
         } else {
-          // No client found for this domain - return 404 view
-          \Log::warning('No client found for domain in CustomDomain middleware', ['domain' => $domain]);
-          abort(404);
+          // No client found for this domain - allow to continue (might be main domain or localhost)
+          \Log::info('No client found for domain, allowing request to continue', ['domain' => $domain]);
+          return $next($request);
         }
       } catch (\Exception $e) {
-        // Database connection failed - return 404 view
-        \Log::error('Database connection failed in CustomDomain middleware', [
+        // Database connection failed - allow to continue with default connection
+        \Log::warning('Database connection failed in CustomDomain middleware, using default', [
           'error' => $e->getMessage(),
           'domain' => $domain
         ]);
-        abort(404);
+        return $next($request);
       }
     }
     $callback = '';
@@ -102,7 +111,8 @@ class CustomDomain
         'prefix' => '',
         'prefix_indexes' => true,
         'strict' => false,
-        'engine' => null
+        'engine' => null,
+        'options' => \App\Helpers\DatabaseHelper::getSslOptions(),
       ];
       Config::set("database.connections.$database_name", $default);
       Config::set("client_id", 1);

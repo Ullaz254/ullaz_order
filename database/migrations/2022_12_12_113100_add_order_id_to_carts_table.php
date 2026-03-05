@@ -13,11 +13,13 @@ class AddOrderIdToCartsTable extends Migration
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('carts', 'order_id')) {
+            Schema::table('carts', function (Blueprint $table) {
             $table->bigInteger('order_id')->unsigned()->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddOrderIdToCartsTable extends Migration
      */
     public function down()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

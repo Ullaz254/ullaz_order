@@ -13,14 +13,13 @@ class UpdateSpotlightDealsInProductTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'spotlight_deals')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->tinyInteger('spotlight_deals')->default(0)->nullable()->comment('0-No, 1-Yes');
-        });
-        Schema::table('home_products', function (Blueprint $table) {
-            $table->Integer('layout_id')->nullable()->after('title');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,11 +27,6 @@ class UpdateSpotlightDealsInProductTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('spotlight_deals');
-        });
-        Schema::table('home_products', function (Blueprint $table) {
-            $table->dropColumn('layout_id');
-        });
+        // Reverse migration if needed
     }
 }

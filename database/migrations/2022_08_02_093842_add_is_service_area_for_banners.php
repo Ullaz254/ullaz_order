@@ -13,11 +13,13 @@ class AddIsServiceAreaForBanners extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'is_service_area_for_banners')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('is_service_area_for_banners')->default(0)->nullable()->comment('0-Inactive, 1-Active');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsServiceAreaForBanners extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('is_service_area_for_banners');
-        });
+        // Reverse migration if needed
     }
 }

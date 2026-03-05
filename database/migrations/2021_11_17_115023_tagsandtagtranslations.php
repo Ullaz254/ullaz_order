@@ -13,23 +13,25 @@ class Tagsandtagtranslations extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
-            $table->id();
-             $table->timestamps();
-        });
+        if (!Schema::hasTable('tags')) {
+            Schema::create('tags', function (Blueprint $table) {
+                $table->id();
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('tag_translations', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->nullable();
-            $table->mediumText('slug')->nullable();
-            $table->bigInteger('language_id')->unsigned();
-            $table->bigInteger('tag_id')->unsigned();
-            $table->timestamps();
+        if (!Schema::hasTable('tag_translations')) {
+            Schema::create('tag_translations', function (Blueprint $table) {
+                $table->id();
+                $table->string('name')->nullable();
+                $table->mediumText('slug')->nullable();
+                $table->bigInteger('language_id')->unsigned();
+                $table->bigInteger('tag_id')->unsigned();
+                $table->timestamps();
 
-            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
-        });
-
-        
+                $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
+            });
+        }
     }
 
     /**

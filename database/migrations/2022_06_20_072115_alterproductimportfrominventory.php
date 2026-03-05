@@ -13,11 +13,13 @@ class Alterproductimportfrominventory extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'import_from_inventory')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->tinyInteger('import_from_inventory')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class Alterproductimportfrominventory extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('import_from_inventory');
-        });
+        // Reverse migration if needed
     }
 }

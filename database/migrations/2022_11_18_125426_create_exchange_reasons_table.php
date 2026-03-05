@@ -13,13 +13,15 @@ class CreateExchangeReasonsTable extends Migration
      */
     public function up()
     {
-        Schema::create('exchange_reasons', function (Blueprint $table) {
+        if (!Schema::hasTable('exchange_reasons')) {
+            Schema::create('exchange_reasons', function (Blueprint $table) {
             $table->id();
             $table->string('title', 500)->nullable();
             $table->enum('status',['Active','Block'])->default('Active');
             $table->tinyInteger('order');
             $table->timestamps();
         });
+        }
     }
 
     /**

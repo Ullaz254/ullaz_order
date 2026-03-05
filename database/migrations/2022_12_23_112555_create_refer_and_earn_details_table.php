@@ -13,7 +13,8 @@ class CreateReferAndEarnDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('refer_and_earn_details', function (Blueprint $table) {
+        if (!Schema::hasTable('refer_and_earn_details')) {
+            Schema::create('refer_and_earn_details', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('attribute_id')->unsigned()->nullable(); 
             $table->bigInteger('attribute_option_id')->unsigned()->nullable();
@@ -28,6 +29,7 @@ class CreateReferAndEarnDetailsTable extends Migration
             $table->foreign('attribute_option_id')->references('id')->on('influ_attr_opt')->onDelete('cascade');
             $table->foreign('influencer_user_id')->references('id')->on('influencer_users')->onDelete('cascade');
         });
+        }
     }
 
     /**

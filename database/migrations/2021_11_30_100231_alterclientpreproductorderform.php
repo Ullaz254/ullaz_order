@@ -6,18 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 class Alterclientpreproductorderform extends Migration
 {
-     /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'product_order_form')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('product_order_form')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class Alterclientpreproductorderform extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('product_order_form');
-        });
+        // Reverse migration if needed
     }
 }

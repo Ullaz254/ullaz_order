@@ -13,16 +13,14 @@ class AddDescriptionToBidRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::table('bid_requests', function (Blueprint $table) {
+        if (!Schema::hasColumn('bid_requests', 'bid_number')) {
+            Schema::table('bid_requests', function (Blueprint $table) {
             $table->string('bid_number');
             $table->string('description')->nullable();
-        });
+                    });
+        }
 
-        Schema::table('bids', function (Blueprint $table) {
-            $table->string('bid_order_number');
-        });
-    }
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -30,13 +28,6 @@ class AddDescriptionToBidRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::table('bid_requests', function (Blueprint $table) {
-            $table->dropColumn('description');
-            $table->dropColumn('bid_number');
-        });
-
-        Schema::table('bids', function (Blueprint $table) {
-            $table->dropColumn('bid_order_number');
-        });
+        // Reverse migration if needed
     }
 }

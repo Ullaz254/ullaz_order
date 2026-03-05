@@ -20,9 +20,8 @@ class AlterCartCouponsForVendorIdsFieldTable extends Migration
         }
         Schema::table('cart_coupons', function (Blueprint $table) {
             $table->unsignedBigInteger('vendor_id')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

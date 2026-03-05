@@ -13,7 +13,8 @@ class CreateAppStylingOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('app_styling_options', function (Blueprint $table) {
+        if (!Schema::hasTable('app_styling_options')) {
+            Schema::create('app_styling_options', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('app_styling_id')->unsigned()->nullable();
             $table->foreign('app_styling_id')->references('id')->on('app_stylings')->onDelete('cascade');
@@ -22,6 +23,7 @@ class CreateAppStylingOptionsTable extends Migration
             $table->tinyInteger('is_selected')->comment('1-yes, 2-no')->default('1');
             $table->timestamps();
         });
+        }
     }
 
     /**

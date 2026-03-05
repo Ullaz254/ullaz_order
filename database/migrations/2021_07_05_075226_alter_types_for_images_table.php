@@ -13,11 +13,13 @@ class AlterTypesForImagesTable extends Migration
      */
     public function up()
     {
-        Schema::table('types', function (Blueprint $table) {
+        if (!Schema::hasColumn('types', 'image')) {
+            Schema::table('types', function (Blueprint $table) {
             $table->mediumText('image')->after('description')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AlterTypesForImagesTable extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

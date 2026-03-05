@@ -13,7 +13,8 @@ class CreateProductUpSellsTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_up_sells', function (Blueprint $table) {
+        if (!Schema::hasTable('product_up_sells')) {
+            Schema::create('product_up_sells', function (Blueprint $table) {
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->bigInteger('upsell_product_id')->unsigned()->nullable();
             $table->timestamps();
@@ -21,6 +22,7 @@ class CreateProductUpSellsTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('upsell_product_id')->references('id')->on('products')->onDelete('cascade');
         });
+        }
     }
 
     /**

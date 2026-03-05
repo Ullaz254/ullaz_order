@@ -13,11 +13,13 @@ class ChangeDatatypeInCartVendorDeliveryFeeTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_vendor_delivery_fee', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_vendor_delivery_fee', 'delivery_fee')) {
+            Schema::table('cart_vendor_delivery_fee', function (Blueprint $table) {
             $table->decimal('delivery_fee', 16, 8)->nullable()->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class ChangeDatatypeInCartVendorDeliveryFeeTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_vendor_delivery_fee', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

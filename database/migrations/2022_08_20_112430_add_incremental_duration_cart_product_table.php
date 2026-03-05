@@ -13,12 +13,14 @@ class AddIncrementalDurationCartProductTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'additional_increments_hrs_min')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             //
             $table->string('additional_increments_hrs_min')->default(0)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddIncrementalDurationCartProductTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            $table->dropColumn('incremental_price');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddSeatsInOrderVendorProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'booking_seats')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->integer('booking_seats')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSeatsInOrderVendorProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn(['booking_seats']);
-        });
+        // Reverse migration if needed
     }
 }

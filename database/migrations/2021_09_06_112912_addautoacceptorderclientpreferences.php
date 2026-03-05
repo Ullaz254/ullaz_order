@@ -13,9 +13,17 @@ class Addautoacceptorderclientpreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('auto_accept_order')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
+        // Skip if column already exists to avoid row size error
+        if (!Schema::hasColumn('client_preferences', 'auto_accept_order')) {
+            try {
+                Schema::table('client_preferences', function (Blueprint $table) {
+                    $table->tinyInteger('auto_accept_order')->nullable()->default(0)->comment('0-No, 1-Yes');
+                });
+            } catch (\Exception $e) {
+                // If row size error, log and skip
+                \Log::warning('Could not add auto_accept_order column due to row size limit: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -26,7 +34,9 @@ class Addautoacceptorderclientpreferences extends Migration
     public function down()
     {
         Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('auto_accept_order');
+            if (Schema::hasColumn('client_preferences', 'auto_accept_order')) {
+                $table->dropColumn('auto_accept_order');
+            }
         });
     }
 }

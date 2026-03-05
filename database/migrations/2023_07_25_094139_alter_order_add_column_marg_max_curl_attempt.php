@@ -13,11 +13,13 @@ class AlterOrderAddColumnMargMaxCurlAttempt extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'marg_max_attempt')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->integer('marg_max_attempt')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterOrderAddColumnMargMaxCurlAttempt extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('marg_max_attempt');
-        });
+        // Reverse migration if needed
     }
 }

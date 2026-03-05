@@ -35,8 +35,17 @@ class AppServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot(Request $request){
-        if (config('app.env') != 'local') {
+        // Force localhost URL for local development FIRST, before anything else
+        if (config('app.env') === 'local') {
+            config(['app.url' => 'http://localhost:8000']);
+            \URL::forceRootUrl('http://localhost:8000');
+            \URL::forceScheme('http');
+        } elseif (config('app.env') === 'production' && !$request->isSecure()) {
+            // Only force HTTPS in production
             \URL::forceScheme('https');
+        } else {
+            // Force HTTP for other environments
+            \URL::forceScheme('http');
         }
        $this->connectDynamicDb($request);
         Paginator::useBootstrap();
@@ -61,17 +70,67 @@ class AppServiceProvider extends ServiceProvider
                 $social_media_details = SocialMedia::get();
             }
             
-        $client_preference_detail = ClientPreference::where(['id' => 1])->first();
-        if ($client_preference_detail) {
-            $favicon_url = $client_preference_detail->favicon['proxy_url'] . '600/400' . $client_preference_detail->favicon['image_path'];
-        }
-        $client_head = Client::where(['id' => 1])->first();
+            // Check if tables exist before querying
+            if(Schema::hasTable('client_preferences')) {
+                $client_preference_detail = ClientPreference::where(['id' => 1])->first();
+                if ($client_preference_detail && isset($client_preference_detail->favicon)) {
+                    $favicon_url = $client_preference_detail->favicon['proxy_url'] . '600/400' . $client_preference_detail->favicon['image_path'];
+                }
+            }
+            
+            // Ensure client_preference_detail is always an object, not null
+            // Create a default object with all common properties set to safe defaults
+            if (!$client_preference_detail) {
+                $defaults = [
+                    'show_dark_mode' => 0,
+                    'hide_nav_bar' => 0,
+                    'Default_location_name' => null,
+                    'Default_latitude' => 0,
+                    'Default_longitude' => 0,
+                    'business_type' => '',
+                    'client_code' => 'default',
+                    'is_hyperlocal' => 0,
+                    'rating_check' => 0,
+                    'dinein_check' => 0,
+                    'takeaway_check' => 0,
+                    'delivery_check' => 0,
+                    'show_icons' => 0,
+                    'web_template_id' => 1,
+                    'app_template_id' => 1,
+                    'age_restriction' => 0,
+                    'age_restriction_title' => null,
+                    'subscription_mode' => 0,
+                    'enquire_mode' => 0,
+                    'cart_enable' => 0,
+                    'show_wishlist' => 0,
+                    'show_contact_us' => 0,
+                ];
+                // Create object with __get magic method to return null for undefined properties
+                $client_preference_detail = new class($defaults) {
+                    private $data;
+                    public function __construct($data) {
+                        $this->data = $data;
+                    }
+                    public function __get($name) {
+                        return $this->data[$name] ?? null;
+                    }
+                    public function __isset($name) {
+                        return isset($this->data[$name]);
+                    }
+                };
+            }
+            
+            if(Schema::hasTable('clients')) {
+                $client_head = Client::where(['id' => 1])->first();
+            }
 
         $payment_codes = ['stripe', 'stripe_fpx', 'yoco', 'checkout', 'cashfree','payphone','stripe_oxxo','stripe_ideal','khalti','data_trans'];
-        if(checkColumnExists('payment_options', 'test_mode')){
-            $payment_options = PaymentOption::select('code','credentials','test_mode')->whereIn('code', $payment_codes)->where('status', 1)->get();
-        }else{
-            $payment_options = PaymentOption::select('code','credentials')->whereIn('code', $payment_codes)->where('status', 1)->get();
+        if(Schema::hasTable('payment_options')) {
+            if(checkColumnExists('payment_options', 'test_mode')){
+                $payment_options = PaymentOption::select('code','credentials','test_mode')->whereIn('code', $payment_codes)->where('status', 1)->get();
+            }else{
+                $payment_options = PaymentOption::select('code','credentials')->whereIn('code', $payment_codes)->where('status', 1)->get();
+            }
         }
 
         if(@$payment_options){
@@ -170,13 +229,30 @@ class AppServiceProvider extends ServiceProvider
                 Log::warning('Redis connection failed, continuing without cache', ['error' => $e->getMessage()]);
             }
 
-            if ($domain != env('Main_Domain')) {
+            $mainDomain = env('Main_Domain', 'localhost');
+            
+            // Allow localhost and main domain to pass through without client lookup
+            if ($domain == $mainDomain || $domain == 'drivarr.com' || $domain == 'localhost' || $domain == '127.0.0.1' || strpos($domain, 'localhost') !== false) {
+                // Use default database connection for localhost/main domain
+                return;
+            }
+
+            if ($domain != $mainDomain) {
 
                 if (!$existRedis) {
                     $client = null;
                     try {
                         // Check if database connection is available
                         DB::connection()->getPdo();
+                        
+                        // Check if clients table exists
+                        $tableExists = DB::select("SHOW TABLES LIKE 'clients'");
+                        if (empty($tableExists)) {
+                            // Table doesn't exist, use default connection
+                            Log::info('clients table does not exist in connectDynamicDb, using default connection', ['domain' => $domain]);
+                            return;
+                        }
+                        
                     $client = Client::select('name', 'email', 'phone_number', 'is_deleted', 'is_blocked', 'logo', 'company_name', 'company_address', 'status', 'code', 'database_name', 'database_host', 'database_port', 'database_username', 'database_password', 'custom_domain', 'sub_domain')
                         ->where(function ($q) use ($domain, $subDomain) {
                             $q->where('custom_domain', $domain)
@@ -190,6 +266,7 @@ class AppServiceProvider extends ServiceProvider
                             'domain' => $domain
                         ]);
                         // Continue without client data - will use default connection
+                        return;
                     }
 
 
@@ -235,7 +312,8 @@ class AppServiceProvider extends ServiceProvider
                                 'prefix' => '',
                                 'prefix_indexes' => true,
                                 'strict' => false,
-                                'engine' => null
+                                'engine' => null,
+                                'options' => \App\Helpers\DatabaseHelper::getSslOptions(),
                             ];
                             Config::set("database.connections.$defaultDbName", $default);
                             DB::setDefaultConnection($defaultDbName);
@@ -268,7 +346,8 @@ class AppServiceProvider extends ServiceProvider
                                 'prefix' => '',
                                 'prefix_indexes' => true,
                                 'strict' => false,
-                                'engine' => null
+                                'engine' => null,
+                                'options' => \App\Helpers\DatabaseHelper::getSslOptions(),
                             ];
                             Config::set("database.connections.$database_name", $default);
                             Config::set("client_id", 1);

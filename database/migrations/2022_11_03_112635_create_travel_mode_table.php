@@ -13,12 +13,14 @@ class CreateTravelModeTable extends Migration
      */
     public function up()
     {
-        Schema::create('travel_mode', function (Blueprint $table) {
+        if (!Schema::hasTable('travel_mode')) {
+            Schema::create('travel_mode', function (Blueprint $table) {
             $table->id();
             $table->string('travelmode', 200);
             $table->string('desc', 500);
             $table->timestamps();
         });
+        }
     }
 
     /**

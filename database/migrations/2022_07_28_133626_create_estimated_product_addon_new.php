@@ -13,13 +13,15 @@ class CreateEstimatedProductAddonNew extends Migration
      */
     public function up()
     {
-        Schema::create('estimated_product_addon_new', function (Blueprint $table) {
+        if (!Schema::hasTable('estimated_product_addon_new')) {
+            Schema::create('estimated_product_addon_new', function (Blueprint $table) {
             $table->id();
             $table->foreignId('estimated_product_id')->references('id')->on('estimated_product_new')->onDelete('cascade');
             $table->foreignId('estimated_addon_id')->references('id')->on('estimate_addon_sets')->onDelete('cascade');
             $table->foreignId('estimated_addon_option_id')->references('id')->on('estimate_addon_options')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

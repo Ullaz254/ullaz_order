@@ -13,13 +13,15 @@ class CreateShowSubscriptionPlanOnSignupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('show_subscription_plan_on_signups', function (Blueprint $table) {
+        if (!Schema::hasTable('show_subscription_plan_on_signups')) {
+            Schema::create('show_subscription_plan_on_signups', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('show_plan_customer')->nullable()->default(0)->comment('0-No, 1-Yes');
             $table->tinyInteger('every_sign_up')->nullable()->default(0)->comment('0-No, 1-Yes');
             $table->tinyInteger('every_app_open')->nullable()->default(0)->comment('0-No, 1-Yes');
             $table->timestamps();
         });
+        }
     }
 
     /**

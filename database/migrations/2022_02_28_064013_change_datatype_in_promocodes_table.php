@@ -13,13 +13,15 @@ class ChangeDatatypeInPromocodesTable extends Migration
      */
     public function up()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
+        if (!Schema::hasColumn('promocodes', 'amount')) {
+            Schema::table('promocodes', function (Blueprint $table) {
             $table->decimal('amount', 16, 8)->nullable()->change();
             $table->decimal('minimum_spend', 16, 8)->nullable()->change();
             $table->decimal('maximum_spend', 16, 8)->nullable()->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class ChangeDatatypeInPromocodesTable extends Migration
      */
     public function down()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

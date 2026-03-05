@@ -17,9 +17,8 @@ class AlterTableOrderProductAddons extends Migration
             if(!Schema::hasColumn('order_product_addons', 'addon_count')){
                 $table->string('addon_count')->nullable();
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

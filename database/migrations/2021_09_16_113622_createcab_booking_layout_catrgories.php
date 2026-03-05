@@ -13,14 +13,16 @@ class CreatecabBookingLayoutCatrgories extends Migration
      */
     public function up()
     {
-        Schema::create('cab_booking_layout_categories', function (Blueprint $table) {
+        if (!Schema::hasTable('cab_booking_layout_categories')) {
+            Schema::create('cab_booking_layout_categories', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('cab_booking_layout_id')->unsigned()->nullable();
             $table->bigInteger('category_id')->unsigned()->nullable();
             $table->foreign('cab_booking_layout_id')->references('id')->on('cab_booking_layouts')->onDelete('cascade');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
              $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

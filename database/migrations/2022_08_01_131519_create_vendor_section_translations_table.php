@@ -13,7 +13,8 @@ class CreateVendorSectionTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_section_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_section_translations')) {
+            Schema::create('vendor_section_translations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('vendor_section_id');
             $table->mediumText('title');
@@ -21,6 +22,7 @@ class CreateVendorSectionTranslationsTable extends Migration
             $table->bigInteger('language_id')->unsigned();
             $table->timestamps();
         });
+        }
     }
 
     /**

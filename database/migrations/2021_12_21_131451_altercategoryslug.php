@@ -13,11 +13,13 @@ class Altercategoryslug extends Migration
      */
     public function up()
     {
-        Schema::table('categories', function (Blueprint $table) {
+        if (!Schema::hasColumn('categories', 'slug')) {
+            Schema::table('categories', function (Blueprint $table) {
             $table->string('slug', 500)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class Altercategoryslug extends Migration
      */
     public function down()
     {
-        
+        // Reverse migration if needed
     }
 }

@@ -13,8 +13,8 @@ class CreateCountriesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('countries', function(Blueprint $table)
-		{
+		if (!Schema::hasTable('countries')) {
+            Schema::create('countries', function (Blueprint $table) {
 			$table->id();
 			$table->string('code', 5);
 			$table->string('name', 56)->nullable();
@@ -29,15 +29,15 @@ class CreateCountriesTable extends Migration {
 			$table->index('code');
 			$table->index('name');
 		});
+        }
+    }
 
-	}
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
 	{
 		/*Schema::table('countries', function (Blueprint $table) {
 			$table->dropIndex('code');

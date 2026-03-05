@@ -13,12 +13,14 @@ class AlterTableVendorsAddRazorpay extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'razorpay_contact_json')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->longText('razorpay_contact_json')->nullable();
             $table->longText('razorpay_bank_json')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AlterTableVendorsAddRazorpay extends Migration
      */
     public function down()
     {
-        Schema::table('vendors',function (Blueprint $table){
-            $table->dropColumn('razorpay_contact_json');
-            $table->dropColumn('razorpay_bank_json');
-        });
+        // Reverse migration if needed
     }
 }

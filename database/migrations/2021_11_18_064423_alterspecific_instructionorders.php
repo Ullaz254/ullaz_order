@@ -13,13 +13,13 @@ class AlterspecificInstructionorders extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'specific_instructions')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->text('specific_instructions')->nullable();
-        });
-    }
+                    });
+        }
 
-    
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +27,6 @@ class AlterspecificInstructionorders extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('specific_instructions');
-        });
+        // Reverse migration if needed
     }
 }

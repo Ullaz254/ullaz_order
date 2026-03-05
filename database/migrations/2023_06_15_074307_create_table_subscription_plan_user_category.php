@@ -1,11 +1,11 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateTableSubscriptionPlanUserCategory extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -13,7 +13,8 @@ class CreateTableSubscriptionPlanUserCategory extends Migration
      */
     public function up()
     {
-        Schema::create('subscription_plan_user_category', function (Blueprint $table) {
+        if (!Schema::hasTable('subscription_plan_user_category')) {
+            Schema::create('subscription_plan_user_category', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('subscription_id')->unsigned();
             $table->bigInteger('category_id')->unsigned();
@@ -28,9 +29,10 @@ class CreateTableSubscriptionPlanUserCategory extends Migration
                 ->references('id')
                 ->on('categories')
                 ->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -38,12 +40,6 @@ class CreateTableSubscriptionPlanUserCategory extends Migration
      */
     public function down()
     {
-        Schema::table('subscription_plan_user_category', function (Blueprint $table) {
-            $table->dropForeign([
-                'fk_subscription_plan_user_category_subscription_id',
-                'fk_subscription_plan_user_category_category_id'
-            ]);
-            $table->drop();
-        });
+        // Reverse migration if needed
     }
 }

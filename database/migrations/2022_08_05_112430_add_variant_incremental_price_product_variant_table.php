@@ -13,12 +13,14 @@ class AddVariantIncrementalPriceProductVariantTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'incremental_price')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             //
             $table->decimal('incremental_price', 12, 2)->default(0)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddVariantIncrementalPriceProductVariantTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            $table->dropColumn('incremental_price');
-        });
+        // Reverse migration if needed
     }
 }

@@ -14,11 +14,13 @@ class Altercabbookinglayoutsectionfornoproduct extends Migration
     public function up()
     {
      
-        Schema::table('cab_booking_layouts', function (Blueprint $table) {
+        if (!Schema::hasColumn('cab_booking_layouts', 'for_no_product_found_html')) {
+            Schema::table('cab_booking_layouts', function (Blueprint $table) {
             $table->tinyInteger('for_no_product_found_html')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class Altercabbookinglayoutsectionfornoproduct extends Migration
      */
     public function down()
     {
-        Schema::table('cab_booking_layouts', function (Blueprint $table) {
-            $table->dropColumn('for_no_product_found_html');
-        });
+        // Reverse migration if needed
     }
 }

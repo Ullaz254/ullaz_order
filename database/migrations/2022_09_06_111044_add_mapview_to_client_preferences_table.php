@@ -13,11 +13,13 @@ class AddMapviewToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'map_on_search_screen')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('map_on_search_screen')->default(0)->nullable()->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddMapviewToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('map_on_search_screen');
-        });
+        // Reverse migration if needed
     }
 }

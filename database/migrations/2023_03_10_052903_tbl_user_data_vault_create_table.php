@@ -13,7 +13,8 @@ class TblUserDataVaultCreateTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_data_vault', function (Blueprint $table) {
+        if (!Schema::hasTable('user_data_vault')) {
+            Schema::create('user_data_vault', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->string('token', 64);
@@ -22,6 +23,7 @@ class TblUserDataVaultCreateTable extends Migration
             $table->string('card_hint', 32);
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,7 +13,8 @@ class CreateCategoryKycDocumentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('category_kyc_documents', function (Blueprint $table) {
+        if (!Schema::hasTable('category_kyc_documents')) {
+            Schema::create('category_kyc_documents', function (Blueprint $table) {
             $table->id();
             $table->string('file_type')->nullable();
             $table->tinyinteger('is_required')->nullable();
@@ -26,7 +27,8 @@ class CreateCategoryKycDocumentsTable extends Migration
             $table->bigInteger('language_id')->unsigned();
             $table->bigInteger('category_kyc_document_id')->unsigned();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

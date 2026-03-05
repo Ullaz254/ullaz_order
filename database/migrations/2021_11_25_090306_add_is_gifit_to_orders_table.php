@@ -13,11 +13,13 @@ class AddIsGifitToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'is_gift')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->tinyInteger('is_gift')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsGifitToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('is_gift');
-        });
+        // Reverse migration if needed
     }
 }

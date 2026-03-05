@@ -13,11 +13,13 @@ class AddMaxSafetyToVendors extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'max_safety')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('max_safety')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddMaxSafetyToVendors extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('max_safety');
-        });
+        // Reverse migration if needed
     }
 }

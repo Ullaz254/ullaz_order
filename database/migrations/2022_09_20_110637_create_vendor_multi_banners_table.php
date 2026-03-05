@@ -13,12 +13,14 @@ class CreateVendorMultiBannersTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_multi_banners', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_multi_banners')) {
+            Schema::create('vendor_multi_banners', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('vendor_id')->unsigned()->nullable();
             $table->string('image');
             $table->timestamps();
         });
+        }
     }
 
     /**

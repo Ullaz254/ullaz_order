@@ -13,13 +13,15 @@ class CreateOrderLongTermServiceSchedulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_long_term_service_schedules', function (Blueprint $table) {
+        if (!Schema::hasTable('order_long_term_service_schedules')) {
+            Schema::create('order_long_term_service_schedules', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_long_term_services_id')->unsigned()->nullable();
             $table->dateTime('schedule_date')->nullable();
             $table->tinyInteger('status')->nullable()->default(0)->comment('0-not completed, 1-completed');
             $table->timestamps();
         });
+        }
     }
 
     /**

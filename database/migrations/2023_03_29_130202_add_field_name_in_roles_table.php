@@ -13,11 +13,13 @@ class AddFieldNameInRolesTable extends Migration
      */
     public function up()
     {
-        Schema::table('roles', function (Blueprint $table) {
+        if (!Schema::hasColumn('roles', 'name')) {
+            Schema::table('roles', function (Blueprint $table) {
             $table->string('name')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddFieldNameInRolesTable extends Migration
      */
     public function down()
     {
-        Schema::table('roles', function (Blueprint $table) {
-            $table->dropColumn('name');
-        });
+        // Reverse migration if needed
     }
 }

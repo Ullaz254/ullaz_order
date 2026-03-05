@@ -30,10 +30,11 @@ class DropRefundTransfersTable extends Migration
             }
 
             $table->dropColumn('refund');
-        });
-    }
-
+        }); } 
+    
     /**
+     * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void

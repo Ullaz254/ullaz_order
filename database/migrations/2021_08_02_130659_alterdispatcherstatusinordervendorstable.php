@@ -13,9 +13,11 @@ class Alterdispatcherstatusinordervendorstable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->tinyInteger('dispatcher_status_option_id')->unsigned()->nullable()->after('payment_option_id');
-        });
+        if (!Schema::hasColumn('order_vendors', 'dispatcher_status_option_id')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
+                $table->tinyInteger('dispatcher_status_option_id')->unsigned()->nullable()->after('payment_option_id');
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class Alterdispatcherstatusinordervendorstable extends Migration
     public function down()
     {
         Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn('dispatcher_status_option_id');
+            if (Schema::hasColumn('order_vendors', 'dispatcher_status_option_id')) {
+                $table->dropColumn('dispatcher_status_option_id');
+            }
         });
     }
 }

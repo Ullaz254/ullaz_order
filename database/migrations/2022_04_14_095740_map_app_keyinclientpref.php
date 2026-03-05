@@ -13,11 +13,13 @@ class MapAppKeyinclientpref extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'map_key_for_app')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('map_key_for_app')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class MapAppKeyinclientpref extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->string('map_key_for_app');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,12 +13,14 @@ class CreateDispatcherWarningPagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('dispatcher_warning_pages', function (Blueprint $table) {
+        if (!Schema::hasTable('dispatcher_warning_pages')) {
+            Schema::create('dispatcher_warning_pages', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->tinyInteger('status')->default(0)->comment('0 for inactive and 1 for active');
             $table->timestamps();
         });
+        }
     }
 
     /**

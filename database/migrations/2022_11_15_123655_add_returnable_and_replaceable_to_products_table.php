@@ -13,12 +13,14 @@ class AddReturnableAndReplaceableToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'returnable')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->tinyInteger('returnable')->default(0);
             $table->tinyInteger('replaceable')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddReturnableAndReplaceableToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('returnable');
-            $table->dropColumn('replaceable');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddPickupDeliveryServiceAreaMod extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'pickup_delivery_service_area')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('pickup_delivery_service_area')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPickupDeliveryServiceAreaMod extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('pickup_delivery_service_area');
-        });
+        // Reverse migration if needed
     }
 }

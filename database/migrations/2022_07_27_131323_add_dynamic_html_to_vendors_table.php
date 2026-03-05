@@ -13,11 +13,13 @@ class AddDynamicHtmlToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'dynamic_html')) {
+            Schema::table('vendors', function (Blueprint $table) {
          $table->longText('dynamic_html')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddDynamicHtmlToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

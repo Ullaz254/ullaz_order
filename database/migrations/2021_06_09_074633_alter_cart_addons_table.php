@@ -13,12 +13,14 @@ class AlterCartAddonsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_addons', function (Blueprint $table) { 
+        if (!Schema::hasColumn('cart_addons', 'cart_id')) {
+            Schema::table('cart_addons', function (Blueprint $table) { 
             $table->id()->first();
             $table->bigInteger('cart_id')->unsigned()->after('id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,6 +28,6 @@ class AlterCartAddonsTable extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

@@ -5,7 +5,7 @@ if(Session::get('config_theme') == 'dark'){
 }else{
     $urlImg = $clientData ? $clientData->logo['original'] : ' ';
 }
-$languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
+$languageList = \App\Models\ClientLanguage::with('language')->orderBy('is_primary', 'desc')->get();
 $currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
 @endphp
 <style>.cab-booking-header{display: none;}</style>

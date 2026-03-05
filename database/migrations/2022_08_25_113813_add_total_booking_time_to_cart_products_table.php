@@ -13,12 +13,14 @@ class AddTotalBookingTimeToCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'total_booking_time')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             //
             $table->string('total_booking_time')->default(0)->nullable()->comment('in min');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddTotalBookingTimeToCartProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

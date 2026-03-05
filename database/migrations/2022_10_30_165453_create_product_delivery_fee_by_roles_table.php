@@ -13,7 +13,8 @@ class CreateProductDeliveryFeeByRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_delivery_fee_by_roles', function (Blueprint $table) {
+        if (!Schema::hasTable('product_delivery_fee_by_roles')) {
+            Schema::create('product_delivery_fee_by_roles', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->bigInteger('role_id')->unsigned()->nullable();
@@ -23,6 +24,7 @@ class CreateProductDeliveryFeeByRolesTable extends Migration
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('SET NULL');
             $table->timestamps();
         });
+        }
     }
 
     /**

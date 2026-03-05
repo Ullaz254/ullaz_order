@@ -13,12 +13,14 @@ class DropAddColumnToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'appointmenticon')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->dropColumn('address_is_car');
             //$table->string('appointmenticon')->nullable()->after('laundryicon');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class DropAddColumnToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,13 +13,15 @@ class CreateSubscriptionValiditiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscription_validities', function (Blueprint $table) {
+        if (!Schema::hasTable('subscription_validities')) {
+            Schema::create('subscription_validities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->longText('Description')->nullable();
             $table->tinyInteger('status')->unsigned()->default(1)->comment('0=Inactive, 1=Active');
             $table->timestamps();
         });
+        }
     }
 
     /**

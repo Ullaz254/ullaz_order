@@ -13,7 +13,8 @@ class CreateTaxCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('tax_categories', function (Blueprint $table) {
+        if (!Schema::hasTable('tax_categories')) {
+            Schema::create('tax_categories', function (Blueprint $table) {
             $table->id();
             $table->string('title', 100)->nullable();
             $table->string('code', 100)->nullable();
@@ -26,6 +27,7 @@ class CreateTaxCategoriesTable extends Migration
             $table->index('code');
             $table->index('is_core');
         });
+        }
     }
 
     /**

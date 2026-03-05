@@ -13,12 +13,14 @@ class AddColumnToProductVariantsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'minimum_duration')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             $table->string('minimum_duration')->nullable();
             $table->string('incremental_price')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddColumnToProductVariantsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

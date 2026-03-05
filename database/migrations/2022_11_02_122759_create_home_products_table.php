@@ -13,7 +13,8 @@ class CreateHomeProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('home_products', function (Blueprint $table) {
+        if (!Schema::hasTable('home_products')) {
+            Schema::create('home_products', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->string('slug')->nullable();
@@ -21,6 +22,7 @@ class CreateHomeProductsTable extends Migration
             $table->text('products')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

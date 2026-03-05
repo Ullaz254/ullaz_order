@@ -13,7 +13,8 @@ class CreateOrderRefundsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_refunds', function (Blueprint $table) {
+        if (!Schema::hasTable('order_refunds')) {
+            Schema::create('order_refunds', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -29,6 +30,7 @@ class CreateOrderRefundsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+        }
     }
 
     /**

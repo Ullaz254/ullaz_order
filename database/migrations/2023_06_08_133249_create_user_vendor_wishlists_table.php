@@ -13,12 +13,14 @@ class CreateUserVendorWishlistsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_vendor_wishlists', function (Blueprint $table) {
+        if (!Schema::hasTable('user_vendor_wishlists')) {
+            Schema::create('user_vendor_wishlists', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('vendor_id');
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,16 +13,18 @@ class AddRecurringBookingOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'recurring_booking_type')) {
+            Schema::table('orders', function (Blueprint $table) {
             //
             $table->tinyInteger('recurring_booking_type')->nullable()->comment('1=daily,2=weekly,3=monthly,4=custom');
             $table->string('recurring_week_day')->nullable();
             $table->tinyInteger('recurring_week_type')->nullable()->comment('1=daily,2=once');
             $table->longText('recurring_day_data')->nullable();
             $table->string('recurring_booking_time')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -30,13 +32,6 @@ class AddRecurringBookingOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            //
-            $table->dropColumn('recurring_booking_type');
-            $table->dropColumn('recurring_week_day');
-            $table->dropColumn('recurring_week_type');
-            $table->dropColumn('recurring_day_data');
-            $table->dropColumn('recurring_booking_time');
-        });
+        // Reverse migration if needed
     }
 }

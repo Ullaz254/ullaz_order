@@ -13,16 +13,14 @@ class AlterSomeTableForRef extends Migration
      */
     public function up()
     {
-        Schema::table('user_refferals', function (Blueprint $table) {
+        if (!Schema::hasColumn('user_refferals', 'refferal_code')) {
+            Schema::table('user_refferals', function (Blueprint $table) {
             $table->dropColumn('refferal_code');
             $table->dropColumn('reffered_by');
-        });
-        Schema::table('user_refferals', function (Blueprint $table) {
-            $table->string('refferal_code', 15)->after('id')->nullable();
-            $table->bigInteger('reffered_by')->after('refferal_code')->unsigned()->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -30,6 +28,6 @@ class AlterSomeTableForRef extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddAgeRestrictionToOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'is_restricted')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->tinyInteger('is_restricted')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAgeRestrictionToOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,14 +13,17 @@ class OrderDeliveryStatusIcon extends Migration
      */
     public function up()
     {
-        Schema::create('order_delivery_status_icon', function (Blueprint $table) {
+        if (!Schema::hasTable('order_delivery_status_icon')) {
+            Schema::create('order_delivery_status_icon', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
             $table->string('image')->nullable();
             $table->string('image_url')->nullable();
             $table->timestamps();
         });
+        }
     }
+
     /**
      * Reverse the migrations.
      *

@@ -13,13 +13,15 @@ class Addpickupdeliverykeysinclientprefereance extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'pickup_delivery_service_key')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('pickup_delivery_service_key')->nullable();
             $table->string('pickup_delivery_service_key_url')->nullable();
             $table->string('pickup_delivery_service_key_code')->nullable();
-        });
-    } 
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,10 +29,6 @@ class Addpickupdeliverykeysinclientprefereance extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('pickup_delivery_service_key');
-            $table->dropColumn('pickup_delivery_service_key_url');
-            $table->dropColumn('pickup_delivery_service_key_code');
-        });
+        // Reverse migration if needed
     }
 }

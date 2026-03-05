@@ -18,9 +18,8 @@ class AddVendorIdToMeasurementTable extends Migration
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
             $table->softDeletes();
 
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

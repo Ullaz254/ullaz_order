@@ -13,11 +13,13 @@ class AddExtraTimeToOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'extra_time')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->string('extra_time', 40)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddExtraTimeToOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn('extra_time');
-        });
+        // Reverse migration if needed
     }
 }

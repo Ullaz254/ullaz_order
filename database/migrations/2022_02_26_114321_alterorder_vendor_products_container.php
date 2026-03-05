@@ -13,17 +13,13 @@ class AlterorderVendorProductsContainer extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'container_charges')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->decimal('container_charges', 12, 4)->nullable()->default(0);
-        });
-        Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('total_container_charges', 12, 4)->nullable()->default(0);
-        });
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->decimal('total_container_charges', 12, 4)->nullable()->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -31,14 +27,6 @@ class AlterorderVendorProductsContainer extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn('container_charges');
-        });
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('total_container_charges');
-        });
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn('total_container_charges');
-        });
+        // Reverse migration if needed
     }
 }

@@ -15,9 +15,8 @@ class AltervendorOrderDispatcherStatusestypeley extends Migration
     {
         Schema::table('vendor_order_dispatcher_statuses', function (Blueprint $table) {
             $table->enum('type', ['1', '2'])->default('1')->comment('1 : pickup , 2 : drop');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

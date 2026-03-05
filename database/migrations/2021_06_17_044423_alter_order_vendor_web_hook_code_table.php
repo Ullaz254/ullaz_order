@@ -13,11 +13,13 @@ class AlterOrderVendorWebHookCodeTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'web_hook_code')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->string('web_hook_code',120)->after('discount_amount')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterOrderVendorWebHookCodeTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn('web_hook_code');
-        });
+        // Reverse migration if needed
     }
 }

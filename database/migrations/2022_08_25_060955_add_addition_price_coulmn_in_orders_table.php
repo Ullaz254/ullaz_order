@@ -13,11 +13,13 @@ class AddAdditionPriceCoulmnInOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'additional_price')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->decimal('additional_price',16,4)->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAdditionPriceCoulmnInOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('additional_price');
-        });
+        // Reverse migration if needed
     }
 }

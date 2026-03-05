@@ -13,11 +13,13 @@ class AddMaxSafetyModToClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'max_safety_mod')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('max_safety_mod')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddMaxSafetyModToClientPreferences extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('max_safety_mod');
-        });
+        // Reverse migration if needed
     }
 }

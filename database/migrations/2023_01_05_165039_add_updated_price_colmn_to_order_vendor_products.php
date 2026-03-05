@@ -22,9 +22,8 @@ class AddUpdatedPriceColmnToOrderVendorProducts extends Migration
             {
                  $table->text('updated_price_reason')->nullable();
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

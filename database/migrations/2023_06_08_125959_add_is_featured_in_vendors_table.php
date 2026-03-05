@@ -13,11 +13,13 @@ class AddIsFeaturedInVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'is_featured')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('is_featured')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsFeaturedInVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('is_featured');
-        });
+        // Reverse migration if needed
     }
 }

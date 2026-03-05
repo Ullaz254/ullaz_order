@@ -13,11 +13,13 @@ class AddStripSubscriberIdColumnInSubscriptionInvoicesUserTable extends Migratio
      */
     public function up()
     {
-        Schema::table('subscription_invoices_user', function (Blueprint $table) {
+        if (!Schema::hasColumn('subscription_invoices_user', 'strip_subscriber_id')) {
+            Schema::table('subscription_invoices_user', function (Blueprint $table) {
             $table->string('strip_subscriber_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddStripSubscriberIdColumnInSubscriptionInvoicesUserTable extends Migratio
      */
     public function down()
     {
-        Schema::table('subscription_invoices_user', function (Blueprint $table) {
-            $table->dropColumn('strip_subscriber_id');
-        });
+        // Reverse migration if needed
     }
 }

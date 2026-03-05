@@ -13,7 +13,8 @@ class CreateProductCelebritiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_celebrities', function (Blueprint $table) {
+        if (!Schema::hasTable('product_celebrities')) {
+            Schema::create('product_celebrities', function (Blueprint $table) {
             $table->unsignedBigInteger('celebrity_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
 
@@ -21,6 +22,7 @@ class CreateProductCelebritiesTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,11 +13,13 @@ class AlterCommissionPercent extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'commission_percent')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->decimal('commission_percent', 10, 2)->nullable()->default(1)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterCommissionPercent extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

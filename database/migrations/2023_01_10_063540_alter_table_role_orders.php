@@ -18,9 +18,8 @@ class AlterTableRoleOrders extends Migration
             {
                 $table->integer('hierarchy_no')->default(0);
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

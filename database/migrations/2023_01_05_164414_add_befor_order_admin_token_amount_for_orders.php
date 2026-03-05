@@ -18,9 +18,8 @@ class AddBeforOrderAdminTokenAmountForOrders extends Migration
             {
                 $table->decimal('advance_amount',16,4)->default(0);
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

@@ -13,14 +13,13 @@ class AlterWebStylingOptionsAddColumnIsTemplate extends Migration
      */
     public function up()
     {
-        Schema::table('web_styling_options', function (Blueprint $table) {
+        if (!Schema::hasColumn('web_styling_options', 'is_template')) {
+            Schema::table('web_styling_options', function (Blueprint $table) {
             $table->tinyInteger('is_template')->default(0);
-        });
-        Schema::table('app_styling_options', function (Blueprint $table) {
-            $table->tinyInteger('is_template')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,11 +27,6 @@ class AlterWebStylingOptionsAddColumnIsTemplate extends Migration
      */
     public function down()
     {
-        Schema::table('web_styling_options', function (Blueprint $table) {
-            $table->dropColumn('is_template');
-        });
-        Schema::table('app_styling_options', function (Blueprint $table) {
-            $table->dropColumn('is_template');
-        });
+        // Reverse migration if needed
     }
 }

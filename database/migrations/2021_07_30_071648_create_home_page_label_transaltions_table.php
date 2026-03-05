@@ -13,7 +13,8 @@ class CreateHomePageLabelTransaltionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('home_page_label_transaltions', function (Blueprint $table) {
+        if (!Schema::hasTable('home_page_label_transaltions')) {
+            Schema::create('home_page_label_transaltions', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->bigInteger('home_page_label_id')->unsigned()->nullable();
@@ -22,6 +23,7 @@ class CreateHomePageLabelTransaltionsTable extends Migration
             $table->foreign('language_id')->references('id')->on('languages')->onDelete('cascade');;
             $table->timestamps();
         });
+        }
     }
 
     /**

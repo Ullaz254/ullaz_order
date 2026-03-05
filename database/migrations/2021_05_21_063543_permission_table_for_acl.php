@@ -13,14 +13,16 @@ class PermissionTableForAcl extends Migration
      */
     public function up()
     {        
-        Schema::create('permissions', function (Blueprint $table) {
+        if (!Schema::hasTable('permissions')) {
+            Schema::create('permissions', function (Blueprint $table) {
             $table->id();
 			$table->string('name',300);
             $table->string('slug',300);
 			$table->timestamps();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,8 +30,6 @@ class PermissionTableForAcl extends Migration
      */
     public function down()
     {
-        Schema::table('permissions', function (Blueprint $table) {
-            Schema::drop('permissions');
-        });
+        // Reverse migration if needed
     }
 }

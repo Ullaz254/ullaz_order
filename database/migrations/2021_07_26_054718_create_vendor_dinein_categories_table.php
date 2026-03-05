@@ -13,13 +13,15 @@ class CreateVendorDineinCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_dinein_categories', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_dinein_categories')) {
+            Schema::create('vendor_dinein_categories', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('vendor_id')->unsigned();
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');;
             $table->string('title');
             $table->timestamps();
         });
+        }
     }
 
     /**

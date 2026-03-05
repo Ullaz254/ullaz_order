@@ -13,11 +13,13 @@ class AddPharmacyCheckFieldToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'pharmacy_check')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('pharmacy_check')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPharmacyCheckFieldToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('pharmacy_check');
-        });
+        // Reverse migration if needed
     }
 }

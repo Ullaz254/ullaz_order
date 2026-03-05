@@ -15,9 +15,8 @@ class AddVendorDineinTableIdToCartProducts extends Migration
     {
         Schema::table('cart_products', function (Blueprint $table) {
             $table->unsignedBigInteger('vendor_dinein_table_id')->nullable()->after('vendor_id');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

@@ -13,9 +13,11 @@ class AddAgeRestrictionFieldToClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('age_restriction')->after('enquire_mode')->default(0);
-        });
+        if (!Schema::hasColumn('client_preferences', 'age_restriction')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('age_restriction')->after('enquire_mode')->default(0);
+            });
+        }
     }
 
     /**

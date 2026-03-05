@@ -13,11 +13,13 @@ class AddPaymentStatusToOrders extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'payment_status')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->tinyInteger('payment_status')->nullable()->default(0)->comment('0=Pending, 1=Paid, 2=Refunded');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPaymentStatusToOrders extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('payment_status');
-        });
+        // Reverse migration if needed
     }
 }

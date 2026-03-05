@@ -18,9 +18,8 @@ class AddResColumnToVendors extends Migration
                 $table->decimal('rescheduling_charges', 64, 0)->default(0)->comment('enable for laundry');
                 $table->decimal('pickup_cancelling_charges', 64, 0)->nullable()->default(0)->after('rescheduling_charges');
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

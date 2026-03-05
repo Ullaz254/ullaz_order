@@ -13,7 +13,8 @@ class CreateVendorMinAmountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_min_amounts', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_min_amounts')) {
+            Schema::create('vendor_min_amounts', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('vendor_id')->unsigned();
             $table->bigInteger('role_id')->unsigned()->nullable();
@@ -23,6 +24,7 @@ class CreateVendorMinAmountsTable extends Migration
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('SET NULL');
         });
+        }
     }
 
     /**

@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Kalnoy\Nestedset\NestedSet;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateCategoriesTable extends Migration
 {
@@ -14,7 +13,8 @@ class CreateCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
+        if (!Schema::hasTable('categories')) {
+            Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('icon', 150)->nullable();
             $table->string('slug', 30)->unique();
@@ -30,21 +30,10 @@ class CreateCategoriesTable extends Migration
             $table->string('client_code', 10)->nullable();
             $table->string('display_mode')->nullable()->comment('only products name, product with description');
             $table->timestamps();
-        });
+                    });
+        }
 
-        Schema::table('categories', function (Blueprint $table) {
-            $table->foreign('client_code')->references('code')->on('clients')->onDelete('set null');
-            $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('set null');
-            $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null');
-            $table->foreign('type_id')->references('id')->on('types')->onDelete('set null');
-            $table->index('status');
-            $table->index('is_core');
-            $table->index('position');
-            $table->index('can_add_products');
-            $table->index('display_mode');
-        });
-    }
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -52,6 +41,6 @@ class CreateCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categories');
+        // Reverse migration if needed
     }
 }

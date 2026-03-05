@@ -13,12 +13,14 @@ class CreateTollPassByOriginTable extends Migration
      */
     public function up()
     {
-        Schema::create('toll_pass_origin', function (Blueprint $table) {
+        if (!Schema::hasTable('toll_pass_origin')) {
+            Schema::create('toll_pass_origin', function (Blueprint $table) {
             $table->id();
             $table->string('toll_pass', 200);
             $table->string('desc', 500);
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,13 +13,15 @@ class CreateTableAdditionalAttributesOptionTranslations extends Migration
      */
     public function up()
     {
-        Schema::create('additional_attributes_option_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('additional_attributes_option_translations')) {
+            Schema::create('additional_attributes_option_translations', function (Blueprint $table) {
             $table->id();
             $table->string('title', 128)->nullable();
             $table->bigInteger('additional_attribute_option_id')->nullable();
             $table->bigInteger('language_id')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

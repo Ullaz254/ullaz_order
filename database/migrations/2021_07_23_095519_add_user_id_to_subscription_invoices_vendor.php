@@ -17,9 +17,8 @@ class AddUserIdToSubscriptionInvoicesVendor extends Migration
             $table->unsignedBigInteger('user_id')->nullable()->after('vendor_id');
             $table->unsignedBigInteger('approved_by')->nullable()->after('cancelled_at');
             $table->unsignedBigInteger('rejected_by')->nullable()->after('approved_by');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

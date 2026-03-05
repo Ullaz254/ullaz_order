@@ -13,7 +13,8 @@ class CreateProductVariantsTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_variants', function (Blueprint $table) {
+        if (!Schema::hasTable('product_variants')) {
+            Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
             $table->string('sku', 100)->unique();
             $table->bigInteger('product_id')->unsigned()->nullable();
@@ -42,6 +43,7 @@ class CreateProductVariantsTable extends Migration
             $table->index('cost_price');
 
         });
+        }
     }
 
     /**

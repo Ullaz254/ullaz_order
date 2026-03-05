@@ -13,13 +13,15 @@ class AddOrderVendorProductIdToProductBookingsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_bookings', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_bookings', 'order_vendor_product_id')) {
+            Schema::table('product_bookings', function (Blueprint $table) {
             $table->bigInteger('order_vendor_product_id')->unsigned()->nullable();
 
             $table->foreign('order_vendor_product_id')->references('id')->on('order_vendor_products')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class AddOrderVendorProductIdToProductBookingsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_bookings', function (Blueprint $table) {
-            $table->dropColumn('order_vendor_product_id');
-        });
+        // Reverse migration if needed
     }
 }

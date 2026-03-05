@@ -13,9 +13,16 @@ class ChangeTypeOfDollerCompareInClientCurrenciesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_currencies', function (Blueprint $table) {
-            $table->decimal('doller_compare', 14, 8)->nullable()->change();
-        });
+        // Only change if column exists
+        if (Schema::hasColumn('client_currencies', 'doller_compare')) {
+            try {
+                Schema::table('client_currencies', function (Blueprint $table) {
+                    $table->string('doller_compare')->nullable()->change();
+                });
+            } catch (\Exception $e) {
+                \Log::warning('Could not change doller_compare column type: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -25,8 +32,14 @@ class ChangeTypeOfDollerCompareInClientCurrenciesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_currencies', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasColumn('client_currencies', 'doller_compare')) {
+            try {
+                Schema::table('client_currencies', function (Blueprint $table) {
+                    $table->decimal('doller_compare', 10, 8)->nullable()->change();
+                });
+            } catch (\Exception $e) {
+                \Log::warning('Could not reverse doller_compare column type: ' . $e->getMessage());
+            }
+        }
     }
 }

@@ -13,11 +13,13 @@ class HideNavBarClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'hide_nav_bar')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('hide_nav_bar')->after('enquire_mode')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class HideNavBarClientPreferences extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('hide_nav_bar');
-        });
+        // Reverse migration if needed
     }
 }

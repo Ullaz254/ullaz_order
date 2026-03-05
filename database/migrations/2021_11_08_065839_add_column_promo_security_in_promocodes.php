@@ -13,11 +13,13 @@ class AddColumnPromoSecurityInPromocodes extends Migration
      */
     public function up()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
+        if (!Schema::hasColumn('promocodes', 'promo_visibility')) {
+            Schema::table('promocodes', function (Blueprint $table) {
             $table->string('promo_visibility', 50)->nullable()->default('public')->comment('public/private');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddColumnPromoSecurityInPromocodes extends Migration
      */
     public function down()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
-            $table->dropColumn('promo_visibility');
-        });
+        // Reverse migration if needed
     }
 }

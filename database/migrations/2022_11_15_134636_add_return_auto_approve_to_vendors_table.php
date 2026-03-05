@@ -13,11 +13,13 @@ class AddReturnAutoApproveToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'return_auto_approve')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('return_auto_approve')->default(0)->comment('1 for yes, 0 for no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddReturnAutoApproveToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('return_auto_approve');
-        });
+        // Reverse migration if needed
     }
 }

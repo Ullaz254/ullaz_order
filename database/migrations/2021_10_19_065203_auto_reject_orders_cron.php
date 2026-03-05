@@ -13,7 +13,8 @@ class AutoRejectOrdersCron extends Migration
      */
     public function up()
     {
-        Schema::create('auto_reject_orders_cron', function (Blueprint $table) {
+        if (!Schema::hasTable('auto_reject_orders_cron')) {
+            Schema::create('auto_reject_orders_cron', function (Blueprint $table) {
             $table->id();
             $table->string('database_host')->nullable();
             $table->string('database_name', 50)->nullable();
@@ -22,7 +23,8 @@ class AutoRejectOrdersCron extends Migration
             $table->integer('order_vendor_id')->nullable();
             $table->dateTime('auto_reject_time')->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

@@ -13,12 +13,14 @@ class AddFieldsToTaxRatesTable extends Migration
      */
     public function up()
     {
-        Schema::table('tax_rates', function (Blueprint $table) {
+        if (!Schema::hasColumn('tax_rates', 'square_tax_id')) {
+            Schema::table('tax_rates', function (Blueprint $table) {
             $table->string('square_tax_id', 150)->nullable();
             $table->string('square_tax_version', 100)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddFieldsToTaxRatesTable extends Migration
      */
     public function down()
     {
-        Schema::table('tax_rates', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

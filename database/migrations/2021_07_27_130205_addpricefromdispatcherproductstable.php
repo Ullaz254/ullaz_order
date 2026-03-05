@@ -6,18 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 class Addpricefromdispatcherproductstable extends Migration
 {
-     /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'need_price_from_dispatcher')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->string('need_price_from_dispatcher')->nullable();
-        });
-    } 
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class Addpricefromdispatcherproductstable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('need_price_from_dispatcher');
-        });
+        // Reverse migration if needed
     }
 }

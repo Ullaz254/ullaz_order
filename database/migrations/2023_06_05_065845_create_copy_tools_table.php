@@ -13,12 +13,14 @@ class CreateCopyToolsTable extends Migration
      */
     public function up()
     {
-        Schema::create('copy_tools', function (Blueprint $table) {
+        if (!Schema::hasTable('copy_tools')) {
+            Schema::create('copy_tools', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('copy_from')->unsigned()->nullable();
             $table->bigInteger('copy_to')->unsigned()->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

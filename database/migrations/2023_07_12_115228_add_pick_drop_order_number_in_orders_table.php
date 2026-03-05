@@ -13,11 +13,13 @@ class AddPickDropOrderNumberInOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'pick_drop_order_number')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->string('pick_drop_order_number')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPickDropOrderNumberInOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('pick_drop_order_number');
-        });
+        // Reverse migration if needed
     }
 }

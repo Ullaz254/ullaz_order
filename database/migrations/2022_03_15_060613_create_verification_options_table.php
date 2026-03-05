@@ -13,7 +13,8 @@ class CreateVerificationOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('verification_options', function (Blueprint $table) {
+        if (!Schema::hasTable('verification_options')) {
+            Schema::create('verification_options', function (Blueprint $table) {
             $table->id();
             $table->string('code');
             $table->string('path')->nullable();
@@ -22,7 +23,8 @@ class CreateVerificationOptionsTable extends Migration
             $table->tinyInteger('status')->default(1)->comment('0 inactive, 1 active, 2 delete');
             $table->unsignedTinyInteger('test_mode')->default(0)->comment('0 = false, 1 = true');
             $table->timestamps(); 
-        });
+            });
+        }
     }
 
     /**

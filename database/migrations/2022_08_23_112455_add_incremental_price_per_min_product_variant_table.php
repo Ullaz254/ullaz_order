@@ -13,12 +13,14 @@ class AddIncrementalPricePerMinProductVariantTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'incremental_price_per_min')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             //
             $table->string('incremental_price_per_min')->default(0)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddIncrementalPricePerMinProductVariantTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            $table->dropColumn('incremental_price_per_min');
-        });
+        // Reverse migration if needed
     }
 }

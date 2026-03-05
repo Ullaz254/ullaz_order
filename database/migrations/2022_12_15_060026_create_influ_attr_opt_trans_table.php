@@ -13,7 +13,8 @@ class CreateInfluAttrOptTransTable extends Migration
      */
     public function up()
     {
-        Schema::create('influ_attr_opt_trans', function (Blueprint $table) {
+        if (!Schema::hasTable('influ_attr_opt_trans')) {
+            Schema::create('influ_attr_opt_trans', function (Blueprint $table) {
             $table->id();
             $table->string('title', 150)->nullable();
             $table->bigInteger('attribute_option_id')->unsigned()->nullable();
@@ -23,6 +24,7 @@ class CreateInfluAttrOptTransTable extends Migration
             $table->foreign('attribute_option_id')->references('id')->on('influ_attr_opt')->onDelete('cascade');
             $table->foreign('language_id')->references('language_id')->on('client_languages')->onDelete('cascade');
         });
+        }
     }
 
     /**

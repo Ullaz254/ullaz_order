@@ -6,18 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 class Alterskuvariant extends Migration
 {
-     /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'sku')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             $table->string('sku', 500)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class Alterskuvariant extends Migration
      */
     public function down()
     {
-        
+        // Reverse migration if needed
     }
 }

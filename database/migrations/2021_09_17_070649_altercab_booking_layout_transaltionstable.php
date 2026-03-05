@@ -13,11 +13,13 @@ class AltercabBookingLayoutTransaltionstable extends Migration
      */
     public function up()
     {
-        Schema::table('cab_booking_layout_transaltions', function (Blueprint $table) {
+        if (!Schema::hasColumn('cab_booking_layout_transaltions', 'body_html')) {
+            Schema::table('cab_booking_layout_transaltions', function (Blueprint $table) {
             $table->longText('body_html')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AltercabBookingLayoutTransaltionstable extends Migration
      */
     public function down()
     {
-        Schema::table('cab_booking_layout_transaltions', function (Blueprint $table) {
-            $table->dropColumn('body_html');
-        });
+        // Reverse migration if needed
     }
 }

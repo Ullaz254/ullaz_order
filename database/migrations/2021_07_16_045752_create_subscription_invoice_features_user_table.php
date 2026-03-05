@@ -13,7 +13,8 @@ class CreateSubscriptionInvoiceFeaturesUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscription_invoice_features_user', function (Blueprint $table) {
+        if (!Schema::hasTable('subscription_invoice_features_user')) {
+            Schema::create('subscription_invoice_features_user', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('subscription_invoice_id');
@@ -25,6 +26,7 @@ class CreateSubscriptionInvoiceFeaturesUserTable extends Migration
             $table->index('subscription_invoice_id');
             $table->index('feature_id');
         });
+        }
     }
 
     /**

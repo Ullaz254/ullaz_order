@@ -13,9 +13,16 @@ class AlterTableClientPreferenceTaxPriceType extends Migration
      */
     public function up()
     {
-        // Schema::table('client_preferences', function (Blueprint $table) {
-             //$table->tinyInteger('is_tax_price_inclusive')->default('0'); //No Need Now
-        // });
+        if (!Schema::hasColumn('client_preferences', 'tax_price_type')) {
+            try {
+                Schema::table('client_preferences', function (Blueprint $table) {
+                    $table->tinyInteger('tax_price_type')->default(0)->comment('0-Exclusive, 1-Inclusive');
+                });
+            } catch (\Exception $e) {
+                // If row size error, log and skip
+                \Log::warning('Could not add tax_price_type column due to row size limit: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -25,8 +32,10 @@ class AlterTableClientPreferenceTaxPriceType extends Migration
      */
     public function down()
     {
-        // Schema::table('client_preferences', function (Blueprint $table) {
-        //     $table->dropColumn('is_tax_price_inclusive');
-        // });
+        Schema::table('client_preferences', function (Blueprint $table) {
+            if (Schema::hasColumn('client_preferences', 'tax_price_type')) {
+                $table->dropColumn('tax_price_type');
+            }
+        });
     }
 }

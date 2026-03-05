@@ -13,11 +13,13 @@ class AddVendorBiddingDiscountToCarts extends Migration
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('carts', 'vendor_bidding_discount')) {
+            Schema::table('carts', function (Blueprint $table) {
             $table->string('vendor_bidding_discount')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddVendorBiddingDiscountToCarts extends Migration
      */
     public function down()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->dropColumn('vendor_bidding_discount');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddTemplateIdFieldToAppStylingOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('app_styling_options', function (Blueprint $table) {
+        if (!Schema::hasColumn('app_styling_options', 'template_id')) {
+            Schema::table('app_styling_options', function (Blueprint $table) {
             $table->tinyInteger('template_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddTemplateIdFieldToAppStylingOptionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('app_styling_options', function (Blueprint $table) {
-            $table->dropColumn('template_id');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddTypeToServiceareaforbanners extends Migration
      */
     public function up()
     {
-        Schema::table('service_area_for_banners', function (Blueprint $table) {
+        if (!Schema::hasColumn('service_area_for_banners', 'type')) {
+            Schema::table('service_area_for_banners', function (Blueprint $table) {
             $table->tinyInteger('type')->default(1)->comment('1-Web, 2-Mobile');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddTypeToServiceareaforbanners extends Migration
      */
     public function down()
     {
-        Schema::table('service_area_for_banners', function (Blueprint $table) {
-            $table->dropColumn('type');
-        });
+        // Reverse migration if needed
     }
 }

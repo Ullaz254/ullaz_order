@@ -13,13 +13,15 @@ class CreateUserDocsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_docs', function (Blueprint $table) {
+        if (!Schema::hasTable('user_docs')) {
+            Schema::create('user_docs', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('user_registration_document_id')->unsigned();
             $table->mediumText('file_name')->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

@@ -15,9 +15,8 @@ class AlterUsersRemoveUniqueEmail extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropUnique('users_email_unique');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

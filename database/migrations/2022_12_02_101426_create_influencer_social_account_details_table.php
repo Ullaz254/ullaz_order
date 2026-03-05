@@ -13,7 +13,8 @@ class CreateInfluencerSocialAccountDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('influencer_social_account_details', function (Blueprint $table) {
+        if (!Schema::hasTable('influencer_social_account_details')) {
+            Schema::create('influencer_social_account_details', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->string('social_media_link')->nullable();
@@ -23,6 +24,7 @@ class CreateInfluencerSocialAccountDetailsTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('products')->onDelete('SET NULL');
         });
+        }
     }
 
     /**

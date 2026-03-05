@@ -13,7 +13,8 @@ class CreateCsvVendorImportsTable extends Migration
      */
     public function up()
     {
-        Schema::create('csv_vendor_imports', function (Blueprint $table) {
+        if (!Schema::hasTable('csv_vendor_imports')) {
+            Schema::create('csv_vendor_imports', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
             $table->string('path')->nullable();
@@ -23,6 +24,7 @@ class CreateCsvVendorImportsTable extends Migration
             $table->longText('error')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

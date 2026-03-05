@@ -13,7 +13,8 @@ class CreatecabBookingLayoutTranslations extends Migration
      */
     public function up()
     {
-        Schema::create('cab_booking_layout_transaltions', function (Blueprint $table) {
+        if (!Schema::hasTable('cab_booking_layout_transaltions')) {
+            Schema::create('cab_booking_layout_transaltions', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->bigInteger('cab_booking_layout_id')->unsigned()->nullable();
@@ -21,7 +22,8 @@ class CreatecabBookingLayoutTranslations extends Migration
             $table->bigInteger('language_id')->unsigned()->nullable();
             $table->foreign('language_id')->references('id')->on('languages')->onDelete('cascade');;
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

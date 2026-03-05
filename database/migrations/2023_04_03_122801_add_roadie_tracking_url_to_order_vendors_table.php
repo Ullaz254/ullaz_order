@@ -13,11 +13,13 @@ class AddRoadieTrackingUrlToOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'roadie_tracking_url')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->string('roadie_tracking_url')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddRoadieTrackingUrlToOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn('roadie_tracking_url');
-        });
+        // Reverse migration if needed
     }
 }

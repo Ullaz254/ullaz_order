@@ -13,12 +13,14 @@ class CreateInfluencerCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('influencer_categories', function (Blueprint $table) {
+        if (!Schema::hasTable('influencer_categories')) {
+            Schema::create('influencer_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->tinyInteger('is_active')->default(1)->comment('0=no active, 1=active');
             $table->timestamps();
         });
+        }
     }
 
     /**

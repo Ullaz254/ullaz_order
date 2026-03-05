@@ -13,7 +13,8 @@ class CsvCustomerImport extends Migration
      */
     public function up()
     {
-        Schema::create('csv_customer_imports', function (Blueprint $table) {
+        if (!Schema::hasTable('csv_customer_imports')) {
+            Schema::create('csv_customer_imports', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
             $table->string('path')->nullable();
@@ -22,7 +23,8 @@ class CsvCustomerImport extends Migration
             $table->tinyInteger('status')->nullable()->comment('1-Pending, 2-Success, 3-Failed, 4-In-progress');
             $table->longText('error')->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

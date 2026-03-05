@@ -24,9 +24,8 @@ class AlterOrderProductsTable extends Migration
             $table->string('image')->after('product_name')->nullable();
             $table->string('price')->after('image')->nullable();
             $table->string('taxable_amount')->after('price')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

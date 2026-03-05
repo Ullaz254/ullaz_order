@@ -13,13 +13,15 @@ class AddSeatsInProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'extra_time')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->dateTime('pickup_time')->nullable();
             $table->dateTime('drop_time')->nullable();
             $table->integer('extra_time')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class AddSeatsInProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['pickup_time','drop_time','extra_time']);
-        });
+        // Reverse migration if needed
     }
 }

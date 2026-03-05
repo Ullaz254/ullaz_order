@@ -13,13 +13,15 @@ class AddNewthemeIcontoPrefernecesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'deliveryicon')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('deliveryicon')->nullable();
             $table->string('dineinicon')->nullable();
             $table->string('takewayicon')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,6 +29,6 @@ class AddNewthemeIcontoPrefernecesTable extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

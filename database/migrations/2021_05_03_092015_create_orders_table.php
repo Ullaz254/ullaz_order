@@ -13,7 +13,8 @@ class CreateOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('orders', function (Blueprint $table) {
+        if (!Schema::hasTable('orders')) {
+            Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('address_id')->nullable();
@@ -36,7 +37,9 @@ class CreateOrdersTable extends Migration
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('set null');
             $table->timestamps();
         });
+        }
     }
+
     /**
      * Reverse the migrations.
      *

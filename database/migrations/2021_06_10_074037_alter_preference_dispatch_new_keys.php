@@ -13,12 +13,14 @@ class AlterPreferenceDispatchNewKeys extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'delivery_service_key_url')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('delivery_service_key_url')->nullable();
             $table->string('delivery_service_key_code')->nullable();
-        });
-    } 
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AlterPreferenceDispatchNewKeys extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('delivery_service_key_url');
-            $table->dropColumn('delivery_service_key_code');
-        });
+        // Reverse migration if needed
     }
 }

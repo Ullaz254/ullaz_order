@@ -13,11 +13,13 @@ class AddTypeToReturnReasonsTable extends Migration
      */
     public function up()
     {
-        Schema::table('return_reasons', function (Blueprint $table) {
+        if (!Schema::hasColumn('return_reasons', 'type')) {
+            Schema::table('return_reasons', function (Blueprint $table) {
             $table->tinyInteger('type')->default(1)->comment('1 for Return, 2 for Exchange, 3 for Cancellation');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddTypeToReturnReasonsTable extends Migration
      */
     public function down()
     {
-        Schema::table('return_reasons', function (Blueprint $table) {
-            $table->dropColumn('type');
-        });
+        // Reverse migration if needed
     }
 }

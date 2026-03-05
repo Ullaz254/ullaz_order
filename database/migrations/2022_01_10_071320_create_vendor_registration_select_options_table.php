@@ -13,12 +13,14 @@ class CreateVendorRegistrationSelectOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_registration_select_options', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_registration_select_options')) {
+            Schema::create('vendor_registration_select_options', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('vendor_registration_documents_id');
             $table->tinyInteger('status')->nullable()->default(0);
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

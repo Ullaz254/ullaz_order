@@ -13,13 +13,15 @@ class CreateMapProvidersTable extends Migration
      */
     public function up()
     {
-        Schema::create('map_providers', function (Blueprint $table) {
+        if (!Schema::hasTable('map_providers')) {
+            Schema::create('map_providers', function (Blueprint $table) {
             $table->id();
             $table->string('provider', 20);
             $table->string('keyword', 20);
             $table->tinyInteger('status')->default(0)->comment(' 0 for no, 1 for yes');
             $table->timestamps();
         });
+        }
     }
 
     /**

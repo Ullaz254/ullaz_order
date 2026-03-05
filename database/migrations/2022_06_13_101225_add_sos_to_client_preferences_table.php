@@ -13,13 +13,15 @@ class AddSosToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'sos')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('sos')->nullable()->default(0)->comment('0-No, 1-Yes');
             $table->string('sos_police_contact')->nullable()->comment('police number for sos');
             $table->string('sos_ambulance_contact')->nullable()->comment('ambulance number for sos');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class AddSosToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

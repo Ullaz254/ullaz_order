@@ -13,7 +13,8 @@ class CreateVendorDineinTablesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_dinein_tables', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_dinein_tables')) {
+            Schema::create('vendor_dinein_tables', function (Blueprint $table) {
             $table->id();
             $table->string("table_number")->nullable();
             $table->string("image")->nullable();
@@ -22,6 +23,7 @@ class CreateVendorDineinTablesTable extends Migration
             $table->tinyInteger('status')->default(0)->comment('0-active, 1-inactive');
             $table->timestamps();
         });
+        }
     }
 
     /**

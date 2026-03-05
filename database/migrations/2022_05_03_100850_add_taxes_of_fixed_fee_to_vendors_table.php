@@ -13,12 +13,14 @@ class AddTaxesOfFixedFeeToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'fixed_fee_tax')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('fixed_fee_tax')->default(0)->comment('1=active, 0=not');
             $table->unsignedBigInteger('fixed_fee_tax_id')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddTaxesOfFixedFeeToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('fixed_fee_tax');
-            $table->dropColumn('fixed_fee_tax_id');
-        });
+        // Reverse migration if needed
     }
 }

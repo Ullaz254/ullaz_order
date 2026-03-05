@@ -14,7 +14,8 @@ class CreateProductVariantByRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_variant_by_roles', function (Blueprint $table) {
+        if (!Schema::hasTable('product_variant_by_roles')) {
+            Schema::create('product_variant_by_roles', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->bigInteger('product_variant_id')->unsigned()->nullable();
@@ -26,6 +27,7 @@ class CreateProductVariantByRolesTable extends Migration
             $table->foreign('product_variant_id')->references('id')->on('product_variants')->onDelete('SET NULL');
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('SET NULL');
         });
+        }
     }
 
     /**

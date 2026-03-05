@@ -16,9 +16,8 @@ class AddSoftDeleteToAddonOptionsTable extends Migration
         Schema::table('addon_options', function (Blueprint $table) {
             //
             $table->softDeletes();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

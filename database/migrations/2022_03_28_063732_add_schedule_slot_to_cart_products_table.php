@@ -13,13 +13,15 @@ class AddScheduleSlotToCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'schedule_slot')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             
             $table->string('schedule_slot')->nullable();
             $table->string('specific_instruction')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,9 +29,6 @@ class AddScheduleSlotToCartProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            $table->dropColumn('schedule_slot');
-            $table->dropColumn('specific_instruction');
-        });
+        // Reverse migration if needed
     }
 }

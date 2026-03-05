@@ -13,13 +13,15 @@ class Createtablereturnrequestfiles extends Migration
      */
     public function up()
     {
-        Schema::create('order_return_request_files', function (Blueprint $table) {
+        if (!Schema::hasTable('order_return_request_files')) {
+            Schema::create('order_return_request_files', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_return_request_id')->unsigned();
             $table->string('file', 500)->nullable();
             $table->foreign('order_return_request_id')->references('id')->on('order_return_requests')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

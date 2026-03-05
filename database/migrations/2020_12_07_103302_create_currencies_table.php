@@ -13,8 +13,8 @@ class CreateCurrenciesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('currencies', function(Blueprint $table)
-		{
+		if (!Schema::hasTable('currencies')) {
+            Schema::create('currencies', function (Blueprint $table) {
 			$table->id();
 			$table->string('name', 50);
 			$table->integer('priority')->default(0);
@@ -36,16 +36,15 @@ class CreateCurrenciesTable extends Migration {
 			$table->index('iso_code');
 			$table->index('iso_numeric');
 		});
+        }
+    }
 
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
 	{
 		/*Schema::table('currencies', function (Blueprint $table) {
 			$table->index('name');

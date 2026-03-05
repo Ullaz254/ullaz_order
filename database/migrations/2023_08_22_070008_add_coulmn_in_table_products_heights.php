@@ -23,9 +23,8 @@ class AddCoulmnInTableProductsHeights extends Migration
                 if(!Schema::hasColumn('products', 'length')){
                     $table->decimal('length', 10, 4)->nullable();
                 }
-            });
-    }
-
+            }); } 
+    
     /**
      * Reverse the migrations.
      *

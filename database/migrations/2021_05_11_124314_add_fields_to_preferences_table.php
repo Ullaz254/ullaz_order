@@ -13,11 +13,13 @@ class AddFieldsToPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'celebrity_check')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('celebrity_check')->default(0)->comment('0 - no, 1 - yes')->index();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,9 +27,6 @@ class AddFieldsToPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('celebrity_check');
-        });
+        // Reverse migration if needed
     }
 }
-

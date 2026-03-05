@@ -19,9 +19,8 @@ class AddTimezoneFieldUsersTable extends Migration
             }
             $table->bigInteger('timezone_id')->unsigned()->nullable();
             $table->foreign('timezone_id')->references('id')->on('timezones')->onDelete('set null');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

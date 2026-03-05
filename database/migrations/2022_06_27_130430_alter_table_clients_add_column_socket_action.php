@@ -13,13 +13,15 @@ class AlterTableClientsAddColumnSocketAction extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
+        if (!Schema::hasColumn('clients', 'admin_chat')) {
+            Schema::table('clients', function (Blueprint $table) {
             $table->integer('admin_chat')->default(2);
             $table->integer('driver_chat')->default(2);
             $table->integer('customer_chat')->default(2);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,10 +29,6 @@ class AlterTableClientsAddColumnSocketAction extends Migration
      */
     public function down()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            $table->dropColumn('admin_chat');
-            $table->dropColumn('driver_chat');
-            $table->dropColumn('customer_chat');
-        });
+        // Reverse migration if needed
     }
 }

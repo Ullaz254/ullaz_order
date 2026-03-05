@@ -13,11 +13,13 @@ class AddReffManagerIdInTableVendors extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'refference_id')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->integer('refference_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddReffManagerIdInTableVendors extends Migration
      */
     public function down()
     {
-        Schema::table('table_vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -833,9 +833,16 @@ if (!function_exists('getDefaultImagePath')) {
     {
         $values = array();
         $img = 'default/default_image.png';
-        $values['proxy_url'] = \Config::get('app.IMG_URL1');
+        $proxyUrl = \Config::get('app.IMG_URL1');
+        $fitUrl = \Config::get('app.FIT_URl');
+        // Use HTTP for local development
+        if (env('APP_ENV') === 'local') {
+            $proxyUrl = str_replace('https://', 'http://', $proxyUrl);
+            $fitUrl = str_replace('https://', 'http://', $fitUrl);
+        }
+        $values['proxy_url'] = $proxyUrl;
         $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).'@webp';
-        $values['image_fit'] = \Config::get('app.FIT_URl');
+        $values['image_fit'] = $fitUrl;
         return $values;
     }
 }
@@ -844,6 +851,11 @@ if (!function_exists('loadDefaultImage')) {
         $proxy_url = \Config::get('app.IMG_URL1');
         $image_path = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url('default/default_image.png');
         $image_fit = \Config::get('app.FIT_URl');
+        // Use HTTP for local development
+        if (env('APP_ENV') === 'local') {
+            $proxy_url = str_replace('https://', 'http://', $proxy_url);
+            $image_fit = str_replace('https://', 'http://', $image_fit);
+        }
         $default_url = $image_fit .'300/300'. $image_path.'@webp';
 
         if (imageExists($default_url)) {
@@ -880,11 +892,73 @@ if (!function_exists('imageExistsS3')) {
 if (!function_exists('getImageUrl')) {
     function getImageUrl($image, $dim)
     {
-        $server = env('APP_ENV', 'development');
-        if ($server == 'local') {
+        // Check if image URL contains localhost - if so, skip proxy or use HTTP
+        $isLocal = env('APP_ENV') === 'local' || 
+                   strpos($image, 'localhost') !== false || 
+                   strpos($image, '127.0.0.1') !== false ||
+                   request()->getHost() === 'localhost' ||
+                   request()->getHost() === '127.0.0.1';
+        
+        if ($isLocal && (strpos($image, 'http://') === 0 || strpos($image, 'https://') === 0)) {
+            // For local development with full URLs, return directly without proxy
+            return str_replace('https://', 'http://', $image);
+        }
+        
+        $fitUrl = \Config::get('app.FIT_URl');
+        $imgUrl2 = \Config::get('app.IMG_URL2');
+        
+        // Always convert HTTPS to HTTP for local development
+        if ($isLocal) {
+            $fitUrl = str_replace('https://', 'http://', $fitUrl);
+        }
+        
+        $finalUrl = $fitUrl.$dim.$imgUrl2.'/'.$image.'@webp';
+        
+        // Final safety check: convert HTTPS to HTTP for local
+        if ($isLocal) {
+            $finalUrl = str_replace('https://', 'http://', $finalUrl);
+        }
+        
+        return $finalUrl;
+    }
+}
+
+// Helper function to get image proxy URL with correct protocol for environment
+if (!function_exists('getImageProxyUrl')) {
+    function getImageProxyUrl($url) {
+        if (env('APP_ENV') === 'local' && strpos($url, 'https://') === 0) {
+            return str_replace('https://', 'http://', $url);
+        }
+        return $url;
+    }
+}
+
+// Helper function to get image URL with correct protocol
+if (!function_exists('get_file_path')) {
+    function get_file_path($image, $type = 'FIT_URL', $width = '300', $height = '300') {
+        if (empty($image)) {
+            return asset('assets/images/bg-material.png');
+        }
+        
+        // If image already has protocol, use it directly (for local development)
+        if (strpos($image, 'http://') === 0 || strpos($image, 'https://') === 0) {
+            // For local development, convert HTTPS to HTTP
+            if (env('APP_ENV') === 'local' && strpos($image, 'https://') === 0) {
+                return str_replace('https://', 'http://', $image);
+            }
             return $image;
         }
-        return \Config::get('app.FIT_URl').$dim.\Config::get('app.IMG_URL2').'/'.$image.'@webp';
+        
+        // Build image URL from config
+        $fitUrl = \Config::get('app.FIT_URl');
+        $imgUrl2 = \Config::get('app.IMG_URL2');
+        
+        // Use HTTP for local development
+        if (env('APP_ENV') === 'local') {
+            $fitUrl = str_replace('https://', 'http://', $fitUrl);
+        }
+        
+        return $fitUrl . $width . '/' . $height . $imgUrl2 . '/' . $image . '@webp';
     }
 }
 
@@ -1907,7 +1981,8 @@ if (!function_exists('inventorySyncOnOff')) {
 
 if( !function_exists('clientPrefrenceModuleStatus') ) {
     function clientPrefrenceModuleStatus($module_name) {
-            return ClientPreference::select($module_name)->first()->value($module_name);
+            $preference = ClientPreference::select($module_name)->first();
+            return $preference ? $preference->value($module_name) : null;
 
     }
 }
@@ -1915,8 +1990,9 @@ if( !function_exists('clientPrefrenceModuleStatus') ) {
 if( !function_exists('p2p_module_status') ) {
     function p2p_module_status() {
         $additional_preference = getAdditionalPreference(['is_attribute']);
+        $p2p_check = clientPrefrenceModuleStatus('p2p_check');
 
-        if(clientPrefrenceModuleStatus('p2p_check') && $additional_preference['is_attribute']) {
+        if($p2p_check && isset($additional_preference['is_attribute']) && $additional_preference['is_attribute']) {
             return true;
         }
         return false;

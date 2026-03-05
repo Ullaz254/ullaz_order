@@ -13,7 +13,8 @@ class CreateCampaignsTable extends Migration
      */
     public function up()
     {
-        Schema::create('campaigns', function (Blueprint $table) {
+        if (!Schema::hasTable('campaigns')) {
+            Schema::create('campaigns', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->integer('type')->comment('1 SMS, 2 Email, 3 Push Notification')->default(1);
@@ -33,7 +34,8 @@ class CreateCampaignsTable extends Migration
             $table->bigInteger('total_request_count')->nullable();
             $table->integer('status')->comment('1 Active, 2 Pause, 3 Finish');
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

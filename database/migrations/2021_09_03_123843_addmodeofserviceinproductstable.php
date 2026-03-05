@@ -13,9 +13,11 @@ class Addmodeofserviceinproductstable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->string('mode_of_service', 50)->nullable();
-        });
+        if (!Schema::hasColumn('products', 'mode_of_service')) {
+            Schema::table('products', function (Blueprint $table) {
+                $table->string('mode_of_service', 50)->nullable();
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class Addmodeofserviceinproductstable extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('mode_of_service');
+            if (Schema::hasColumn('products', 'mode_of_service')) {
+                $table->dropColumn('mode_of_service');
+            }
         });
     }
 }

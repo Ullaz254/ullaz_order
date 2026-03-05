@@ -13,7 +13,8 @@ class CreatePincodeDeliveryOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pincode_delivery_options', function (Blueprint $table) {
+        if (!Schema::hasTable('pincode_delivery_options')) {
+            Schema::create('pincode_delivery_options', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('pincode_id')->unsigned()->nullable();
             $table->tinyInteger('delivery_option_type')->default(1)->comment('1 for same_day_delivery, 2 for next_day_delivery, 3 for hyper_local_delivery');
@@ -21,6 +22,7 @@ class CreatePincodeDeliveryOptionsTable extends Migration
             $table->foreign('pincode_id')->references('id')->on('pincodes')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

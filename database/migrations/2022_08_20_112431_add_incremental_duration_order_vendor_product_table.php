@@ -13,14 +13,16 @@ class AddIncrementalDurationOrderVendorProductTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'additional_increments_hrs_min')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             //
             $table->string('additional_increments_hrs_min')->default(0)->nullable();
             $table->dateTime('start_date_time')->nullable();
             $table->dateTime('end_date_time')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,8 +30,6 @@ class AddIncrementalDurationOrderVendorProductTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            $table->dropColumn('incremental_price');
-        });
+        // Reverse migration if needed
     }
 }

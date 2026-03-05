@@ -13,11 +13,13 @@ class AddFileNameToUserDocsTable extends Migration
      */
     public function up()
     {
-        Schema::table('user_docs', function (Blueprint $table) {
+        if (!Schema::hasColumn('user_docs', 'file_original_name')) {
+            Schema::table('user_docs', function (Blueprint $table) {
             $table->string('file_original_name')->nullable()->after('file_name');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddFileNameToUserDocsTable extends Migration
      */
     public function down()
     {
-        Schema::table('user_docs', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

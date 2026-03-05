@@ -13,7 +13,8 @@ class CreateBidRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::create('bid_requests', function (Blueprint $table) {
+        if (!Schema::hasTable('bid_requests')) {
+            Schema::create('bid_requests', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('prescription')->nullable();
@@ -22,6 +23,7 @@ class CreateBidRequestsTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+        }
     }
 
     /**

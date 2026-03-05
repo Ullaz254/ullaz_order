@@ -13,7 +13,8 @@ class CreateDeliverySlotsProductTable extends Migration
      */
     public function up()
     {
-        Schema::create('delivery_slots_product', function (Blueprint $table) {
+        if (!Schema::hasTable('delivery_slots_product')) {
+            Schema::create('delivery_slots_product', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->bigInteger('delivery_slot_id')->unsigned()->nullable();
@@ -22,6 +23,7 @@ class CreateDeliverySlotsProductTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('delivery_slot_id')->references('id')->on('delivery_slots')->onDelete('cascade');
         });
+        }
     }
 
     /**

@@ -13,14 +13,16 @@ class Createcabbookinglayoutstable extends Migration
      */
     public function up()
     {
-        Schema::create('cab_booking_layouts', function (Blueprint $table) {
+        if (!Schema::hasTable('cab_booking_layouts')) {
+            Schema::create('cab_booking_layouts', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->string('slug')->nullable();
             $table->tinyInteger('order_by')->nullable();
             $table->tinyInteger('is_active')->default(1)->comment('0-No, 1-Yes');
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

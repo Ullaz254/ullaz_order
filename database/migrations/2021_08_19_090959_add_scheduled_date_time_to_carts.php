@@ -13,10 +13,12 @@ class AddScheduledDateTimeToCarts extends Migration
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->string('schedule_type')->after('currency_id')->nullable();
-            $table->dateTimeTz('scheduled_date_time')->after('schedule_type')->nullable();
-        });
+        if (!Schema::hasColumn('carts', 'schedule_type')) {
+            Schema::table('carts', function (Blueprint $table) {
+                $table->string('schedule_type')->after('currency_id')->nullable();
+                $table->dateTimeTz('scheduled_date_time')->after('schedule_type')->nullable();
+            });
+        }
     }
 
     /**
@@ -27,8 +29,12 @@ class AddScheduledDateTimeToCarts extends Migration
     public function down()
     {
         Schema::table('carts', function (Blueprint $table) {
-            $table->dropColumn('schedule_type');
-            $table->dropColumn('scheduled_date_time');
+            if (Schema::hasColumn('carts', 'schedule_type')) {
+                $table->dropColumn('schedule_type');
+            }
+            if (Schema::hasColumn('carts', 'scheduled_date_time')) {
+                $table->dropColumn('scheduled_date_time');
+            }
         });
     }
 }

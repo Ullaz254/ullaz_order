@@ -13,7 +13,8 @@ class CreateUserRatingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_ratings', function (Blueprint $table) {
+        if (!Schema::hasTable('user_ratings')) {
+            Schema::create('user_ratings', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('order_id')->unsigned()->nullable()->index();
@@ -24,6 +25,7 @@ class CreateUserRatingsTable extends Migration
             $table->string('review', 500)->nullable()->comment('user average rating.');;
             $table->timestamps();
         });
+        }
     }
 
     /**

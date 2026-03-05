@@ -13,11 +13,13 @@ class AddInventoryCategoryIdColumnToCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::table('categories', function (Blueprint $table) {
+        if (!Schema::hasColumn('categories', 'inventory_category_id')) {
+            Schema::table('categories', function (Blueprint $table) {
             $table->bigInteger('inventory_category_id')->nullable()->comment('Refrence of inventory panel category table');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddInventoryCategoryIdColumnToCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::table('categories', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

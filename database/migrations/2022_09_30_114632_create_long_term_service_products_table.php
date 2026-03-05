@@ -13,7 +13,8 @@ class CreateLongTermServiceProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('long_term_service_products', function (Blueprint $table) {
+        if (!Schema::hasTable('long_term_service_products')) {
+            Schema::create('long_term_service_products', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('long_term_service_id')->unsigned()->nullable();
             $table->bigInteger('product_id')->unsigned()->nullable();
@@ -21,6 +22,7 @@ class CreateLongTermServiceProductsTable extends Migration
             $table->integer('quantity')->default(0);
             $table->timestamps();
         });
+        }
     }
 
     /**

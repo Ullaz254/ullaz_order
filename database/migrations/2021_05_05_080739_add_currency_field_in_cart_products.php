@@ -16,9 +16,8 @@ class AddCurrencyFieldInCartProducts extends Migration
         Schema::table('cart_products', function (Blueprint $table) {
             $table->unsignedBigInteger('tax_category_id')->nullable();
             $table->foreign('tax_category_id')->references('id')->on('tax_categories')->onDelete('set null');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

@@ -13,11 +13,13 @@ class AlterTableEstimateProductAddPrice extends Migration
      */
     public function up()
     {
-        Schema::table('estimate_product_translations', function (Blueprint $table) {
+        if (!Schema::hasColumn('estimate_product_translations', 'price')) {
+            Schema::table('estimate_product_translations', function (Blueprint $table) {
             $table->decimal('price', 16, 8)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterTableEstimateProductAddPrice extends Migration
      */
     public function down()
     {
-        Schema::table('estimate_product_translations', function (Blueprint $table) {
-            $table->dropColumn('price');
-        });
+        // Reverse migration if needed
     }
 }

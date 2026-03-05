@@ -13,9 +13,11 @@ class AddlastMileTeamInPreference extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->string('last_mile_team')->nullable();
-        });
+        if (!Schema::hasColumn('client_preferences', 'last_mile_team')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->string('last_mile_team')->nullable();
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AddlastMileTeamInPreference extends Migration
     public function down()
     {
         Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('last_mile_team');
+            if (Schema::hasColumn('client_preferences', 'last_mile_team')) {
+                $table->dropColumn('last_mile_team');
+            }
         });
     }
 }

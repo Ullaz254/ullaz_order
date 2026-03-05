@@ -13,14 +13,16 @@ class AddAgentToTempCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('temp_cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('temp_cart_products', 'dispatch_agent_price')) {
+            Schema::table('temp_cart_products', function (Blueprint $table) {
             $table->unsignedBigInteger('dispatch_agent_id')->nullable()->comment('driver id');
             $table->decimal('dispatch_agent_price',16,4)->default(0)->nullable();
             
 
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,9 +30,6 @@ class AddAgentToTempCartProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('temp_cart_products', function (Blueprint $table) {
-            $table->dropColumn('dispatch_agent_id');
-            $table->dropColumn('dispatch_agent_price');
-        });
+        // Reverse migration if needed
     }
 }

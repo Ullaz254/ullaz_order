@@ -13,11 +13,13 @@ class Addtagkeyinproducttable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'tags')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->string('tags')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class Addtagkeyinproducttable extends Migration
      */
     public function down()
     {
-        Schema::table('products',function (Blueprint $table){
-                $table->dropColumn('tags');
-            });
+        // Reverse migration if needed
     }
 }

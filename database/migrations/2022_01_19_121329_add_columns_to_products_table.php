@@ -18,9 +18,8 @@ class AddColumnsToProductsTable extends Migration
             $table->Integer('delay_order_min_for_dine_in')->default(0);
             $table->Integer('delay_order_hrs_for_takeway')->default(0);
             $table->Integer('delay_order_min_for_takeway')->default(0);
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

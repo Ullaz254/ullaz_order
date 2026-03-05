@@ -13,12 +13,14 @@ class AddShippingTypeToOrderVendorTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'courier_id')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->enum('shipping_delivery_type',['D','L','S','SR'])->default('D');
             $table->integer('courier_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddShippingTypeToOrderVendorTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddAvailableForPoolingToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'available_for_pooling')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->tinyInteger('available_for_pooling')->default(0)->nullable()->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAvailableForPoolingToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('available_for_pooling');
-        });
+        // Reverse migration if needed
     }
 }

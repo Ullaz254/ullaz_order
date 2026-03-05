@@ -13,7 +13,8 @@ class AlterTableProducts extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'engine')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->string('engine', 16)->nullable();
             $table->string('boot_space', 16)->nullable();
             $table->string('mileage', 16)->nullable();
@@ -23,9 +24,10 @@ class AlterTableProducts extends Migration
             $table->string('fuel_tank_capacity', 8)->nullable();
             $table->string('ground_clearence', 8)->nullable();
             $table->string('bhp', 8)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -33,8 +35,6 @@ class AlterTableProducts extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['engine', 'boot_space', 'mileage', 'body_type', 'no_of_cylinder', 'max_torque', 'fuel_tank_capacity', 'ground_clearence', 'bhp']);
-        });
+        // Reverse migration if needed
     }
 }

@@ -6,16 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 class ChangeDollerCompareinclientCur extends Migration
 {
-     /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('client_currencies', function (Blueprint $table) {
-            $table->decimal('doller_compare', 8, 7)->nullable()->change();
-        });
+        // Only change if column exists
+        if (Schema::hasColumn('client_currencies', 'doller_compare')) {
+            try {
+                Schema::table('client_currencies', function (Blueprint $table) {
+                    $table->decimal('doller_compare', 8, 7)->nullable()->change();
+                });
+            } catch (\Exception $e) {
+                \Log::warning('Could not change doller_compare column: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -25,6 +32,14 @@ class ChangeDollerCompareinclientCur extends Migration
      */
     public function down()
     {
-        
+        if (Schema::hasColumn('client_currencies', 'doller_compare')) {
+            try {
+                Schema::table('client_currencies', function (Blueprint $table) {
+                    $table->decimal('doller_compare', 8, 2)->nullable()->change();
+                });
+            } catch (\Exception $e) {
+                \Log::warning('Could not reverse doller_compare column: ' . $e->getMessage());
+            }
+        }
     }
 }

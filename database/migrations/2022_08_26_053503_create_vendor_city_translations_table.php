@@ -13,13 +13,15 @@ class CreateVendorCityTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_city_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_city_translations')) {
+            Schema::create('vendor_city_translations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('vendor_city_id');
             $table->unsignedBigInteger('language_id');
             $table->string('name');
             $table->timestamps();
         });
+        }
     }
 
     /**

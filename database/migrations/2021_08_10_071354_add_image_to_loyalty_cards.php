@@ -13,9 +13,11 @@ class AddImageToLoyaltyCards extends Migration
      */
     public function up()
     {
-        Schema::table('loyalty_cards', function (Blueprint $table) {
-            $table->string('image')->nullable()->after('description');
-        });
+        if (!Schema::hasColumn('loyalty_cards', 'image')) {
+            Schema::table('loyalty_cards', function (Blueprint $table) {
+                $table->string('image')->nullable();
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AddImageToLoyaltyCards extends Migration
     public function down()
     {
         Schema::table('loyalty_cards', function (Blueprint $table) {
-            $table->dropColumn('image');
+            if (Schema::hasColumn('loyalty_cards', 'image')) {
+                $table->dropColumn('image');
+            }
         });
     }
 }

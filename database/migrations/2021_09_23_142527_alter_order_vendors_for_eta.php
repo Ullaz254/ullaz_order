@@ -16,9 +16,8 @@ class AlterOrderVendorsForEta extends Migration
         Schema::table('order_vendors', function (Blueprint $table) {
             $table->unsignedInteger('order_pre_time')->nullable()->default(0);
             $table->unsignedInteger('user_to_vendor_time')->nullable()->default(0);
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

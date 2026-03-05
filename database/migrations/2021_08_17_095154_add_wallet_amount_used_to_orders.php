@@ -13,9 +13,11 @@ class AddWalletAmountUsedToOrders extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('wallet_amount_used', 12, 2)->unsigned()->default(0)->after('total_amount');
-        });
+        if (!Schema::hasColumn('orders', 'wallet_amount_used')) {
+            Schema::table('orders', function (Blueprint $table) {
+                $table->decimal('wallet_amount_used', 12, 2)->unsigned()->default(0)->after('total_amount');
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AddWalletAmountUsedToOrders extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('wallet_amount_used');
+            if (Schema::hasColumn('orders', 'wallet_amount_used')) {
+                $table->dropColumn('wallet_amount_used');
+            }
         });
     }
 }

@@ -13,7 +13,8 @@ class CreateOrderProductAddonsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_product_addons', function (Blueprint $table) {
+        if (!Schema::hasTable('order_product_addons')) {
+            Schema::create('order_product_addons', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_product_id');
             $table->unsignedBigInteger('addon_id');
@@ -24,6 +25,7 @@ class CreateOrderProductAddonsTable extends Migration
             $table->foreign('addon_id')->references('id')->on('addon_sets')->onDelete('cascade');
             $table->foreign('option_id')->references('id')->on('addon_options')->onDelete('cascade');
         });
+        }
     }
 
     /**

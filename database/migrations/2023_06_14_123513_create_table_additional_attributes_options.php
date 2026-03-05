@@ -13,7 +13,8 @@ class CreateTableAdditionalAttributesOptions extends Migration
      */
     public function up()
     {
-        Schema::create('additional_attributes_options', function (Blueprint $table) {
+        if (!Schema::hasTable('additional_attributes_options')) {
+            Schema::create('additional_attributes_options', function (Blueprint $table) {
             $table->id();
             $table->string('title', 128)->nullable();
             $table->bigInteger('additional_attribute_id')->nullable();
@@ -21,6 +22,7 @@ class CreateTableAdditionalAttributesOptions extends Migration
             $table->smallInteger('position')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

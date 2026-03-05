@@ -13,7 +13,8 @@ class CreateBidsTable extends Migration
      */
     public function up()
     {
-        Schema::create('bids', function (Blueprint $table) {
+        if (!Schema::hasTable('bids')) {
+            Schema::create('bids', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('bid_req_id')->nullable();
             $table->bigInteger('vendor_id')->nullable();
@@ -25,6 +26,7 @@ class CreateBidsTable extends Migration
 
             $table->foreign('bid_req_id')->references('id')->on('bid_requests')->onDelete('cascade');
         });
+        }
     }
 
     /**

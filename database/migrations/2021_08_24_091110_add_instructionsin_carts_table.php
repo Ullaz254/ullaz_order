@@ -6,16 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 class AddInstructionsinCartsTable extends Migration
 {
-   /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->text('specific_instructions')->nullable();
-        });
+        if (!Schema::hasColumn('carts', 'specific_instructions')) {
+            Schema::table('carts', function (Blueprint $table) {
+                $table->text('specific_instructions')->nullable();
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AddInstructionsinCartsTable extends Migration
     public function down()
     {
         Schema::table('carts', function (Blueprint $table) {
-            $table->dropColumn('specific_instructions');
+            if (Schema::hasColumn('carts', 'specific_instructions')) {
+                $table->dropColumn('specific_instructions');
+            }
         });
     }
 }

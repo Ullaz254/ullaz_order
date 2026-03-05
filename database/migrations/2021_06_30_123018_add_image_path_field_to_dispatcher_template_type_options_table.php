@@ -13,11 +13,13 @@ class AddImagePathFieldToDispatcherTemplateTypeOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('dispatcher_template_type_options', function (Blueprint $table) {
+        if (!Schema::hasColumn('dispatcher_template_type_options', 'image_path')) {
+            Schema::table('dispatcher_template_type_options', function (Blueprint $table) {
             $table->string('image_path')->nullable()->after('title');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddImagePathFieldToDispatcherTemplateTypeOptionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('dispatcher_template_type_options', function (Blueprint $table) {
-            $table->dropColumn('image_path');
-        });
+        // Reverse migration if needed
     }
 }

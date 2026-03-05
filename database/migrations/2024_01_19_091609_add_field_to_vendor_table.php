@@ -13,11 +13,13 @@ class AddFieldToVendorTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'is_online')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('is_online')->default(1);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddFieldToVendorTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('is_online');
-        });
+        // Reverse migration if needed
     }
 }

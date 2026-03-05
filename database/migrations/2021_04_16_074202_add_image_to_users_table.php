@@ -13,7 +13,8 @@ class AddImageToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'image')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->string('image')->nullable();
             $table->string('email_token', 20)->nullable();
             $table->timestamp('email_token_valid_till')->nullable();
@@ -21,9 +22,10 @@ class AddImageToUsersTable extends Migration
             $table->timestamp('phone_token_valid_till')->nullable();
             $table->tinyInteger('is_email_verified')->default(0)->comment('1 for yes, 0 for no');
             $table->tinyInteger('is_phone_verified')->default(0)->comment('1 for yes, 0 for no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -31,14 +33,6 @@ class AddImageToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('image');
-            $table->dropColumn('email_token');
-            $table->dropColumn('email_token_valid_till');
-            $table->dropColumn('phone_token');
-            $table->dropColumn('phone_token_valid_till');
-            $table->dropColumn('is_email_verified');
-            $table->dropColumn('is_phone_verified');
-        });
+        // Reverse migration if needed
     }
 }

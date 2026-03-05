@@ -13,11 +13,13 @@ class AddVivaOrderIdToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'viva_order_id')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->string('viva_order_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddVivaOrderIdToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

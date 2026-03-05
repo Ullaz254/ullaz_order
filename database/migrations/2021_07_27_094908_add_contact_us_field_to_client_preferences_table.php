@@ -13,9 +13,11 @@ class AddContactUsFieldToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('show_contact_us')->after('enquire_mode')->default(0);
-        });
+        if (!Schema::hasColumn('client_preferences', 'show_contact_us')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('show_contact_us')->after('enquire_mode')->default(0);
+            });
+        }
     }
 
     /**

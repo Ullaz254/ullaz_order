@@ -13,11 +13,13 @@ class AddControllerMainPermission extends Migration
      */
     public function up()
     {
-        Schema::table('main_permissions', function (Blueprint $table) {
+        if (!Schema::hasColumn('main_permissions', 'controller')) {
+            Schema::table('main_permissions', function (Blueprint $table) {
             $table->string('controller')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AddControllerMainPermission extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

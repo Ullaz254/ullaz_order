@@ -31,9 +31,8 @@ class AddInitialGatewayReferenceToPayments extends Migration
             $table->string('order_reference', 255)->nullable();
             $table->string('otp', 255)->nullable();
             $table->tinyInteger('otp_verified')->default(0)->nullable()->comments('0 = Not Verified, 1 = Verified');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

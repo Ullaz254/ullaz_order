@@ -17,9 +17,8 @@ class AlterOrdersForLoyaltyMembershipIdTable extends Migration
             if (!Schema::hasColumn('orders', 'loyalty_membership_id')) {
                 $table->unsignedInteger('loyalty_membership_id')->nullable()->after('currency_id');
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

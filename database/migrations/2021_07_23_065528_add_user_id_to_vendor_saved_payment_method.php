@@ -15,9 +15,8 @@ class AddUserIdToVendorSavedPaymentMethod extends Migration
     {
         Schema::table('vendor_saved_payment_methods', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable()->after('vendor_id');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

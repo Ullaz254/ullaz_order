@@ -13,12 +13,14 @@ class AddSeatsSeatsForBookingToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'seats')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->tinyInteger('seats')->default(0)->nullable();
             $table->tinyInteger('seats_for_booking')->default(0)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddSeatsSeatsForBookingToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('seats');
-            $table->dropColumn('seats_for_booking');
-        });
+        // Reverse migration if needed
     }
 }

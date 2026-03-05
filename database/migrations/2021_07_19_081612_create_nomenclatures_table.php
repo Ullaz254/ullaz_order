@@ -13,12 +13,14 @@ class CreateNomenclaturesTable extends Migration
      */
     public function up()
     {
-        Schema::create('nomenclatures', function (Blueprint $table) {
+        if (!Schema::hasTable('nomenclatures')) {
+            Schema::create('nomenclatures', function (Blueprint $table) {
             $table->id();
             $table->mediumText('label');
             $table->mediumText('value');
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,7 +13,8 @@ class CreateVariantOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('variant_options', function (Blueprint $table) {
+        if (!Schema::hasTable('variant_options')) {
+            Schema::create('variant_options', function (Blueprint $table) {
 
             $table->id();
             $table->string('title', 150)->nullable();
@@ -25,6 +26,7 @@ class CreateVariantOptionsTable extends Migration
             $table->index('position');
             $table->foreign('variant_id')->references('id')->on('variants')->onDelete('cascade');
         });
+        }
     }
 
     /**

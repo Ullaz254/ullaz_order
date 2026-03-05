@@ -13,7 +13,8 @@ class CreateAttributeTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('attribute_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('attribute_translations')) {
+            Schema::create('attribute_translations', function (Blueprint $table) {
             $table->id();
             $table->string('title', 150)->nullable();
             $table->bigInteger('attribute_id')->unsigned()->nullable();
@@ -23,6 +24,7 @@ class CreateAttributeTranslationsTable extends Migration
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
             $table->foreign('language_id')->references('language_id')->on('client_languages')->onDelete('cascade');
         });
+        }
     }
 
     /**

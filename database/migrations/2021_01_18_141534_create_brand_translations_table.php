@@ -13,7 +13,8 @@ class CreateBrandTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('brand_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('brand_translations')) {
+            Schema::create('brand_translations', function (Blueprint $table) {
             $table->id();
             $table->string('title', 150)->nullable();
             $table->bigInteger('brand_id')->unsigned()->nullable();
@@ -23,6 +24,7 @@ class CreateBrandTranslationsTable extends Migration
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
             $table->foreign('language_id')->references('language_id')->on('client_languages')->onDelete('cascade');
         });
+        }
     }
 
     /**

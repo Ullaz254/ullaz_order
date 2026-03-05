@@ -13,10 +13,16 @@ class Alterdefaultvalueofminimumordercount extends Migration
      */
     public function up()
     {
-     
-        Schema::table('products', function (Blueprint $table) {
-            $table->integer('minimum_order_count')->default(1)->change();
-        });
+        // Only change if column exists
+        if (Schema::hasColumn('products', 'minimum_order_count')) {
+            try {
+                Schema::table('products', function (Blueprint $table) {
+                    $table->integer('minimum_order_count')->default(1)->change();
+                });
+            } catch (\Exception $e) {
+                \Log::warning('Could not change minimum_order_count column: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -26,6 +32,14 @@ class Alterdefaultvalueofminimumordercount extends Migration
      */
     public function down()
     {
-       
+        if (Schema::hasColumn('products', 'minimum_order_count')) {
+            try {
+                Schema::table('products', function (Blueprint $table) {
+                    $table->integer('minimum_order_count')->nullable()->change();
+                });
+            } catch (\Exception $e) {
+                \Log::warning('Could not reverse minimum_order_count column: ' . $e->getMessage());
+            }
+        }
     }
 }

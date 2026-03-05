@@ -13,7 +13,8 @@ class CreateInfluencerKycTable extends Migration
      */
     public function up()
     {
-        Schema::create('influencer_kyc', function (Blueprint $table) {
+        if (!Schema::hasTable('influencer_kyc')) {
+            Schema::create('influencer_kyc', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->string('account_name')->nullable();
@@ -29,6 +30,7 @@ class CreateInfluencerKycTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+        }
     }
 
     /**

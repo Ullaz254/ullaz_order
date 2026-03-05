@@ -21,14 +21,17 @@ $(document).ready(async function () {
         let latitude = "";
         let longitude = "";
         if ($("#address-latitude").length > 0) {
-            latitude = $("#address-latitude").val();
+            latitude = $("#address-latitude").val() || "";
         }
         if ($("#address-longitude").length > 0) {
-            longitude = $("#address-longitude").val();
+            longitude = $("#address-longitude").val() || "";
         }
-        // await getHomePageCategoryMenu(latitude, longitude);
-        //  getHomePage(latitude, longitude);
-        // $(document).ready(function () {
+        if (!latitude || !longitude) {
+            latitude = (typeof defaultLatitude !== 'undefined' && defaultLatitude) ? defaultLatitude : '30.7333';
+            longitude = (typeof defaultLongitude !== 'undefined' && defaultLongitude) ? defaultLongitude : '76.7794';
+        }
+        getHomePageCategoryMenu(latitude, longitude);
+        getHomePage(latitude, longitude);
         if ($.cookie("age_restriction") != 1) {
             if (is_age_restricted == "1" || is_age_restricted == 1) {
                 if (redirect) {
@@ -340,8 +343,7 @@ $(document).ready(async function () {
         if ((latitude) && (longitude) && (selected_address)) {
             ajaxData.latitude = latitude;
             ajaxData.longitude = longitude;
-            ajaxData.selectedAddress = sele
-            cted_address;
+            ajaxData.selectedAddress = selected_address;
             ajaxData.selectedPlaceId = selected_place_id;
         }
         /// remove_spinner('#our_vendor_main_div');
@@ -352,9 +354,15 @@ $(document).ready(async function () {
             type: "POST",
             dataType: 'json',
             url: home_page_data_url_new,
+            timeout: 30000,
             beforeSend: function () {
 
                 //$(".no-store-wrapper, .home-slider, .home-banner-slider, #our_vendor_main_div").hide();
+            },
+            error: function () {
+                remove_spinner('#our_vendor_main_div');
+                $(".shimmer_effect").hide();
+                $(".home-slider, .home-banner-slider").show();
             },
             success: function (response) {
                 if (response.status == "Success") {
@@ -868,7 +876,10 @@ $(document).ready(async function () {
     }
 
     function defaultPosition() {
-        // displayLocation(defaultLatitude, defaultLongitude, '', defaultLocationName);
+        var lat = (typeof defaultLatitude !== 'undefined' && defaultLatitude) ? defaultLatitude : '30.7333';
+        var lng = (typeof defaultLongitude !== 'undefined' && defaultLongitude) ? defaultLongitude : '76.7794';
+        getHomePageCategoryMenu(lat, lng);
+        getHomePage(lat, lng);
     }
 
     if (is_hyperlocal) {
@@ -1037,59 +1048,70 @@ $(document).ready(async function () {
         }
 
         // alert(vendor_type);
-        await $.ajax({
-            data: ajaxData,
-            type: "POST",
-            dataType: 'json',
-            url: home_page_data_url_category_menu,
-            beforeSend: function () {
-                $("#main-menu").hide();
-                $(".shimmer_effect .menu-slider").css("display", "flex");
-            },
-            success: async function (response) {
-                nav_click_vendor_mode = 0;
-                if (response.status == "Success") {
+        try {
+            await $.ajax({
+                data: ajaxData,
+                type: "POST",
+                dataType: 'json',
+                url: home_page_data_url_category_menu,
+                timeout: 30000,
+                beforeSend: function () {
+                    $("#main-menu").hide();
+                    $(".shimmer_effect .menu-slider").css("display", "flex");
+                },
+                error: function () {
+                    $("#main-menu").show();
+                    $(".shimmer_effect").hide();
+                },
+                success: async function (response) {
+                    nav_click_vendor_mode = 0;
+                    if (response.status == "Success") {
 
-                    var data = response.data;
-                    // console.log(data);
-                    // return 0;
-                    if ((data.navCategories).length > 0 && vendor_type == "pick_drop") {
-                        var category = data.navCategories[0].slug;
-                        window.location.href = category_page_url.replace(":id", category);
-                        redirect = 1;
-                        return false;
-                    }
+                        var data = response.data;
+                        // console.log(data);
+                        // return 0;
+                        var isLocalhost = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+                        if (!isLocalhost && (data.navCategories).length > 0 && vendor_type == "pick_drop") {
+                            var category = data.navCategories[0].slug;
+                            window.location.href = category_page_url.replace(":id", category);
+                            redirect = 1;
+                            return false;
+                        }
 
-                    if ($('.menu-slider').hasClass('slick-initialized')) {
-                        $('.menu-slider').slick('destroy');
-                    }
-                    $('#main-menu').smartmenus('destroy');
-                    let nav_categories_template = _.template($('#nav_categories_template').html());
-                    await $("#main-menu").html(nav_categories_template({ nav_categories: response.data.navCategories }));
-                    await $("#main-menu").smartmenus({ subMenusSubOffsetX: 1, subMenusSubOffsetY: -8 }), $("#sub-menu").smartmenus({ subMenusSubOffsetX: 1, subMenusSubOffsetY: -8 });
-                    //     if($(window).width() >= 320){
-                    //         if(!$('.menu-slider').hasClass('slick-initialized')){
-                    //             loadMainMenuSlider();
-                    //         }
-                    //    }
-                    resizeMenuSlider();
-                    $("#main-menu").css("display", "flex");
+                        if ($('.menu-slider').hasClass('slick-initialized')) {
+                            $('.menu-slider').slick('destroy');
+                        }
+                        $('#main-menu').smartmenus('destroy');
+                        let nav_categories_template = _.template($('#nav_categories_template').html());
+                        await $("#main-menu").html(nav_categories_template({ nav_categories: response.data.navCategories }));
+                        await $("#main-menu").smartmenus({ subMenusSubOffsetX: 1, subMenusSubOffsetY: -8 }), $("#sub-menu").smartmenus({ subMenusSubOffsetX: 1, subMenusSubOffsetY: -8 });
+                        //     if($(window).width() >= 320){
+                        //         if(!$('.menu-slider').hasClass('slick-initialized')){
+                        //             loadMainMenuSlider();
+                        //         }
+                        //    }
+                        resizeMenuSlider();
+                        $("#main-menu").css("display", "flex");
 
-                    var path = window.location.pathname;
-                    if (path == '/') {
+                        var path = window.location.pathname;
+                        if (path == '/') {
 
+                        }
+                        else {
+                            // if ((latitude) && (longitude) && (selected_address)) {
+                            //     window.location.href = home_page_url;
+                            // }
+                        }
                     }
-                    else {
-                        // if ((latitude) && (longitude) && (selected_address)) {
-                        //     window.location.href = home_page_url;
-                        // }
-                    }
+                },
+                complete: function (data) {
+                    $("#main-menu").show();
                 }
-            },
-            complete: function (data) {
-                $("#main-menu").show();
-            }
-        });
+            });
+        } catch (e) {
+            $("#main-menu").show();
+            $(".shimmer_effect").hide();
+        }
     }
 
 

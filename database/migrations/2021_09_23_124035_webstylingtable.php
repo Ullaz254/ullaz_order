@@ -13,12 +13,14 @@ class Webstylingtable extends Migration
      */
     public function up()
     {
-        Schema::create('web_stylings', function (Blueprint $table) {
+        if (!Schema::hasTable('web_stylings')) {
+            Schema::create('web_stylings', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
             $table->tinyInteger('type')->comment('1-Text, 2-Option, 3-Option Images, 4-Color')->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

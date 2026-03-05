@@ -13,7 +13,8 @@ class CreateVendorRegistrationDocumentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_registration_documents', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_registration_documents')) {
+            Schema::create('vendor_registration_documents', function (Blueprint $table) {
             $table->id();
             $table->string('file_type')->nullable();
             $table->timestamps();
@@ -25,6 +26,7 @@ class CreateVendorRegistrationDocumentsTable extends Migration
             $table->bigInteger('vendor_registration_document_id')->unsigned();
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -139,13 +139,18 @@
 
         var bindLatlng, bindmapProp, bindMap = '';
     function bindLatestCoords(userLatitude, userLongitude){
+        if (typeof google === 'undefined' || !google.maps) return;
+        var el = document.getElementById("nearmap");
+        if (!el) return;
         bindLatlng = new google.maps.LatLng(userLatitude, userLongitude);
         bindmapProp = {
             center:bindLatlng,
             zoom:13,
             mapTypeId:google.maps.MapTypeId.ROADMAP
         };
-        bindMap=new google.maps.Map(document.getElementById("nearmap"), bindmapProp);
+        bindMap=new google.maps.Map(el, bindmapProp);
     }
-    bindLatestCoords(userLatitude, userLongitude);
+    if (typeof google !== 'undefined' && google.maps && document.getElementById("nearmap")) {
+        bindLatestCoords(userLatitude, userLongitude);
+    }
 </script> --}}

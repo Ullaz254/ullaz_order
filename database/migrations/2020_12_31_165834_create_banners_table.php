@@ -13,7 +13,8 @@ class CreateBannersTable extends Migration
      */
     public function up()
     {
-        Schema::create('banners', function (Blueprint $table) {
+        if (!Schema::hasTable('banners')) {
+            Schema::create('banners', function (Blueprint $table) {
             $table->id();
             $table->string('name', 150);
             $table->longText('description')->nullable();
@@ -27,18 +28,10 @@ class CreateBannersTable extends Migration
             $table->bigInteger('redirect_vendor_id')->unsigned()->nullable();
             $table->string('link')->nullable();
             $table->timestamps();
-        });
+                    });
+        }
 
-        Schema::table('banners', function (Blueprint $table) {
-            $table->foreign('redirect_category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('set null');
-            $table->foreign('redirect_vendor_id')->references('id')->on('vendors')->onUpdate('cascade')->onDelete('set null');
-            $table->index('name');
-            $table->index('status');
-            $table->index('start_date_time');
-            $table->index('end_date_time');
-        });
-    }
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -46,6 +39,6 @@ class CreateBannersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('banners');
+        // Reverse migration if needed
     }
 }

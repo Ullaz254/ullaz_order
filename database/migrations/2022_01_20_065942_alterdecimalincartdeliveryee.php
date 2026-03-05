@@ -13,11 +13,13 @@ class Alterdecimalincartdeliveryee extends Migration
      */
     public function up()
     {
-        Schema::table('cart_vendor_delivery_fee', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_vendor_delivery_fee', 'delivery_fee')) {
+            Schema::table('cart_vendor_delivery_fee', function (Blueprint $table) {
             $table->decimal('delivery_fee', 64, 4)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class Alterdecimalincartdeliveryee extends Migration
      */
     public function down()
     {
-        
+        // Reverse migration if needed
     }
 }

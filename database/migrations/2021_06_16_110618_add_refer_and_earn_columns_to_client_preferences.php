@@ -13,13 +13,15 @@ class AddReferAndEarnColumnsToClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'reffered_by_amount')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             //
             $table->decimal('reffered_by_amount')->nullable();
             $table->decimal('reffered_to_amount')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,10 +29,6 @@ class AddReferAndEarnColumnsToClientPreferences extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-            $table->dropColumn('reffered_by_amount');
-            $table->dropColumn('reffered_to_amount');
-        });
+        // Reverse migration if needed
     }
 }

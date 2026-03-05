@@ -13,19 +13,23 @@ class Createproductfaqstable extends Migration
      */
     public function up()
     {
-        Schema::create('product_faqs', function (Blueprint $table) {
-            $table->id();
-            $table->integer('is_required')->default(1)->comment('0 means not required, 1 means required');
-            $table->timestamps();
-        });
-        Schema::create('product_faq_translations', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->nullable();
-            $table->bigInteger('language_id')->unsigned();
-            $table->mediumText('slug')->nullable();
-            $table->bigInteger('product_faq_id')->unsigned();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('product_faqs')) {
+            Schema::create('product_faqs', function (Blueprint $table) {
+                $table->id();
+                $table->integer('is_required')->default(1)->comment('0 means not required, 1 means required');
+                $table->timestamps();
+            });
+        }
+        if (!Schema::hasTable('product_faq_translations')) {
+            Schema::create('product_faq_translations', function (Blueprint $table) {
+                $table->id();
+                $table->string('name')->nullable();
+                $table->bigInteger('language_id')->unsigned();
+                $table->mediumText('slug')->nullable();
+                $table->bigInteger('product_faq_id')->unsigned();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

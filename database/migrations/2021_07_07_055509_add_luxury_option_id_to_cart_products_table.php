@@ -13,11 +13,13 @@ class AddLuxuryOptionIdToCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'luxury_option_id')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             $table->bigInteger('luxury_option_id')->default('1');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddLuxuryOptionIdToCartProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            $table->dropColumn('luxury_option_id');
-        });
+        // Reverse migration if needed
     }
 }

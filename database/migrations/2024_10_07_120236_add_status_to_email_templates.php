@@ -13,24 +13,23 @@ class AddStatusToEmailTemplates extends Migration
      */
     public function up()
     {
-        Schema::table('email_templates', function (Blueprint $table) {
+        if (!Schema::hasColumn('email_templates', 'status')) {
+            Schema::table('email_templates', function (Blueprint $table) {
             $table->tinyInteger('status', false, true)->default(1)->comment(<<<EOL
                 0 -> inactive
                 1 -> active
             EOL);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
      * @return void
      */
-
     public function down()
     {
-        Schema::table('email_templates', function (Blueprint $table) {
-            $table->dropColumn('status');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,10 +13,12 @@ class CreateSquareTimestampTable extends Migration
      */
     public function up()
     {
-        Schema::create('square_timestamp', function (Blueprint $table) {
+        if (!Schema::hasTable('square_timestamp')) {
+            Schema::create('square_timestamp', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,11 +13,13 @@ class AddP2pColumnToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'p2p')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('p2p')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddP2pColumnToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('p2p');
-        });
+        // Reverse migration if needed
     }
 }

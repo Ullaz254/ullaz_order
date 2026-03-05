@@ -13,7 +13,8 @@ class CreateVendorPayouts extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_payouts', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_payouts')) {
+            Schema::create('vendor_payouts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('vendor_id')->nullable();
             $table->unsignedBigInteger('payout_option_id')->nullable();
@@ -23,7 +24,8 @@ class CreateVendorPayouts extends Migration
             $table->unsignedBigInteger('requested_by')->nullable();
             $table->tinyInteger('status')->default(0)->comment('0-pending, 1-paid, 2-failed');
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

@@ -13,11 +13,13 @@ class AddproductDispatcherTaginorderVendorProductstable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'product_dispatcher_tag')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->string('product_dispatcher_tag')->nullable();
-        });
-    } 
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddproductDispatcherTaginorderVendorProductstable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn('product_dispatcher_tag');
-        });
+        // Reverse migration if needed
     }
 }

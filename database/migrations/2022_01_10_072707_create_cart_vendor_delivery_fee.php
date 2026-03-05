@@ -13,7 +13,8 @@ class CreateCartVendorDeliveryFee extends Migration
      */
     public function up()
     {
-        Schema::create('cart_vendor_delivery_fee', function (Blueprint $table) {
+        if (!Schema::hasTable('cart_vendor_delivery_fee')) {
+            Schema::create('cart_vendor_delivery_fee', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('cart_id')->nullable();
             $table->unsignedBigInteger('vendor_id')->nullable();
@@ -25,8 +26,8 @@ class CreateCartVendorDeliveryFee extends Migration
 
             $table->foreign('cart_id')->references('id')->on('carts')->onDelete('cascade');
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
-
-        });
+            });
+        }
     }
 
     /**

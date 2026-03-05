@@ -13,7 +13,7 @@ class CreateTableCartRentalProtection extends Migration
      */
     public function up()
     {
-        if (!checkTableExists('cart_rental_protections')) {
+        if (!Schema::hasTable('cart_rental_protections')) {
             Schema::create('cart_rental_protections', function (Blueprint $table) {
                 $table->id();
                 $table->integer('product_id');

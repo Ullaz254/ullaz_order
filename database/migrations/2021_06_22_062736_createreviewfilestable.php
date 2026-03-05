@@ -13,13 +13,15 @@ class Createreviewfilestable extends Migration
      */
     public function up()
     {
-        Schema::create('order_product_rating_files', function (Blueprint $table) {
+        if (!Schema::hasTable('order_product_rating_files')) {
+            Schema::create('order_product_rating_files', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_product_rating_id')->unsigned();
             $table->string('file', 500)->nullable();
             $table->foreign('order_product_rating_id')->references('id')->on('order_product_ratings')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

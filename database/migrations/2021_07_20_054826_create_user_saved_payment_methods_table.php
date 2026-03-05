@@ -13,7 +13,8 @@ class CreateUserSavedPaymentMethodsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_saved_payment_methods', function (Blueprint $table) {
+        if (!Schema::hasTable('user_saved_payment_methods')) {
+            Schema::create('user_saved_payment_methods', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedInteger('payment_option_id')->nullable();
@@ -28,6 +29,7 @@ class CreateUserSavedPaymentMethodsTable extends Migration
             $table->index('user_id');
             $table->index('payment_option_id');
         });
+        }
     }
 
     /**

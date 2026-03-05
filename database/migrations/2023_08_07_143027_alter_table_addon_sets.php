@@ -17,9 +17,8 @@ class AlterTableAddonSets extends Migration
             if(!Schema::hasColumn('addon_sets', 'icon')){
                 $table->string('icon')->nullable();
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

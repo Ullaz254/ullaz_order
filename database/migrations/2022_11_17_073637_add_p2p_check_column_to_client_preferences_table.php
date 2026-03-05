@@ -13,11 +13,13 @@ class AddP2pCheckColumnToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'p2p_check')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('p2p_check')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddP2pCheckColumnToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('p2p_check');
-        });
+        // Reverse migration if needed
     }
 }

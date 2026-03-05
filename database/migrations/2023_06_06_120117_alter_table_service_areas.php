@@ -13,12 +13,14 @@ class AlterTableServiceAreas extends Migration
      */
     public function up()
     {
-        Schema::table('service_areas', function (Blueprint $table) {
+        if (!Schema::hasColumn('service_areas', 'primary_language')) {
+            Schema::table('service_areas', function (Blueprint $table) {
             $table->tinyInteger('primary_language')->nullable();
             $table->tinyInteger('primary_currency')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AlterTableServiceAreas extends Migration
      */
     public function down()
     {
-        Schema::table('service_areas', function (Blueprint $table) {
-            $table->dropColumn('primary_language');
-            $table->dropColumn('primary_currency');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,8 +13,8 @@ class CreateClientsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('clients', function(Blueprint $table)
-		{
+		if (!Schema::hasTable('clients')) {
+            Schema::create('clients', function (Blueprint $table) {
 			$table->id();
 			$table->string('name', 50);
 			$table->string('email', 60)->unique();
@@ -54,15 +54,15 @@ class CreateClientsTable extends Migration {
 			$table->index('status');
 
 		});
-	}
+        }
+    }
 
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
 	{
 		/*Schema::table('clients', function (Blueprint $table) {
 			$table->dropIndex('phone_number');

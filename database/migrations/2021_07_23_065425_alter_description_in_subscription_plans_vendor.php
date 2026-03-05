@@ -15,9 +15,8 @@ class AlterDescriptionInSubscriptionPlansVendor extends Migration
     {
         Schema::table('subscription_plans_vendor', function (Blueprint $table) {
             $table->renameColumn('Description', 'description');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

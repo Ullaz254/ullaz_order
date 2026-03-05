@@ -13,13 +13,15 @@ class CreateOrderFilesTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_files', function (Blueprint $table) {
+        if (!Schema::hasTable('order_files')) {
+            Schema::create('order_files', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable()->index();
             $table->unsignedBigInteger('cart_id')->nullable()->index();
             $table->string('file')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

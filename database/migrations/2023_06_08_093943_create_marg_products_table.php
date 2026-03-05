@@ -13,7 +13,8 @@ class CreateMargProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('marg_products', function (Blueprint $table) {
+        if (!Schema::hasTable('marg_products')) {
+            Schema::create('marg_products', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->integer('rid')->unsigned()->nullable();// $request->rid;    //: "34347992"
@@ -45,6 +46,7 @@ class CreateMargProductsTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->index('ProductCode');
         });
+        }
     }
 
     /**

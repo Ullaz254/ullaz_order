@@ -13,13 +13,15 @@ class AddCustomerSupportToPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'customer_support')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('customer_support')->nullable();
             $table->string('customer_support_key')->nullable();
             $table->string('customer_support_application_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,10 +29,6 @@ class AddCustomerSupportToPreferences extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('customer_support');
-            $table->dropColumn('customer_support_key');
-            $table->dropColumn('customer_support_application_id');
-        });
+        // Reverse migration if needed
     }
 }

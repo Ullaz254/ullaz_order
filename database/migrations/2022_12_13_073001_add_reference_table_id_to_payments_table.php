@@ -13,11 +13,13 @@ class AddReferenceTableIdToPaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::table('payments', function (Blueprint $table) {
+        if (!Schema::hasColumn('payments', 'reference_table_id')) {
+            Schema::table('payments', function (Blueprint $table) {
             $table->bigInteger('reference_table_id')->unsigned()->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddReferenceTableIdToPaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn('reference_table_id');
-        });
+        // Reverse migration if needed
     }
 }

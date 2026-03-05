@@ -13,9 +13,11 @@ class AddRatingCheckToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('rating_check')->nullable()->after('id')->default(0);
-        });
+        if (!Schema::hasColumn('client_preferences', 'rating_check')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('rating_check')->nullable()->after('id')->default(0);
+            });
+        }
     }
 
     /**

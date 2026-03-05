@@ -13,12 +13,14 @@ class AddShowQrOnFooterFieldToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'show_qr_on_footer')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('show_qr_on_footer')->comment('0-No, 1-Yes')->default(0);
             $table->tinyInteger('auto_implement_5_percent_tip')->comment('0-No, 1-Yes')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddShowQrOnFooterFieldToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('show_qr_on_footer');
-            $table->dropColumn('auto_implement_5_percent_tip');
-        });
+        // Reverse migration if needed
     }
 }

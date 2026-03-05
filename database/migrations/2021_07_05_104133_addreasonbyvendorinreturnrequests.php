@@ -13,11 +13,13 @@ class Addreasonbyvendorinreturnrequests extends Migration
      */
     public function up()
     {
-        Schema::table('order_return_requests', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_return_requests', 'reason_by_vendor')) {
+            Schema::table('order_return_requests', function (Blueprint $table) {
             $table->mediumText('reason_by_vendor')->after('coments')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class Addreasonbyvendorinreturnrequests extends Migration
      */
     public function down()
     {
-        Schema::table('order_return_requests', function (Blueprint $table) {
-            $table->dropColumn('reason_by_vendor');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,7 +13,8 @@ class CreateVendorCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_categories', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_categories')) {
+            Schema::create('vendor_categories', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('vendor_id')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
@@ -24,6 +25,7 @@ class CreateVendorCategoriesTable extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             
         });
+        }
     }
 
     /**

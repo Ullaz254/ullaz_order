@@ -15,9 +15,8 @@ class AddAddedByInPromosTable extends Migration
     {
         Schema::table('promocodes', function (Blueprint $table) {
             $table->unsignedBigInteger('added_by')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

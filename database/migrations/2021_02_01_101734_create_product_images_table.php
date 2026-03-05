@@ -13,7 +13,8 @@ class CreateProductImagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_images', function (Blueprint $table) {
+        if (!Schema::hasTable('product_images')) {
+            Schema::create('product_images', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->bigInteger('media_id')->unsigned()->nullable();
@@ -23,6 +24,7 @@ class CreateProductImagesTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('media_id')->references('id')->on('vendor_media')->onDelete('cascade');
         });
+        }
     }
 
     /**

@@ -16,9 +16,8 @@ class Alterschedulepickupinorders extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->dateTime('schedule_pickup')->nullable();
             $table->dateTime('schedule_dropoff')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

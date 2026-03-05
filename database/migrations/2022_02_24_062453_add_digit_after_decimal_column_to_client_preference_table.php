@@ -13,11 +13,13 @@ class AddDigitAfterDecimalColumnToClientPreferenceTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'digit_after_decimal')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('digit_after_decimal')->default(2)->comment();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddDigitAfterDecimalColumnToClientPreferenceTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

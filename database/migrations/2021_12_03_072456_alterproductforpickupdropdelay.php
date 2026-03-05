@@ -18,9 +18,8 @@ class Alterproductforpickupdropdelay extends Migration
             $table->Integer('pickup_delay_order_min')->default(0);
             $table->Integer('dropoff_delay_order_hrs')->default(0);
             $table->Integer('dropoff_delay_order_min')->default(0);
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

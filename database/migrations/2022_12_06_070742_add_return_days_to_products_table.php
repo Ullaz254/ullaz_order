@@ -13,11 +13,13 @@ class AddReturnDaysToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'return_days')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->integer('return_days')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddReturnDaysToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('return_days');
-        });
+        // Reverse migration if needed
     }
 }

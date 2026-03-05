@@ -16,9 +16,8 @@ class Altercartschedulepickup extends Migration
         Schema::table('carts', function (Blueprint $table) {
             $table->dateTime('schedule_pickup')->nullable();
             $table->dateTime('schedule_dropoff')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

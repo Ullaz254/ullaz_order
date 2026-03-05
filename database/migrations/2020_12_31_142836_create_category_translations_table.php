@@ -13,7 +13,8 @@ class CreateCategoryTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('category_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('category_translations')) {
+            Schema::create('category_translations', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 70)->nullable();
             $table->string('trans-slug')->nullable();
@@ -27,7 +28,7 @@ class CreateCategoryTranslationsTable extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->foreign('language_id')->references('language_id')->on('client_languages')->onDelete('cascade');
         });
-
+        }
     }
 
     /**

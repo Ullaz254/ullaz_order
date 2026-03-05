@@ -13,7 +13,8 @@ class CreateAddonOptionTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('addon_option_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('addon_option_translations')) {
+            Schema::create('addon_option_translations', function (Blueprint $table) {
             $table->id();
             $table->string('title', 100)->nullable();
             $table->bigInteger('addon_opt_id')->unsigned()->nullable();
@@ -23,6 +24,7 @@ class CreateAddonOptionTranslationsTable extends Migration
             $table->foreign('addon_opt_id')->references('id')->on('addon_options')->onDelete('cascade');
             $table->foreign('language_id')->references('language_id')->on('client_languages')->onDelete('cascade');
         });
+        }
     }
 
     /**

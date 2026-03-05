@@ -13,7 +13,8 @@ class CreateAuditsTable extends Migration
      */
     public function up()
     {
-        Schema::create('audits', function (Blueprint $table) {
+        if (!Schema::hasTable('audits')) {
+            Schema::create('audits', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('user_type')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
@@ -28,7 +29,8 @@ class CreateAuditsTable extends Migration
             $table->timestamps();
 
             $table->index(['user_id', 'user_type']);
-        });
+            });
+        }
     }
 
     /**

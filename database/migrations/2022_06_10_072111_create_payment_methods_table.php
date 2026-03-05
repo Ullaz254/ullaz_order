@@ -14,7 +14,8 @@ class CreatePaymentMethodsTable extends Migration
     public function up()
     {
         
-        Schema::create('payment_methods', function (Blueprint $table) {
+        if (!Schema::hasTable('payment_methods')) {
+            Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
             $table->string('image')->nullable();
@@ -22,6 +23,7 @@ class CreatePaymentMethodsTable extends Migration
             $table->tinyInteger('is_show')->nullable()->default(0)->comment('0-No, 1-Yes');
             $table->timestamps();
         });
+        }
     }
 
     /**

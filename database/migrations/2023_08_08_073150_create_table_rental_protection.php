@@ -13,7 +13,7 @@ class CreateTableRentalProtection extends Migration
      */
     public function up()
     {
-        if (!checkTableExists('rental_protections')) {
+        if (!Schema::hasTable('rental_protections')) {
             Schema::create('rental_protections', function (Blueprint $table) {
                 $table->id();
                 $table->string('title', 32);

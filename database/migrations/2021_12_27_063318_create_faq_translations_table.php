@@ -13,7 +13,8 @@ class CreateFaqTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('faq_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('faq_translations')) {
+            Schema::create('faq_translations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('page_id');
             $table->unsignedBigInteger('language_id');
@@ -22,14 +23,10 @@ class CreateFaqTranslationsTable extends Migration
             $table->tinyInteger('status')->default(0);
             $table->tinyInteger('order_by')->nullable();
             $table->timestamps();
-        });
-        Schema::table('faq_translations', function (Blueprint $table) {
-            $table->foreign('page_id')
-                  ->references('id')->on('pages')
-                  ->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -37,6 +34,6 @@ class CreateFaqTranslationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('faq_translations');
+        // Reverse migration if needed
     }
 }

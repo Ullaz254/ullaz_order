@@ -13,7 +13,8 @@ class CreateCampaignRostersTable extends Migration
      */
     public function up()
     {
-        Schema::create('campaign_rosters', function (Blueprint $table) {
+        if (!Schema::hasTable('campaign_rosters')) {
+            Schema::create('campaign_rosters', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('campaign_id')->nullable();
             $table->bigInteger('user_id')->nullable();
@@ -23,8 +24,8 @@ class CreateCampaignRostersTable extends Migration
             $table->string('device_token',191)->nullable();
             $table->integer('status')->nullable();
             $table->timestamps();
-        });
-
+            });
+        }
     }
 
     /**

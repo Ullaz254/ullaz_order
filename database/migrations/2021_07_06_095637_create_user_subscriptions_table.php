@@ -13,7 +13,8 @@ class CreateUserSubscriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_subscriptions', function (Blueprint $table) {
+        if (!Schema::hasTable('user_subscriptions')) {
+            Schema::create('user_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->mediumText('slug')->nullable();
@@ -26,6 +27,7 @@ class CreateUserSubscriptionsTable extends Migration
             $table->tinyInteger('is_deleted')->unsigned()->default(0);
             $table->timestamps();
         });
+        }
     }
 
     /**

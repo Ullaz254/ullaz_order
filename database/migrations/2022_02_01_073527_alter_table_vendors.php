@@ -13,13 +13,15 @@ class AlterTableVendors extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'city')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('country')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,6 +29,6 @@ class AlterTableVendors extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

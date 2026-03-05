@@ -13,7 +13,8 @@ class CreateProductCrossSellsTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_cross_sells', function (Blueprint $table) {
+        if (!Schema::hasTable('product_cross_sells')) {
+            Schema::create('product_cross_sells', function (Blueprint $table) {
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->bigInteger('cross_product_id')->unsigned()->nullable();
             $table->timestamps();
@@ -21,6 +22,7 @@ class CreateProductCrossSellsTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('cross_product_id')->references('id')->on('products')->onDelete('cascade');
         });
+        }
     }
 
     /**

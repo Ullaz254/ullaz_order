@@ -13,11 +13,13 @@ class AddSubscriptiontabtaxiToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'subscription_tab_taxi')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('subscription_tab_taxi')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSubscriptiontabtaxiToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('subscription_tab_taxi');
-        });
+        // Reverse migration if needed
     }
 }

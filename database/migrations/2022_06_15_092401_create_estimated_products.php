@@ -13,13 +13,15 @@ class CreateEstimatedProducts extends Migration
      */
     public function up()
     {
-        Schema::create('estimated_products', function (Blueprint $table) {
+        if (!Schema::hasTable('estimated_products')) {
+            Schema::create('estimated_products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('estimated_cart_id')->references('id')->on('estimated_product_carts')->onDelete('cascade');
             $table->foreignId('product_id')->references('id')->on('estimate_products')->onDelete('cascade');
             $table->integer('quantity')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

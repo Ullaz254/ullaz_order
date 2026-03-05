@@ -13,7 +13,8 @@ class CreatePromocodeRestrictionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('promocode_restrictions', function (Blueprint $table) {
+        if (!Schema::hasTable('promocode_restrictions')) {
+            Schema::create('promocode_restrictions', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('promocode_id')->unsigned()->nullable();
             $table->tinyInteger('restriction_type')->default(0)->comment('0- product, 1-vendor, 2-category')->nullable();
@@ -26,6 +27,7 @@ class CreatePromocodeRestrictionsTable extends Migration
             $table->index('is_excluded');
             $table->foreign('promocode_id')->references('id')->on('promocodes')->onDelete('cascade');
         });
+        }
     }
 
     /**

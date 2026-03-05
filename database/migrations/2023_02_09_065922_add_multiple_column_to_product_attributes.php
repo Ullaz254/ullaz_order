@@ -13,12 +13,14 @@ class AddMultipleColumnToProductAttributes extends Migration
      */
     public function up()
     {
-        Schema::table('product_attributes', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_attributes', 'latitude')) {
+            Schema::table('product_attributes', function (Blueprint $table) {
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddMultipleColumnToProductAttributes extends Migration
      */
     public function down()
     {
-        Schema::table('product_attributes', function (Blueprint $table) {
-            $table->dropColumn(['latitude',  'longitude']);
-        });
+        // Reverse migration if needed
     }
 }

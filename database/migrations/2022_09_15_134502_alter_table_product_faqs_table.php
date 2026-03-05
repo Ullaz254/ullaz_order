@@ -13,11 +13,13 @@ class AlterTableProductFaqsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_faqs', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_faqs', 'file_type')) {
+            Schema::table('product_faqs', function (Blueprint $table) {
             $table->string('file_type')->default(0)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterTableProductFaqsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_faqs', function (Blueprint $table) {
-            $table->dropColumn('file_type');
-        });
+        // Reverse migration if needed
     }
 }

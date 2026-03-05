@@ -13,7 +13,8 @@ class CreateNotificationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('notifications', function (Blueprint $table) {
+        if (!Schema::hasTable('notifications')) {
+            Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->integer('order_id');
@@ -23,7 +24,8 @@ class CreateNotificationsTable extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

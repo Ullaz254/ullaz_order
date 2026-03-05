@@ -13,11 +13,13 @@ class AlterTblUserAddColumnIsPresignup extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'is_presignup')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->integer('is_presignup')->default(0)->comment("1 is active 0 is inactive");
-        });
-    }
-    
+                    });
+        }
+
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterTblUserAddColumnIsPresignup extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('is_presignup');
-        });
+        // Reverse migration if needed
     }
 }

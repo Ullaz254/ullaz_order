@@ -13,11 +13,13 @@ class AddProductDeliveryFeeToCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'product_delivery_fee')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             $table->decimal('product_delivery_fee', 16, 8)->nullable()->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddProductDeliveryFeeToCartProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

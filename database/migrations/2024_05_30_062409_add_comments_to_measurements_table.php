@@ -13,11 +13,13 @@ class AddCommentsToMeasurementsTable extends Migration
      */
     public function up()
     {
-        Schema::table('measurements', function (Blueprint $table) {
+        if (!Schema::hasColumn('measurements', 'field_type')) {
+            Schema::table('measurements', function (Blueprint $table) {
             $table->string('field_type')->comment('0->textBox,1->checkBox')->change();
-          });
-    }
+                      });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCommentsToMeasurementsTable extends Migration
      */
     public function down()
     {
-        Schema::table('measurements', function (Blueprint $table) {
-                 
-        });
+        // Reverse migration if needed
     }
 }

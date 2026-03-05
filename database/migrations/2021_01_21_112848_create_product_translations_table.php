@@ -13,7 +13,8 @@ class CreateProductTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('product_translations')) {
+            Schema::create('product_translations', function (Blueprint $table) {
             $table->id();
             $table->string('title', 150)->nullable();
             $table->text('body_html')->nullable();
@@ -27,6 +28,7 @@ class CreateProductTranslationsTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('language_id')->references('language_id')->on('client_languages')->onDelete('cascade');
         });
+        }
     }
 
     /**

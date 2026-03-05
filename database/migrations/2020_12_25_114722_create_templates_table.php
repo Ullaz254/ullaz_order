@@ -13,13 +13,15 @@ class CreateTemplatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('templates', function (Blueprint $table) {
+        if (!Schema::hasTable('templates')) {
+            Schema::create('templates', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
             $table->string('image');
             $table->tinyInteger('for')->default(0)->comment('1 for web, 2 for app');
             $table->timestamps();
         });
+        }
     }
 
     /**

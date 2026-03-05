@@ -13,11 +13,13 @@ class AddCountryCodeToServiceAreasTable extends Migration
      */
     public function up()
     {
-        Schema::table('service_areas', function (Blueprint $table) {
+        if (!Schema::hasColumn('service_areas', 'country_code')) {
+            Schema::table('service_areas', function (Blueprint $table) {
             $table->string('country_code', 5)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCountryCodeToServiceAreasTable extends Migration
      */
     public function down()
     {
-        Schema::table('service_areas', function (Blueprint $table) {
-            $table->dropColumn('country_code');
-        });
+        // Reverse migration if needed
     }
 }

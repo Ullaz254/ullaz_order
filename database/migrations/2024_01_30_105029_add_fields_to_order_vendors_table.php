@@ -13,12 +13,14 @@ class AddFieldsToOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'borzoe_order_id')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->integer('borzoe_order_id')->nullable();
             $table->string('borzoe_order_name')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddFieldsToOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->dropColumn('borzoe_order_id');
-            $table->dropColumn('borzoe_order_name');
-        });
+        // Reverse migration if needed
     }
 }

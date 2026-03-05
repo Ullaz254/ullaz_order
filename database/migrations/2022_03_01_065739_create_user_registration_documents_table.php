@@ -13,7 +13,8 @@ class CreateUserRegistrationDocumentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_registration_documents', function (Blueprint $table) {
+        if (!Schema::hasTable('user_registration_documents')) {
+            Schema::create('user_registration_documents', function (Blueprint $table) {
             $table->id();
             $table->string('file_type')->nullable();
             $table->tinyinteger('is_required')->nullable();
@@ -26,7 +27,8 @@ class CreateUserRegistrationDocumentsTable extends Migration
             $table->bigInteger('language_id')->unsigned();
             $table->bigInteger('user_registration_document_id')->unsigned();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

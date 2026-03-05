@@ -16,9 +16,8 @@ class AlterTableOrderAddShippingDeliveryType extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->enum('shipping_delivery_type', ['D', 'L'])->default('D')->comment('D : Dispatcher , L : Lalamove');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

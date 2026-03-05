@@ -15,9 +15,8 @@ class AddSubscriptionInvoicesVendorIdToOrderVendorsTable extends Migration
     {
         Schema::table('order_vendors', function (Blueprint $table) {
             $table->unsignedBigInteger('subscription_invoices_vendor_id')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

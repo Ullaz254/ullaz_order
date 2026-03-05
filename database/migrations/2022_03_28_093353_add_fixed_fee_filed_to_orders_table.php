@@ -13,11 +13,13 @@ class AddFixedFeeFiledToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'fixed_fee_amount')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->decimal('fixed_fee_amount',16,2)->default(0.00);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddFixedFeeFiledToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('fixed_fee_amount');
-        });
+        // Reverse migration if needed
     }
 }

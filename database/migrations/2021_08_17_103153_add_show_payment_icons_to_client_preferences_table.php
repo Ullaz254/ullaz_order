@@ -13,9 +13,11 @@ class AddShowPaymentIconsToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('show_payment_icons')->after('enquire_mode')->default(0);
-        });
+        if (!Schema::hasColumn('client_preferences', 'show_payment_icons')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('show_payment_icons')->after('enquire_mode')->default(0);
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AddShowPaymentIconsToClientPreferencesTable extends Migration
     public function down()
     {
         Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('show_payment_icons');
+            if (Schema::hasColumn('client_preferences', 'show_payment_icons')) {
+                $table->dropColumn('show_payment_icons');
+            }
         });
     }
 }

@@ -12,13 +12,15 @@ class CreateOrderStatusTable extends Migration
      * @return void
      */
     public function up(){
-        Schema::create('order_status', function (Blueprint $table) {
+        if (!Schema::hasTable('order_status')) {
+            Schema::create('order_status', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->tinyInteger('type')->default(0)->comment('1 - for order, 2 - fordispatch');
             $table->tinyInteger('status')->default(0)->comment('1 - active, 0 - inactive');
             $table->timestamps();
         });
+        }
     }
 
     /**

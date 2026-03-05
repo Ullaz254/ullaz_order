@@ -13,13 +13,15 @@ class AlterTableProductFaqsSelectOption extends Migration
      */
     public function up()
     {
-        Schema::create('product_faq_select_options', function (Blueprint $table) {
+        if (!Schema::hasTable('product_faq_select_options')) {
+            Schema::create('product_faq_select_options', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_faq_id');
             $table->tinyInteger('status')->nullable()->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
+        }
     }
 
     /**

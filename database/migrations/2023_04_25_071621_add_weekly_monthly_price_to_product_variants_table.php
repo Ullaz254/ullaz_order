@@ -13,13 +13,15 @@ class AddWeeklyMonthlyPriceToProductVariantsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'week_price')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             $table->decimal('week_price', 16, 8)->nullable();
             $table->decimal('month_price', 16, 8)->nullable();
             $table->string('emirate')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class AddWeeklyMonthlyPriceToProductVariantsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

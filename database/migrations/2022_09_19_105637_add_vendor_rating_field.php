@@ -13,11 +13,13 @@ class AddVendorRatingField extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'rating')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->decimal('rating',  4, 2)->nullable()->comment('vendor average rating.');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddVendorRatingField extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('rating');
-        });
+        // Reverse migration if needed
     }
 }

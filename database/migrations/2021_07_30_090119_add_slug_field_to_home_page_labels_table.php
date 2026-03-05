@@ -13,11 +13,13 @@ class AddSlugFieldToHomePageLabelsTable extends Migration
      */
     public function up()
     {
-        Schema::table('home_page_labels', function (Blueprint $table) {
+        if (!Schema::hasColumn('home_page_labels', 'slug')) {
+            Schema::table('home_page_labels', function (Blueprint $table) {
             $table->string('slug')->after('title')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSlugFieldToHomePageLabelsTable extends Migration
      */
     public function down()
     {
-        Schema::table('home_page_labels', function (Blueprint $table) {
-            $table->dropColumn('slug');
-        });
+        // Reverse migration if needed
     }
 }

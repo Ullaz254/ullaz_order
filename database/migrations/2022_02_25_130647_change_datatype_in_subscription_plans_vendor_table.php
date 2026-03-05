@@ -13,11 +13,13 @@ class ChangeDatatypeInSubscriptionPlansVendorTable extends Migration
      */
     public function up()
     {
-        Schema::table('subscription_plans_vendor', function (Blueprint $table) {
+        if (!Schema::hasColumn('subscription_plans_vendor', 'price')) {
+            Schema::table('subscription_plans_vendor', function (Blueprint $table) {
             $table->decimal('price', 16, 8)->nullable()->default(0)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class ChangeDatatypeInSubscriptionPlansVendorTable extends Migration
      */
     public function down()
     {
-        Schema::table('subscription_plans_vendor', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

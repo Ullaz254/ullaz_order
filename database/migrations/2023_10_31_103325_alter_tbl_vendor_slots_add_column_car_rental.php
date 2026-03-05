@@ -13,11 +13,13 @@ class AlterTblVendorSlotsAddColumnCarRental extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_slots', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_slots', 'car_rental')) {
+            Schema::table('vendor_slots', function (Blueprint $table) {
             $table->tinyInteger('car_rental')->after('rental')->default(0)->comment('1 for yes, 0 for no');
-            });
-    }
+                        });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterTblVendorSlotsAddColumnCarRental extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_slots', function (Blueprint $table) {
-            $table->dropColumn('car_rental');
-        });
+        // Reverse migration if needed
     }
 }

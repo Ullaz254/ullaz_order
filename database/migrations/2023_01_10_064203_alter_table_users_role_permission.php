@@ -18,9 +18,8 @@ class AlterTableUsersRolePermission extends Migration
             {
                 $table->string('geo_ids')->default(0);
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

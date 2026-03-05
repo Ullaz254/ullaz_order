@@ -13,11 +13,13 @@ class AddVivaOrderIdtoPaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::table('payments', function (Blueprint $table) {
+        if (!Schema::hasColumn('payments', 'viva_order_id')) {
+            Schema::table('payments', function (Blueprint $table) {
             $table->string('viva_order_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AddVivaOrderIdtoPaymentsTable extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddExpiryDateToProductVariantsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'expiry_date')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             $table->date('expiry_date')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddExpiryDateToProductVariantsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            $table->dropColumn('expiry_date');
-        });
+        // Reverse migration if needed
     }
 }

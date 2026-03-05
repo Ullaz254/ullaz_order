@@ -13,13 +13,15 @@ class CreateWebhooksTable extends Migration
      */
     public function up()
     {
-        Schema::create('webhooks', function (Blueprint $table) {
+        if (!Schema::hasTable('webhooks')) {
+            Schema::create('webhooks', function (Blueprint $table) {
             $table->id();
             $table->integer('tracking_order_id')->nullable();
             $table->longText('response')->nullable();
             $table->enum('hook_from', ['L'])->default('L')->comment('L : Lalamove');
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

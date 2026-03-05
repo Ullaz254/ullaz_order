@@ -13,7 +13,8 @@ class CreateUserDevicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_devices', function (Blueprint $table) {
+        if (!Schema::hasTable('user_devices')) {
+            Schema::create('user_devices', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->string('device_type', 30)->nullable();
@@ -23,6 +24,7 @@ class CreateUserDevicesTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+        }
     }
 
     /**

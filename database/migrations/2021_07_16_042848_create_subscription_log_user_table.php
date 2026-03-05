@@ -13,7 +13,8 @@ class CreateSubscriptionLogUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscription_log_user', function (Blueprint $table) {
+        if (!Schema::hasTable('subscription_log_user')) {
+            Schema::create('subscription_log_user', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('subscription_invoice_id')->nullable();
@@ -32,6 +33,7 @@ class CreateSubscriptionLogUserTable extends Migration
             $table->dateTime('ended_at')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

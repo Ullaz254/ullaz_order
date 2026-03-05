@@ -13,23 +13,13 @@ class ChangeShippingDeliveryTypeEmumToString extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table){
+        if (!Schema::hasColumn('orders', 'shipping_delivery_type')) {
+            Schema::table('orders', function (Blueprint $table){
             $table->string('shipping_delivery_type')->change()->default('D');
-        });
+                    });
+        }
 
-        Schema::table('carts', function (Blueprint $table) {
-            $table->string('shipping_delivery_type')->change()->default('D');
-        });
-
-        Schema::table('cart_vendor_delivery_fee', function (Blueprint $table) {
-            $table->string('shipping_delivery_type')->change()->default('D');
-        });
-
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->string('shipping_delivery_type')->change()->default('D');
-        });
-    }
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -37,6 +27,6 @@ class ChangeShippingDeliveryTypeEmumToString extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

@@ -6,18 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 class Altergetestimationproductsclientpref extends Migration
 {
-     /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'get_estimations')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('get_estimations')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class Altergetestimationproductsclientpref extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

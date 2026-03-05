@@ -13,10 +13,12 @@ class AlterCsvProductImportsTableForWoocomerceImport extends Migration
      */
     public function up()
     {
-        Schema::table('csv_product_imports', function (Blueprint $table) {
-            $table->json('raw_data')->nullable()->after('status');
-            $table->tinyInteger('type')->nullable()->comment('0 for csv, 1 for woocommerce')->after('uploaded_by')->default(0);
-        });
+        if (!Schema::hasColumn('csv_product_imports', 'raw_data')) {
+            Schema::table('csv_product_imports', function (Blueprint $table) {
+                $table->json('raw_data')->nullable()->after('status');
+                $table->tinyInteger('type')->nullable()->comment('0 for csv, 1 for woocommerce')->after('uploaded_by')->default(0);
+            });
+        }
     }
 
     /**
@@ -26,6 +28,13 @@ class AlterCsvProductImportsTableForWoocomerceImport extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('csv_product_imports', function (Blueprint $table) {
+            if (Schema::hasColumn('csv_product_imports', 'raw_data')) {
+                $table->dropColumn('raw_data');
+            }
+            if (Schema::hasColumn('csv_product_imports', 'type')) {
+                $table->dropColumn('type');
+            }
+        });
     }
 }

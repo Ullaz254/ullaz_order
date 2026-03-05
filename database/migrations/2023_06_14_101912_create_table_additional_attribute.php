@@ -13,7 +13,8 @@ class CreateTableAdditionalAttribute extends Migration
      */
     public function up()
     {
-        Schema::create('additional_attributes', function (Blueprint $table) {
+        if (!Schema::hasTable('additional_attributes')) {
+            Schema::create('additional_attributes', function (Blueprint $table) {
             $table->id();
             $table->string('title', 64)->nullable();
             $table->bigInteger('user_id')->nullable();
@@ -27,6 +28,7 @@ class CreateTableAdditionalAttribute extends Migration
                 ->comment('1 for yes, 0 for no');
             $table->timestamps();
         });
+        }
     }
 
     /**

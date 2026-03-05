@@ -13,11 +13,13 @@ class AddDispatcherStatusToVendorOrderProductStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_order_product_statuses', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_order_product_statuses', 'dispatcher_status_option_id')) {
+            Schema::table('vendor_order_product_statuses', function (Blueprint $table) {
             $table->bigInteger('dispatcher_status_option_id')->unsigned()->nullable()->afert('order_status_option_id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddDispatcherStatusToVendorOrderProductStatusesTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_order_product_statuses', function (Blueprint $table) {
-            $table->dropColumn('dispatcher_status_option_id');
-        });
+        // Reverse migration if needed
     }
 }

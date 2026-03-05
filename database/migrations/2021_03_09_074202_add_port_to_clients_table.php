@@ -13,12 +13,14 @@ class AddPortToClientsTable extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
+        if (!Schema::hasColumn('clients', 'database_host')) {
+            Schema::table('clients', function (Blueprint $table) {
             $table->string('database_host')->nullable();
             $table->string('database_port', 50)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddPortToClientsTable extends Migration
      */
     public function down()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            $table->dropColumn('database_host');
-            $table->dropColumn('database_port');
-        });
+        // Reverse migration if needed
     }
 }

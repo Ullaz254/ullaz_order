@@ -11,6 +11,7 @@ use App\Http\Traits\ApiResponser;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\Front\FrontController;
 use Illuminate\Contracts\Session\Session as SessionSession;
 use App\Models\{Currency, Banner, MobileBanner, FaqTranslations, Category, Brand, Product, ClientLanguage, Vendor, VendorCategory, ClientCurrency,Client, ClientPreference, DriverRegistrationDocument, HomePageLabel, Page, VendorRegistrationDocument, Language, OnboardSetting, CabBookingLayout, WebStylingOption, SubscriptionInvoicesVendor, Order, VendorOrderStatus,CabBookingLayoutTranslation,ShowSubscriptionPlanOnSignup, TaxCategory, VendorCities, UserWishlist};
@@ -71,9 +72,28 @@ class UserhomeController extends FrontController
     }
     public function getConfig()
     {
-        $client_preferences = $this->client_preferences;
-        $client_preferences = $client_preferences->makeHidden(['customer_support_key','delivery_service_key','fcm_server_key','fcm_api_key','mail_username','mail_password','sms_key','sms_secret','sms_credentials','fb_client_secret','fcm_storage_bucket','customer_support_application_id','pickup_delivery_service_key']);
-        return response()->json(['success' => true, 'client_preferences' => $client_preferences]);
+        try {
+            $client_preferences = $this->client_preferences;
+            if (!$client_preferences) {
+                // Return default preferences if none exist
+                return response()->json([
+                    'success' => true,
+                    'client_preferences' => new \stdClass()
+                ]);
+            }
+            $client_preferences = $client_preferences->makeHidden(['customer_support_key','delivery_service_key','fcm_server_key','fcm_api_key','mail_username','mail_password','sms_key','sms_secret','sms_credentials','fb_client_secret','fcm_storage_bucket','customer_support_application_id','pickup_delivery_service_key']);
+            return response()->json(['success' => true, 'client_preferences' => $client_preferences]);
+        } catch (\Exception $e) {
+            \Log::error('getConfig error', [
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ]);
+            return response()->json([
+                'success' => true,
+                'client_preferences' => new \stdClass()
+            ]);
+        }
     }
 
     public function getLastMileTeams()
@@ -462,7 +482,7 @@ class UserhomeController extends FrontController
     //         $homeData = ['categories' => $categories,'home' => $home,  'count' => $count, 'for_no_product_found_html' => $for_no_product_found_html,'homePagePickupLabels' => $home_page_pickup_labels, 'homePageLabels' => $home_page_labels, 'clientPreferences' => $client_preferences, 'banners' => $banners,'mobile_banners'=>$mobile_banners, 'navCategories' => $navCategories, 'selectedAddress' => $selectedAddress, 'latitude' => $latitude, 'longitude' => $longitude,'enable_layout'=>$enable_layout,'homePageData'=>$homePageData ,'is_service_product_price_from_dispatch_forOnDemand'=> $is_service_product_price_from_dispatch_forOnDemand];
     //         return view('frontend.'.$view_page)->with($homeData);
 
-    //     } catch (Exception $e) {
+    //     } catch (\Exception $e) {
     //         pr($e->getCode());
     //         die;
     //     }
@@ -523,7 +543,10 @@ class UserhomeController extends FrontController
                 }
 
             }
-            if(count($navCategories) > 0 && ($vendor_type =='pick_drop') &&  ($count!=1) ){
+            // Skip redirect on localhost: route('categoryDetail') is only registered for domain-based routes
+            $isLocalHost = in_array($request->getHost(), ['localhost', '127.0.0.1'], true)
+                || strpos($request->getHost(), 'localhost') !== false;
+            if (!$isLocalHost && count($navCategories) > 0 && ($vendor_type =='pick_drop') &&  ($count!=1) ){
                 $categoriesSlug = $navCategories[0]->slug;
                 return redirect()->route('categoryDetail',$categoriesSlug);
             }
@@ -550,6 +573,7 @@ class UserhomeController extends FrontController
                             'is_hyperlocal' => 0,
                             'Default_latitude' => 0,
                             'Default_longitude' => 0,
+                            'Default_location_name' => null,
                         ];
                         $this->client_preferences = $client_preferences;
                     }
@@ -561,6 +585,7 @@ class UserhomeController extends FrontController
                         'is_hyperlocal' => 0,
                         'Default_latitude' => 0,
                         'Default_longitude' => 0,
+                        'Default_location_name' => null,
                     ];
                     $this->client_preferences = $client_preferences;
                 }
@@ -685,7 +710,7 @@ class UserhomeController extends FrontController
                     ]);
                     // Continue with default value
                 }
-                if ($only_cab_booking == 1)
+                if ($only_cab_booking == 1 && !$isLocalHost)
                     return Redirect::route('categoryDetail', 'cabservice');
 
                 // Get pickup labels with error handling
@@ -807,9 +832,22 @@ class UserhomeController extends FrontController
                 return view('frontend.'.$view_page)->with($homeData);
             }
 
-        } catch (Exception $e) {
-            pr($e->getCode());
-            die;
+        } catch (\Exception $e) {
+            \Log::error('UserhomeController index failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            // Return a fallback view instead of dying
+            $dbName = 'Not connected';
+            try {
+                $dbName = DB::connection()->getDatabaseName();
+            } catch (\Exception $dbE) {
+                // Database not connected
+            }
+            return response()->view('welcome', [
+                'message' => 'Laravel application is running. Database: ' . $dbName,
+                'tables' => 'Error loading homepage: ' . $e->getMessage()
+            ], 200);
         }
     }
     /**
@@ -849,7 +887,7 @@ class UserhomeController extends FrontController
      * @param  mixed $request
      * @return void
      */
-    public function postHomePageData(Request $request,$set_template,$enable_layout)
+    public function postHomePageData(Request $request,$set_template,$enable_layout,$additionalPreference=[])
     {
         $vendor_ids = $vendors = [];
         $new_products = [];
@@ -892,10 +930,21 @@ class UserhomeController extends FrontController
         $featured_products_title = $vendors_title = $new_products_title = $on_sale_title = $brands_title = $best_sellers_title = $recent_orders_title = $banner_title = $selected_products_title = $trending_vendors_title = '';
 
         $slugs = array("featured_products", "vendors", "new_products", "on_sale", "brands", "best_sellers", "recent_orders", "banner", "selected_products", "trending");
-        $CabBookingLayoutTranslation = CabBookingLayoutTranslation::where('language_id', $language_id)->with('layout')
-                                       ->whereHas('layout', function($q) use ($slugs){
-                                            $q->whereIn('slug', $slugs);
-                                       })->whereNotNull('title')->select('title', 'cab_booking_layout_id')->get();
+        $CabBookingLayoutTranslation = collect();
+        try {
+            if (Schema::hasTable('cab_booking_layout_transaltions')) {
+                $CabBookingLayoutTranslation = CabBookingLayoutTranslation::where('language_id', $language_id)->with('layout')
+                                           ->whereHas('layout', function($q) use ($slugs){
+                                                $q->whereIn('slug', $slugs);
+                                           })->whereNotNull('title')->select('title', 'cab_booking_layout_id')->get();
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Failed to get cab booking layout translations in postHomePageData', [
+                'error' => $e->getMessage()
+            ]);
+            // Continue with empty collection
+            $CabBookingLayoutTranslation = collect();
+        }
                                        
 
         foreach($CabBookingLayoutTranslation as $translation)
@@ -949,12 +998,12 @@ class UserhomeController extends FrontController
         if ($preferences) {
             // check vendor Subscription0
             if ((empty($latitude)) || (empty($longitude)) || (empty($selectedAddress))) {
-                $selectedAddress = $preferences->Default_location_name;
-                $latitude = $preferences->Default_latitude??null;
-                $longitude = $preferences->Default_longitude??null;
+                $selectedAddress = $preferences->Default_location_name ?? null;
+                $latitude = $preferences->Default_latitude ?? null;
+                $longitude = $preferences->Default_longitude ?? null;
             } else {
-                if ($preferences && ($latitude == $preferences->Default_latitude) && ($longitude == $preferences->Default_longitude)) {
-                  $selectedAddress =  $preferences->Default_location_name;
+                if ($preferences && ($latitude == ($preferences->Default_latitude ?? null)) && ($longitude == ($preferences->Default_longitude ?? null))) {
+                  $selectedAddress = $preferences->Default_location_name ?? null;
                 }
 
             }
@@ -1371,7 +1420,7 @@ class UserhomeController extends FrontController
             $for_no_product_found_html = CabBookingLayout::with('translations')->where('is_active', 1)->where('for_no_product_found_html',1)->orderBy('order_by')->get();
 
             return view('frontend.home-template-one')->with(['home' => $home, 'count' => $count, 'for_no_product_found_html' => $for_no_product_found_html,'homePagePickupLabels' => $home_page_pickup_labels, 'homePageLabels' => $home_page_labels, 'clientPreferences' => $clientPreferences, 'banners' => $banners, 'navCategories' => $navCategories, 'selectedAddress' => $selectedAddress, 'latitude' => $latitude, 'longitude' => $longitude]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             pr($e->getCode());
             die;
         }

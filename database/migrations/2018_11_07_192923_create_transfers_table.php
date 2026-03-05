@@ -31,26 +31,11 @@ class CreateTransfersTable extends Migration
                 ->references('id')
                 ->on($this->transactionTable())
                 ->onDelete('cascade');
-        });
-    }
-
+        }); } 
+    
     /**
-     * @return string
-     */
-    protected function table(): string
-    {
-        return (new Transfer())->getTable();
-    }
-
-    /**
-     * @return string
-     */
-    protected function transactionTable(): string
-    {
-        return (new Transaction())->getTable();
-    }
-
-    /**
+     * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void

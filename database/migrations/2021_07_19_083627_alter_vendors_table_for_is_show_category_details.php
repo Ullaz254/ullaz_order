@@ -13,11 +13,13 @@ class AlterVendorsTableForIsShowCategoryDetails extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'is_show_vendor_details')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('is_show_vendor_details')->default(0)->after('setting');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AlterVendorsTableForIsShowCategoryDetails extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

@@ -15,9 +15,8 @@ class AddDeletedAtToAddonSetsTable extends Migration
     {
         Schema::table('addon_sets', function (Blueprint $table) {
             $table->softDeletes();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

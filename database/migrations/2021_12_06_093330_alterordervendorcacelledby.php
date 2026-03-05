@@ -15,9 +15,8 @@ class Alterordervendorcacelledby extends Migration
     {
         Schema::table('order_vendors', function (Blueprint $table) {
             $table->unsignedBigInteger('cancelled_by')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

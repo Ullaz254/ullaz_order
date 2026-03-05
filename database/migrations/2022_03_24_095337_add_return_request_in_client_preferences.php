@@ -13,11 +13,13 @@ class AddReturnRequestInClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'vendor_return_request')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('vendor_return_request')->comment('0-No, 1-Yes')->default(1);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddReturnRequestInClientPreferences extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('vendor_return_request');
-        });
+        // Reverse migration if needed
     }
 }

@@ -14,9 +14,12 @@ class AddColumnsToCartProductsTable extends Migration
     public function up()
     {
         Schema::table('cart_products', function (Blueprint $table) {
-            //
-            $table->string('schedule_type',100)->nullable()->after('tax_rate_id');
-            $table->dateTime('scheduled_date_time')->nullable()->after('schedule_type');
+            if (!Schema::hasColumn('cart_products', 'schedule_type')) {
+                $table->string('schedule_type')->nullable();
+            }
+            if (!Schema::hasColumn('cart_products', 'scheduled_date_time')) {
+                $table->dateTimeTz('scheduled_date_time')->nullable();
+            }
         });
     }
 
@@ -28,9 +31,12 @@ class AddColumnsToCartProductsTable extends Migration
     public function down()
     {
         Schema::table('cart_products', function (Blueprint $table) {
-            //
-            $table->dropColumn('schedule_type');
-            $table->dropColumn('scheduled_date_time');
+            if (Schema::hasColumn('cart_products', 'schedule_type')) {
+                $table->dropColumn('schedule_type');
+            }
+            if (Schema::hasColumn('cart_products', 'scheduled_date_time')) {
+                $table->dropColumn('scheduled_date_time');
+            }
         });
     }
 }

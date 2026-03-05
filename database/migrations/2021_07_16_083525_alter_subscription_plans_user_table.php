@@ -15,9 +15,8 @@ class AlterSubscriptionPlansUserTable extends Migration
     {
         Schema::table('subscription_plans_user', function (Blueprint $table) {
             $table->unsignedInteger('period')->change();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

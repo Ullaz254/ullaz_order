@@ -13,14 +13,16 @@ class AddExchangeOrderColumnsToOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'is_exchanged_or_returned')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->tinyInteger('is_exchanged_or_returned')->default(0)->comment('1 = exchanged, 2 = returned');
             $table->bigInteger('exchange_order_vendor_id')->unsigned()->nullable();
 
             $table->foreign('exchange_order_vendor_id')->references('id')->on('order_vendors')->onUpdate('cascade')->onDelete('set null');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,8 +30,6 @@ class AddExchangeOrderColumnsToOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -15,9 +15,8 @@ class AddAcceptedByInOrderVendorsTable extends Migration
     {
         Schema::table('order_vendors', function (Blueprint $table) {
             $table->unsignedBigInteger('accepted_by')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

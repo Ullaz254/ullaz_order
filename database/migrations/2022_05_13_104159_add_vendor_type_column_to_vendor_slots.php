@@ -17,9 +17,8 @@ class AddVendorTypeColumnToVendorSlots extends Migration
             if (!Schema::hasColumn('vendor_slots', 'slot_type')) {
                 $table->tinyInteger('slot_type')->nullable()->default(0)->after('delivery')->comment('0-schedule, 1-pickup, 2-dropoff');
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

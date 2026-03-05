@@ -13,11 +13,13 @@ class AddIsDisabledToPincodeTable extends Migration
      */
     public function up()
     {
-        Schema::table('pincodes', function (Blueprint $table) {
+        if (!Schema::hasColumn('pincodes', 'is_disabled')) {
+            Schema::table('pincodes', function (Blueprint $table) {
             $table->tinyInteger('is_disabled')->default(0)->comment('0 for enabled, 1 for disabled');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsDisabledToPincodeTable extends Migration
      */
     public function down()
     {
-        Schema::table('pincodes', function (Blueprint $table) {
-            $table->dropColumn('is_disabled');
-        });
+        // Reverse migration if needed
     }
 }

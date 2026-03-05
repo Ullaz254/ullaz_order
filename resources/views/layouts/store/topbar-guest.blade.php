@@ -2,7 +2,7 @@
 $clientData = \App\Models\Client::select('id', 'logo')->where('id', '>', 0)->first();
 
 $urlImg = $clientData->logo['proxy_url'].'200/80'.$clientData->logo['image_path'];
-$languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
+$languageList = \App\Models\ClientLanguage::with('language')->orderBy('is_primary', 'desc')->get();
 $currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
 $pages = \App\Models\Page::with(['translations' => function($q) {$q->where('language_id', session()->get('customerLanguage') ??1);}])->whereHas('translations', function($q) {$q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguage') ??1]);})->orderBy('order_by','ASC')->get();
 

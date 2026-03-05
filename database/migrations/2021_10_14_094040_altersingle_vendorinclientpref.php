@@ -7,17 +7,19 @@ use Illuminate\Support\Facades\Schema;
 class AltersingleVendorinclientpref extends Migration
 {
     /**
-    * Run the migrations.
-    *
-    * @return void
-    */
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'single_vendor')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('single_vendor')->default(0);
-        });
-    } 
- 
+                    });
+        }
+
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AltersingleVendorinclientpref extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('single_vendor');
-        });
+        // Reverse migration if needed
     }
 }

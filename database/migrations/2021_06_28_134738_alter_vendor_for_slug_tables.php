@@ -13,11 +13,13 @@ class AlterVendorForSlugTables extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'slug')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->mediumText('slug')->after('name')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AlterVendorForSlugTables extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

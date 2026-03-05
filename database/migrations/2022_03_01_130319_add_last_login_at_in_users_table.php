@@ -13,11 +13,13 @@ class AddLastLoginAtInUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'last_login_at')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->timestamp('last_login_at')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddLastLoginAtInUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

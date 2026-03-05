@@ -13,11 +13,13 @@ class AlterTableUsersAddColumnCustomerId extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'stripe_customer_id')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->string('stripe_customer_id')->default(null);
-        });
-    }
-    
+                    });
+        }
+
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterTableUsersAddColumnCustomerId extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('stripe_customer_id');
-        });
+        // Reverse migration if needed
     }
 }

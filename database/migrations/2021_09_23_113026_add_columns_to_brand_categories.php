@@ -13,18 +13,25 @@ class AddColumnsToBrandCategories extends Migration
      */
     public function up()
     {
-        if (Schema::hasColumn('brand_categories', 'id')) {
-
-            Schema::table('brand_categories', function (Blueprint $table) {
-                $table->bigIncrements('id')->change();
-            });
-
+        // If table doesn't exist, skip
+        if (!Schema::hasTable('brand_categories')) {
+            return;
         }
-        else{
-            Schema::table('brand_categories', function (Blueprint $table) {
-                $table->bigIncrements('id')->first();
-            });
-        }   
+
+        // If id column already exists, just ensure it's the right type
+        if (Schema::hasColumn('brand_categories', 'id')) {
+            // Column exists, skip adding it
+            return;
+        } else {
+            // Only add if it doesn't exist
+            try {
+                Schema::table('brand_categories', function (Blueprint $table) {
+                    $table->bigIncrements('id')->first();
+                });
+            } catch (\Exception $e) {
+                \Log::warning('Could not add id column to brand_categories: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -33,12 +40,15 @@ class AddColumnsToBrandCategories extends Migration
      * @return void
      */
     public function down()
-    {   
-        if (Schema::hasColumn('brand_categories', 'id')) {
-            Schema::table('brand_categories', function (Blueprint $table) {
-                //
-                $table->dropColumn('id');
-            });
+    {
+        if (Schema::hasTable('brand_categories') && Schema::hasColumn('brand_categories', 'id')) {
+            try {
+                Schema::table('brand_categories', function (Blueprint $table) {
+                    $table->dropColumn('id');
+                });
+            } catch (\Exception $e) {
+                \Log::warning('Could not drop id column from brand_categories: ' . $e->getMessage());
+            }
         }
     }
 }

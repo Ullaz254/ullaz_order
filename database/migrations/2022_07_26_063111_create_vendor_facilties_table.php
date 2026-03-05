@@ -13,12 +13,14 @@ class CreateVendorFaciltiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_facilties', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_facilties')) {
+            Schema::create('vendor_facilties', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('facilty_id');
             $table->unsignedBigInteger('vendor_id');
             $table->timestamps();
         });
+        }
     }
 
     /**

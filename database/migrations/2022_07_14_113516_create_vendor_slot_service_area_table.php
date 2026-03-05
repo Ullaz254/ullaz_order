@@ -13,7 +13,8 @@ class CreateVendorSlotServiceAreaTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_slot_service_areas', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_slot_service_areas')) {
+            Schema::create('vendor_slot_service_areas', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('vendor_slot_id')->nullable();
             $table->unsignedBigInteger('service_area_id')->nullable();
@@ -32,6 +33,7 @@ class CreateVendorSlotServiceAreaTable extends Migration
             $table->index('vendor_slot_date_id');
             $table->index('service_area_id');
         });
+        }
     }
 
     /**

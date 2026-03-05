@@ -13,11 +13,13 @@ class UpdateClientPreferencesWithVendorType extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'car_rental_check')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
         $table->tinyInteger('car_rental_check')->after('rental_check')->default(0)->comment('1 for yes, 0 for no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class UpdateClientPreferencesWithVendorType extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('car_rental_check');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,12 +13,14 @@ class AddTimezoneToUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'timezone')) {
+            Schema::table('users', function (Blueprint $table) {
             //
             $table->string('timezone')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddTimezoneToUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-            $table->dropColumn('timezone');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,7 +13,8 @@ class CreateCaregoryKycDocsTable extends Migration
      */
     public function up()
     {
-        Schema::create('caregory_kyc_docs', function (Blueprint $table) {
+        if (!Schema::hasTable('caregory_kyc_docs')) {
+            Schema::create('caregory_kyc_docs', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('category_kyc_document_id')->unsigned();
@@ -22,6 +23,7 @@ class CreateCaregoryKycDocsTable extends Migration
             $table->bigInteger('ordre_id')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

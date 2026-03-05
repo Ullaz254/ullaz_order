@@ -13,7 +13,8 @@ class CreateCsvProductImportsTable extends Migration
      */
     public function up()
     {
-        Schema::create('csv_product_imports', function (Blueprint $table) {
+        if (!Schema::hasTable('csv_product_imports')) {
+            Schema::create('csv_product_imports', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('vendor_id')->unsigned()->nullable();
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('set null');
@@ -25,6 +26,7 @@ class CreateCsvProductImportsTable extends Migration
             $table->longText('error')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

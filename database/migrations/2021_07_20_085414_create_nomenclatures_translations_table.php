@@ -12,18 +12,13 @@ class CreateNomenclaturesTranslationsTable extends Migration
      * @return void
      */
     public function up(){
-        Schema::table('nomenclatures', function (Blueprint $table) {
+        if (!Schema::hasColumn('nomenclatures', 'name')) {
+            Schema::table('nomenclatures', function (Blueprint $table) {
             $table->dropColumn('value');
-        });
-        Schema::create('nomenclatures_translations', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->nullable();
-            $table->bigInteger('language_id')->unsigned();
-            $table->bigInteger('nomenclature_id')->unsigned();
-            $table->timestamps();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -31,6 +26,6 @@ class CreateNomenclaturesTranslationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nomenclatures_translations');
+        // Reverse migration if needed
     }
 }

@@ -16,9 +16,8 @@ class AddServiceColumnToVendorOrderProductDispatcherStatusesTable extends Migrat
         Schema::table('vendor_order_product_dispatcher_statuses', function (Blueprint $table) {
             $table->unsignedBigInteger('order_product_route_id')->nullable()->change();
             $table->unsignedBigInteger('long_term_schedule_id')->nullable()->comment('long_term_schedule_id from order_long_term_service_schedules');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

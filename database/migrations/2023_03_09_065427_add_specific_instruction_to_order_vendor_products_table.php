@@ -13,12 +13,14 @@ class AddSpecificInstructionToOrderVendorProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'specific_instruction')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->string('specific_instruction')->nullable();
        
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddSpecificInstructionToOrderVendorProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn('specific_instruction');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,13 +13,15 @@ class AddColumnToBrandsTable extends Migration
      */
     public function up()
     {
-        Schema::table('brands', function (Blueprint $table) {
+        if (!Schema::hasColumn('brands', 'image_banner')) {
+            Schema::table('brands', function (Blueprint $table) {
             //
 
             $table->string('image_banner',150)->nullable()->after('image');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,9 +29,6 @@ class AddColumnToBrandsTable extends Migration
      */
     public function down()
     {
-        Schema::table('brands', function (Blueprint $table) {
-            //
-            $table->dropColumn('image_banner');
-        });
+        // Reverse migration if needed
     }
 }

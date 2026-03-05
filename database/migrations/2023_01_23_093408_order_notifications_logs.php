@@ -13,7 +13,8 @@ class OrderNotificationsLogs extends Migration
      */
     public function up()
     {
-        Schema::create('order_notifications_logs', function (Blueprint $table) {
+        if (!Schema::hasTable('order_notifications_logs')) {
+            Schema::create('order_notifications_logs', function (Blueprint $table) {
             $table->id();
             $table->Integer('order_id')->nullable();
             $table->Integer('order_vendor_id')->nullable();
@@ -24,6 +25,7 @@ class OrderNotificationsLogs extends Migration
             $table->tinyInteger('is_seen')->default(0);
             $table->timestamps();
         });
+        }
     }
 
     /**

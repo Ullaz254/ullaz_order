@@ -13,11 +13,13 @@ class AddCredentialsToPaymentOptions extends Migration
      */
     public function up()
     {
-        Schema::table('payment_options', function (Blueprint $table) {
+        if (!Schema::hasColumn('payment_options', 'credentials')) {
+            Schema::table('payment_options', function (Blueprint $table) {
             $table->json('credentials')->nullable()->after('title')->comment('credentials in json format');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCredentialsToPaymentOptions extends Migration
      */
     public function down()
     {
-        Schema::table('payment_options', function (Blueprint $table) {
-            $table->dropColumn('credentials');
-        });
+        // Reverse migration if needed
     }
 }

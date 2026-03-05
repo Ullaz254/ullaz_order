@@ -13,13 +13,15 @@ class AddDineInFieldsToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'dinein_check')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('dinein_check')->nullable()->default(1)->comment('0-No, 1-Yes');
             $table->tinyInteger('takeaway_check')->nullable()->default(1)->comment('0-No, 1-Yes');
             $table->tinyInteger('delivery_check')->nullable()->default(1)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,10 +29,6 @@ class AddDineInFieldsToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('dinein_check');
-            $table->dropColumn('takeaway_check');
-            $table->dropColumn('delivery_check');
-        });
+        // Reverse migration if needed
     }
 }

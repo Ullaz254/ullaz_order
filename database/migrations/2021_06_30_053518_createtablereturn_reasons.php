@@ -13,13 +13,15 @@ class CreatetablereturnReasons extends Migration
      */
     public function up()
     {
-        Schema::create('return_reasons', function (Blueprint $table) {
+        if (!Schema::hasTable('return_reasons')) {
+            Schema::create('return_reasons', function (Blueprint $table) {
             $table->id();
             $table->string('title', 500)->nullable();
             $table->enum('status',['Active','Block'])->default('Active');
             $table->tinyInteger('order');
             $table->timestamps();
         });
+        }
     }
 
     /**

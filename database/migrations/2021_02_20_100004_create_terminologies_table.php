@@ -13,10 +13,12 @@ class CreateTerminologiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('terminologies', function (Blueprint $table) {
+        if (!Schema::hasTable('terminologies')) {
+            Schema::create('terminologies', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
         });
+        }
     }
 
     /**

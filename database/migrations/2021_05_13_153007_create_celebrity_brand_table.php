@@ -13,13 +13,15 @@ class CreateCelebrityBrandTable extends Migration
      */
     public function up()
     {
-        Schema::create('celebrity_brands', function (Blueprint $table) {
+        if (!Schema::hasTable('celebrity_brands')) {
+            Schema::create('celebrity_brands', function (Blueprint $table) {
             $table->unsignedBigInteger('celebrity_id')->nullable();
             $table->unsignedBigInteger('brand_id')->nullable();
 
             $table->foreign('celebrity_id')->references('id')->on('celebrities')->onDelete('cascade');
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
         });
+        }
     }
 
     /**

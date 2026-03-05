@@ -13,11 +13,13 @@ class AddIcon2InCategoryTable extends Migration
      */
     public function up()
     {
-        Schema::table('categories', function (Blueprint $table) {
+        if (!Schema::hasColumn('categories', 'icon_2')) {
+            Schema::table('categories', function (Blueprint $table) {
             $table->string('icon_2')->nullable()->after('icon');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIcon2InCategoryTable extends Migration
      */
     public function down()
     {
-        Schema::table('categories', function (Blueprint $table) {
-            $table->dropColumn('icon_2');
-        });
+        // Reverse migration if needed
     }
 }

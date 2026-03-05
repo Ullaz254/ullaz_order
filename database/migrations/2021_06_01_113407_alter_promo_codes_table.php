@@ -13,11 +13,13 @@ class AlterPromoCodesTable extends Migration
      */
     public function up()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
+        if (!Schema::hasColumn('promocodes', 'title')) {
+            Schema::table('promocodes', function (Blueprint $table) {
             $table->mediumText('title')->after('name')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AlterPromoCodesTable extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

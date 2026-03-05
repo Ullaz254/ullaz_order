@@ -13,23 +13,22 @@ class CreateBlockedTokensTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('blocked_tokens', function(Blueprint $table)
-		{
+		if (!Schema::hasTable('blocked_tokens')) {
+            Schema::create('blocked_tokens', function (Blueprint $table) {
 			$table->id();
 			$table->text('token');
 			$table->tinyInteger('expired')->default('0')->comment('1 yes, 0 no');
 			$table->timestamps();
 		});
+        }
+    }
 
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
 	{
 		Schema::drop('blocked_tokens');
 	}

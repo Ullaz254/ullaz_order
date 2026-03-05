@@ -13,11 +13,13 @@ class AddImportUserIdToUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'import_user_id')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->string('import_user_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddImportUserIdToUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('user', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

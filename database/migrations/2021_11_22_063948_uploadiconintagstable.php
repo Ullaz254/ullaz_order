@@ -6,20 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 class Uploadiconintagstable extends Migration
 {
-   /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('tags', function (Blueprint $table) {
+        if (!Schema::hasColumn('tags', 'icon')) {
+            Schema::table('tags', function (Blueprint $table) {
             $table->string('icon')->nullable();
-        });
-    }
+                    });
+        }
 
-    
-
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +27,6 @@ class Uploadiconintagstable extends Migration
      */
     public function down()
     {
-        Schema::table('tags', function (Blueprint $table) {
-            $table->dropColumn('icon');
-        });
+        // Reverse migration if needed
     }
 }

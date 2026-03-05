@@ -14,11 +14,13 @@ class AddGlobalProductIdIntoProductsTable extends Migration
     public function up()
     {
         //global_product_id
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'global_product_id')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->integer('global_product_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddGlobalProductIdIntoProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('estimate_products', function (Blueprint $table) {
-            $table->dropColumn('global_product_id');
-        });
+        // Reverse migration if needed
     }
 }

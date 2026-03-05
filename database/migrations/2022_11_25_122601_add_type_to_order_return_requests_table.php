@@ -13,11 +13,13 @@ class AddTypeToOrderReturnRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_return_requests', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_return_requests', 'type')) {
+            Schema::table('order_return_requests', function (Blueprint $table) {
             $table->tinyInteger('type')->default(1)->comment('1 = return, 2 = exchange')->after('status');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddTypeToOrderReturnRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_return_requests', function (Blueprint $table) {
-            $table->dropColumn('type');
-        });
+        // Reverse migration if needed
     }
 }

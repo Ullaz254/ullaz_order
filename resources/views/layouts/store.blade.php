@@ -15,9 +15,9 @@ $set_common_business_type = $client_preference_detail->business_type??'';
 @php
 
 $dark_mode = '';
-if($client_preference_detail->show_dark_mode == 1){
+if($client_preference_detail && isset($client_preference_detail->show_dark_mode) && $client_preference_detail->show_dark_mode == 1){
   $dark_mode = 'dark';
-}else if($client_preference_detail->show_dark_mode == 2){
+}else if($client_preference_detail && isset($client_preference_detail->show_dark_mode) && $client_preference_detail->show_dark_mode == 2){
   if(session()->has('config_theme')){
     $dark_mode = session()->get('config_theme');
   }

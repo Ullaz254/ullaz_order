@@ -13,9 +13,15 @@ class AddVendorFcmServerKeyToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->String('vendor_fcm_server_key','512')->nullable();
-        });
+        if (!Schema::hasColumn('client_preferences', 'vendor_fcm_server_key')) {
+            try {
+                Schema::table('client_preferences', function (Blueprint $table) {
+                    $table->string('vendor_fcm_server_key', 512)->nullable();
+                });
+            } catch (\Exception $e) {
+                \Log::warning('Could not add vendor_fcm_server_key column: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -26,7 +32,9 @@ class AddVendorFcmServerKeyToClientPreferencesTable extends Migration
     public function down()
     {
         Schema::table('client_preferences', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('client_preferences', 'vendor_fcm_server_key')) {
+                $table->dropColumn('vendor_fcm_server_key');
+            }
         });
     }
 }

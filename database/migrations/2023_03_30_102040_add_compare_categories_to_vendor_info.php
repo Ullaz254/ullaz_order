@@ -13,11 +13,13 @@ class AddCompareCategoriesToVendorInfo extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_additional_info', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_additional_info', 'compare_categories')) {
+            Schema::table('vendor_additional_info', function (Blueprint $table) {
            $table->string('compare_categories')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCompareCategoriesToVendorInfo extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_additional_info', function (Blueprint $table) {
-            $table->dropColumn('compare_categories');
-        });
+        // Reverse migration if needed
     }
 }

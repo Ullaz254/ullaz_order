@@ -13,9 +13,11 @@ class AddSubscriptionModeToClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('subscription_mode')->nullable()->after('enquire_mode')->default(0)->comment('0-No, 1-Yes');
-        });
+        if (!Schema::hasColumn('client_preferences', 'subscription_mode')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('subscription_mode')->nullable()->after('enquire_mode')->default(0)->comment('0-No, 1-Yes');
+            });
+        }
     }
 
     /**

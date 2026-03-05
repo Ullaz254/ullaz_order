@@ -13,11 +13,13 @@ class AddCompanyIdToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'copmany_id')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->integer('copmany_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCompanyIdToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('company_id');
-        });
+        // Reverse migration if needed
     }
 }

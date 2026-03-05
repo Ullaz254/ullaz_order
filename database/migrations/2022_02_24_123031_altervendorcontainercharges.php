@@ -14,11 +14,13 @@ class Altervendorcontainercharges extends Migration
     public function up()
     {
         //
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'need_container_charges')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('need_container_charges')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class Altervendorcontainercharges extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('need_container_charges');
-        });
+        // Reverse migration if needed
     }
 }

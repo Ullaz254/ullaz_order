@@ -13,10 +13,12 @@ class CreateReportsTable extends Migration
      */
     public function up()
     {
-        Schema::create('reports', function (Blueprint $table) {
+        if (!Schema::hasTable('reports')) {
+            Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
         });
+        }
     }
 
     /**

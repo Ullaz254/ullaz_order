@@ -13,11 +13,13 @@ class AddDarkLogoToClientsTable extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
+        if (!Schema::hasColumn('clients', 'dark_logo')) {
+            Schema::table('clients', function (Blueprint $table) {
             $table->string('dark_logo')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddDarkLogoToClientsTable extends Migration
      */
     public function down()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddRentedProductCountToProductVariantsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'rented_product_count')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             $table->integer('rented_product_count')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddRentedProductCountToProductVariantsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            $table->dropColumn('rented_product_count');
-        });
+        // Reverse migration if needed
     }
 }

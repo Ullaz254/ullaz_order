@@ -13,11 +13,13 @@ class AddVendorRejectReasonToOrderCancelRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_cancel_requests', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_cancel_requests', 'vendor_reject_reason')) {
+            Schema::table('order_cancel_requests', function (Blueprint $table) {
             $table->text('vendor_reject_reason')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddVendorRejectReasonToOrderCancelRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_cancel_requests', function (Blueprint $table) {
-            $table->dropColumn('vendor_reject_reason');
-        });
+        // Reverse migration if needed
     }
 }

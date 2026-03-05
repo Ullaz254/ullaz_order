@@ -13,11 +13,13 @@ class AddCutoffTimeToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'cutOff_time')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->string('cutOff_time')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCutoffTimeToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('cutOff_time');
-        });
+        // Reverse migration if needed
     }
 }

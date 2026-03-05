@@ -13,11 +13,13 @@ class AddPromoTypeToPromocodesTable extends Migration
      */
     public function up()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
+        if (!Schema::hasColumn('promocodes', 'promo_type')) {
+            Schema::table('promocodes', function (Blueprint $table) {
             $table->tinyInteger('promo_type')->comment('1=refferal, 0=promo')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPromoTypeToPromocodesTable extends Migration
      */
     public function down()
     {
-        Schema::table('promocodes', function (Blueprint $table) {
-            $table->dropColumn('promo_type');
-        });
+        // Reverse migration if needed
     }
 }

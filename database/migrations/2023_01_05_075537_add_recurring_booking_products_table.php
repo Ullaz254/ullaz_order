@@ -13,12 +13,14 @@ class AddRecurringBookingProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'is_recurring_booking')) {
+            Schema::table('products', function (Blueprint $table) {
             //
             $table->tinyInteger('is_recurring_booking')->default(0)->comment('1=active,0=deactive');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddRecurringBookingProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            //
-            $table->dropColumn('is_recurring_booking');
-        });
+        // Reverse migration if needed
     }
 }

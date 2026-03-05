@@ -13,11 +13,13 @@ class AddAgeRestrictionToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'age_restriction')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->tinyInteger('age_restriction')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAgeRestrictionToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

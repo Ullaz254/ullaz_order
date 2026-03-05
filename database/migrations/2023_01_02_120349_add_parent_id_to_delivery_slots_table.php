@@ -13,11 +13,13 @@ class AddParentIdToDeliverySlotsTable extends Migration
      */
     public function up()
     {
-        Schema::table('delivery_slots', function (Blueprint $table) {
+        if (!Schema::hasColumn('delivery_slots', 'parent_id')) {
+            Schema::table('delivery_slots', function (Blueprint $table) {
             $table->integer('parent_id')->default(0)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddParentIdToDeliverySlotsTable extends Migration
      */
     public function down()
     {
-        Schema::table('delivery_slots', function (Blueprint $table) {
-            $table->dropColumn('parent_id');
-        });
+        // Reverse migration if needed
     }
 }

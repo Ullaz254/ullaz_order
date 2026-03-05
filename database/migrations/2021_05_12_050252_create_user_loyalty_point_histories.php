@@ -13,7 +13,8 @@ class CreateUserLoyaltyPointHistories extends Migration
      */
     public function up()
     {
-        Schema::create('user_loyalty_point_histories', function (Blueprint $table) {
+        if (!Schema::hasTable('user_loyalty_point_histories')) {
+            Schema::create('user_loyalty_point_histories', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->integer('points')->nullable();
@@ -22,6 +23,7 @@ class CreateUserLoyaltyPointHistories extends Migration
             $table->string('comment')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

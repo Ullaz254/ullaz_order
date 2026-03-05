@@ -13,15 +13,17 @@ class AddMultipleColumnToOrderVendorProducts extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'slot_id')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->bigInteger('slot_id')->unsigned()->nullable();
             $table->date('delivery_date')->nullable();
             $table->decimal('slot_price', 12, 2)->nullable();
 
             $table->foreign('slot_id')->references('id')->on('delivery_slots')->onDelete('cascade');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -29,8 +31,6 @@ class AddMultipleColumnToOrderVendorProducts extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->dropColumn(['slot_id',  'delivery_date', 'slot_price']);
-        });
+        // Reverse migration if needed
     }
 }

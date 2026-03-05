@@ -13,7 +13,8 @@ class CreateTaxRatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('tax_rates', function (Blueprint $table) {
+        if (!Schema::hasTable('tax_rates')) {
+            Schema::create('tax_rates', function (Blueprint $table) {
             $table->id();
             $table->string('identifier', 100)->nullable();
             $table->tinyInteger('is_zip')->default(1)->comment('0 - no, 1 - yes');
@@ -28,6 +29,7 @@ class CreateTaxRatesTable extends Migration
 
             $table->index('is_zip');
         });
+        }
     }
 
     /**

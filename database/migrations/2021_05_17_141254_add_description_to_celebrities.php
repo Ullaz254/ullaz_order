@@ -20,9 +20,8 @@ class AddDescriptionToCelebrities extends Migration
         }
         Schema::table('celebrities', function (Blueprint $table) {
             $table->text('description')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

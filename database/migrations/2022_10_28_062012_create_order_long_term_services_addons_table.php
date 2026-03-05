@@ -13,13 +13,15 @@ class CreateOrderLongTermServicesAddonsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_long_term_services_addons', function (Blueprint $table) {
+        if (!Schema::hasTable('order_long_term_services_addons')) {
+            Schema::create('order_long_term_services_addons', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_long_term_services_id')->unsigned()->nullable();
             $table->bigInteger('addon_id')->unsigned()->nullable();
             $table->bigInteger('option_id')->unsigned()->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

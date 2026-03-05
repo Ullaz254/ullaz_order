@@ -13,11 +13,13 @@ class AddIsPaymentDoneToTempCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('temp_cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('temp_cart_products', 'is_payment_done')) {
+            Schema::table('temp_cart_products', function (Blueprint $table) {
             $table->tinyInteger('is_payment_done')->default(0)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsPaymentDoneToTempCartProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('temp_cart_products', function (Blueprint $table) {
-            $table->dropColumn('is_payment_done');
-        });
+        // Reverse migration if needed
     }
 }

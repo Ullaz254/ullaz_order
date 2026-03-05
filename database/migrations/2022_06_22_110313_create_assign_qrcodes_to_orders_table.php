@@ -13,7 +13,8 @@ class CreateAssignQrcodesToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('assign_qrcodes_to_orders', function (Blueprint $table) {
+        if (!Schema::hasTable('assign_qrcodes_to_orders')) {
+            Schema::create('assign_qrcodes_to_orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_no')->nullable();
             $table->integer('order_id')->nullable();
@@ -21,6 +22,7 @@ class CreateAssignQrcodesToOrdersTable extends Migration
             $table->string('qrcode')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

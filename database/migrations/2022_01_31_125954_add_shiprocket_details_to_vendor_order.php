@@ -13,13 +13,15 @@ class AddShiprocketDetailsToVendorOrder extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'ship_order_id')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->string('ship_order_id')->nullable();
             $table->string('ship_shipment_id')->nullable();
             $table->string('ship_awb_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class AddShiprocketDetailsToVendorOrder extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_order', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

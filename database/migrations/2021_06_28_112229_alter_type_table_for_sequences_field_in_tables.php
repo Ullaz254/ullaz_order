@@ -13,12 +13,14 @@ class AlterTypeTableForSequencesFieldInTables extends Migration
      */
     public function up()
     {
-        Schema::table('types', function (Blueprint $table) {
+        if (!Schema::hasColumn('types', 'description')) {
+            Schema::table('types', function (Blueprint $table) {
             $table->longText('description')->after('title')->nullable();
             $table->tinyInteger('sequence')->after('description')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AlterTypeTableForSequencesFieldInTables extends Migration
      */
     public function down()
     {
-        Schema::table('types', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddIsVendorInstantBookingToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'is_vendor_instant_booking')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('is_vendor_instant_booking')->default(0)->comment('1 for yes, 0 for no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsVendorInstantBookingToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

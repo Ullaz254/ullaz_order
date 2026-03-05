@@ -13,11 +13,13 @@ class AddSlugInCelebritiesTable extends Migration
      */
     public function up()
     {
-        Schema::table('celebrities', function (Blueprint $table) {
+        if (!Schema::hasColumn('celebrities', 'slug')) {
+            Schema::table('celebrities', function (Blueprint $table) {
             $table->mediumText('slug')->after('name')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSlugInCelebritiesTable extends Migration
      */
     public function down()
     {
-        Schema::table('celebrities', function (Blueprint $table) {
-            $table->dropColumn('slug');
-        });
+        // Reverse migration if needed
     }
 }

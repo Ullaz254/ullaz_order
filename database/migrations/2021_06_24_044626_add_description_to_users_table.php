@@ -13,11 +13,13 @@ class AddDescriptionToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'description')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->longText('description')->after('email')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddDescriptionToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('description');
-        });
+        // Reverse migration if needed
     }
 }

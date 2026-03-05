@@ -13,7 +13,8 @@ class CreateAttributeOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('attribute_options', function (Blueprint $table) {
+        if (!Schema::hasTable('attribute_options')) {
+            Schema::create('attribute_options', function (Blueprint $table) {
             $table->id();
             $table->string('title', 150)->nullable();
             $table->bigInteger('attribute_id')->unsigned()->nullable();
@@ -24,6 +25,7 @@ class CreateAttributeOptionsTable extends Migration
             $table->index('position');
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
         });
+        }
     }
 
     /**

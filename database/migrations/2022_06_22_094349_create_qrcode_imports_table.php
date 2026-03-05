@@ -13,7 +13,8 @@ class CreateQrcodeImportsTable extends Migration
      */
     public function up()
     {
-        Schema::create('qrcode_imports', function (Blueprint $table) {
+        if (!Schema::hasTable('qrcode_imports')) {
+            Schema::create('qrcode_imports', function (Blueprint $table) {
             $table->id();
             $table->string('code')->nullable();
             $table->string('image')->nullable();
@@ -21,6 +22,7 @@ class CreateQrcodeImportsTable extends Migration
             $table->tinyInteger('status')->default('1');
             $table->timestamps();
         });
+        }
     }
 
     /**

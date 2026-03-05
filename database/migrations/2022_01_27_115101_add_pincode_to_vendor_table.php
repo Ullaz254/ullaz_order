@@ -13,11 +13,13 @@ class AddPincodeToVendorTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'pincode')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->integer('pincode')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPincodeToVendorTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendor', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

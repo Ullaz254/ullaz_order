@@ -13,12 +13,14 @@ class CreateOrderTaxesTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_taxes', function (Blueprint $table) {
+        if (!Schema::hasTable('order_taxes')) {
+            Schema::create('order_taxes', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('order_id');
             $table->unsignedInteger('tax_category_id');
             $table->timestamps();
         });
+        }
     }
 
     /**

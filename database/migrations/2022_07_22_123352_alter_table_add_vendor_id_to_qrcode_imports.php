@@ -17,9 +17,8 @@ class AlterTableAddVendorIdToQrcodeImports extends Migration
             if (!Schema::hasColumn('qrcode_imports', 'vendor_id')){
                 $table->integer('vendor_id')->nullable();
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

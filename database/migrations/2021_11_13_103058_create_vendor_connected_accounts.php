@@ -13,7 +13,8 @@ class CreateVendorConnectedAccounts extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_connected_accounts', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_connected_accounts')) {
+            Schema::create('vendor_connected_accounts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('vendor_id')->nullable();
@@ -21,9 +22,10 @@ class CreateVendorConnectedAccounts extends Migration
             $table->unsignedBigInteger('payment_option_id')->nullable();
             $table->tinyInteger('status')->default(1)->comment('0-inactive, 1-active');
             $table->timestamps();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -31,8 +33,6 @@ class CreateVendorConnectedAccounts extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_connected_accounts', function (Blueprint $table) {
-            Schema::dropIfExists('vendor_connected_accounts');
-        });
+        // Reverse migration if needed
     }
 }

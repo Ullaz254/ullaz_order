@@ -13,11 +13,13 @@ class AddIsSlotFromDispatchToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'is_slot_from_dispatch')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->tinyInteger('is_slot_from_dispatch')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsSlotFromDispatchToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

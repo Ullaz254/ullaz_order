@@ -13,7 +13,8 @@ class CreateBrandCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('brand_categories', function (Blueprint $table) {
+        if (!Schema::hasTable('brand_categories')) {
+            Schema::create('brand_categories', function (Blueprint $table) {
             $table->bigInteger('brand_id')->unsigned();
             $table->bigInteger('category_id')->unsigned();
             $table->timestamps();
@@ -21,6 +22,7 @@ class CreateBrandCategoriesTable extends Migration
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
+        }
     }
 
     /**

@@ -13,11 +13,13 @@ class AddInstructionsToUserAddressesTable extends Migration
      */
     public function up()
     {
-        Schema::table('user_addresses', function (Blueprint $table) {
+        if (!Schema::hasColumn('user_addresses', 'extra_instruction')) {
+            Schema::table('user_addresses', function (Blueprint $table) {
             $table->text('extra_instruction')->nullable()->after('type_name');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddInstructionsToUserAddressesTable extends Migration
      */
     public function down()
     {
-        Schema::table('user_addresses', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

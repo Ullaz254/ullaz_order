@@ -13,7 +13,8 @@ class CreateServiceAreasTable extends Migration
      */
     public function up()
     {
-        Schema::create('service_areas', function (Blueprint $table) {
+        if (!Schema::hasTable('service_areas')) {
+            Schema::create('service_areas', function (Blueprint $table) {
             $table->id();
             $table->string('name', 60)->index();
             $table->text('description')->nullable();
@@ -25,6 +26,7 @@ class CreateServiceAreasTable extends Migration
 
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
         });
+        }
     }
 
     /**

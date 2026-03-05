@@ -16,9 +16,8 @@ class AlterUserSubscriptionsTable extends Migration
         Schema::table('user_subscriptions', function (Blueprint $table) {
             $table->dropColumn('is_deleted');
             $table->softDeletes();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

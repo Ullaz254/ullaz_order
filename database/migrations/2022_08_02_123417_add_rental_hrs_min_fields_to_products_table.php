@@ -13,14 +13,16 @@ class AddRentalHrsMinFieldsToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'minimum_duration_min')) {
+            Schema::table('products', function (Blueprint $table) {
             //
             $table->string('minimum_duration_min')->nullable();
             $table->string('additional_increments_min')->nullable();
             $table->string('buffer_time_duration_min')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -28,8 +30,6 @@ class AddRentalHrsMinFieldsToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

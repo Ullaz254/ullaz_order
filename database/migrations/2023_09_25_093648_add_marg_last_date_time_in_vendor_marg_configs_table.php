@@ -13,11 +13,13 @@ class AddMargLastDateTimeInVendorMargConfigsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_marg_configs', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_marg_configs', 'marg_last_date_time')) {
+            Schema::table('vendor_marg_configs', function (Blueprint $table) {
             $table->string('marg_last_date_time')->after('marg_date_time')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddMargLastDateTimeInVendorMargConfigsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_marg_configs', function (Blueprint $table) {
-            $table->dropColumn('marg_last_date_time');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class ChangeMailHostInClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'mail_host')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('mail_host', 50)->nullable()->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class ChangeMailHostInClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->string('mail_host',30)->nullable()->change();
-        });
+        // Reverse migration if needed
     }
 }

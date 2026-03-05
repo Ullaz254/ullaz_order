@@ -13,7 +13,8 @@ class CreateProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        if (!Schema::hasTable('products')) {
+            Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('sku', 500)->unique();
             $table->string('title', 60)->nullable();
@@ -54,10 +55,8 @@ class CreateProductsTable extends Migration
             $table->index('Requires_last_mile');
             $table->index('averageRating');
         });
+        }
     }
-
-    
-
 
     /**
      * Reverse the migrations.

@@ -13,7 +13,8 @@ class CreateInfluAttrCatTable extends Migration
      */
     public function up()
     {
-        Schema::create('influ_attr_cat', function (Blueprint $table) {
+        if (!Schema::hasTable('influ_attr_cat')) {
+            Schema::create('influ_attr_cat', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('attribute_id')->unsigned();
             $table->bigInteger('category_id')->unsigned();
@@ -22,6 +23,7 @@ class CreateInfluAttrCatTable extends Migration
             $table->foreign('attribute_id')->references('id')->on('influ_attributes')->onDelete('cascade');
             $table->foreign('category_id')->references('id')->on('influencer_categories')->onDelete('cascade');
         });
+        }
     }
 
     /**

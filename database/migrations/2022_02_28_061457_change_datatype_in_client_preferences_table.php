@@ -13,12 +13,14 @@ class ChangeDatatypeInClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'reffered_by_amount')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->decimal('reffered_by_amount', 16, 8)->nullable()->default(0)->change();
             $table->decimal('reffered_to_amount', 16, 8)->nullable()->default(0)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class ChangeDatatypeInClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

@@ -22,18 +22,11 @@ class UpdateTransfersTable extends Migration
             $table->index(['from_type', 'from_id', 'to_type', 'to_id', 'refund'], 'from_to_refund_ind');
             $table->index(['from_type', 'from_id', 'refund'], 'from_refund_ind');
             $table->index(['to_type', 'to_id', 'refund'], 'to_refund_ind');
-        });
-    }
-
+        }); } 
+    
     /**
-     * @return string
-     */
-    protected function table(): string
-    {
-        return (new Transfer())->getTable();
-    }
-
-    /**
+     * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void

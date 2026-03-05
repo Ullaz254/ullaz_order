@@ -13,11 +13,13 @@ class AddIsLongTermToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'is_long_term')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->tinyInteger('is_long_term')->nullable()->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsLongTermToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('is_long_term');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddCustomAllergicItemsInUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'custom_allergic_items')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->string('custom_allergic_items')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCustomAllergicItemsInUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('custom_allergic_items');
-        });
+        // Reverse migration if needed
     }
 }

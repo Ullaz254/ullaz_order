@@ -13,11 +13,13 @@ class AddCaloriesInProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'calories')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->string('calories')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCaloriesInProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('calories');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class TblVendorsChangeOrderPerSlotDataType extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'orders_per_slot')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->integer('orders_per_slot')->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class TblVendorsChangeOrderPerSlotDataType extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

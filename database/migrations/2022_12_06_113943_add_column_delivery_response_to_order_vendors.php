@@ -13,11 +13,13 @@ class AddColumnDeliveryResponseToOrderVendors extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'delivery_response')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->json('delivery_response')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddColumnDeliveryResponseToOrderVendors extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            $table->removeColumn('delivery_response');
-        });
+        // Reverse migration if needed
     }
 }

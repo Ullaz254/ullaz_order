@@ -13,11 +13,13 @@ class AddHideOrderPreparationTimeInClientPreference extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'hide_order_prepare_time')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('hide_order_prepare_time')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddHideOrderPreparationTimeInClientPreference extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('hide_order_prepare_time');
-        });
+        // Reverse migration if needed
     }
 }

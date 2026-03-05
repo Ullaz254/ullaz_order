@@ -13,9 +13,11 @@ class AddSiteTopHeaderColorToClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->string('site_top_header_color', 10)->after('secondary_color')->default('#4c4c4c')->nullable();
-        });
+        if (!Schema::hasColumn('client_preferences', 'site_top_header_color')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->string('site_top_header_color')->nullable();
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AddSiteTopHeaderColorToClientPreferences extends Migration
     public function down()
     {
         Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('site_top_header_color');
+            if (Schema::hasColumn('client_preferences', 'site_top_header_color')) {
+                $table->dropColumn('site_top_header_color');
+            }
         });
     }
 }

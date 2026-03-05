@@ -13,11 +13,13 @@ class AlterOrdersAddColumnRentalHours extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'rental_hours')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->integer('rental_hours')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterOrdersAddColumnRentalHours extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('rental_hours');
-        });
+        // Reverse migration if needed
     }
 }

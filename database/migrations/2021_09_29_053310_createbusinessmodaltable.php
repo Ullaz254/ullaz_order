@@ -13,12 +13,14 @@ class Createbusinessmodaltable extends Migration
      */
     public function up()
     {
-        Schema::create('business_types', function (Blueprint $table) {
+        if (!Schema::hasTable('business_types')) {
+            Schema::create('business_types', function (Blueprint $table) {
             $table->id();
             $table->string('title', 150);
             $table->string('slug', 150);
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

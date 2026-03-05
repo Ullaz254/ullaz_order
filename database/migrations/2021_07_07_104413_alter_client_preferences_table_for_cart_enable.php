@@ -13,9 +13,11 @@ class AlterClientPreferencesTableForCartEnable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('cart_enable')->nullable()->after('id')->default(0);
-        });
+        if (!Schema::hasColumn('client_preferences', 'cart_enable')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('cart_enable')->nullable()->after('id')->default(0);
+            });
+        }
     }
 
     /**

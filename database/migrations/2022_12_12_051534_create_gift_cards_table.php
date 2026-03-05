@@ -13,7 +13,8 @@ class CreateGiftCardsTable extends Migration
      */
     public function up()
     {
-        Schema::create('gift_cards', function (Blueprint $table) {
+        if (!Schema::hasTable('gift_cards')) {
+            Schema::create('gift_cards', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('title')->nullable();
@@ -29,6 +30,7 @@ class CreateGiftCardsTable extends Migration
             $table->foreign('added_by')->references('id')->on('users')->onDelete('set null');
     
         });
+        }
     }
 
     /**

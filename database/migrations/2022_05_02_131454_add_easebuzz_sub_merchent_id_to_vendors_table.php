@@ -13,11 +13,13 @@ class AddEasebuzzSubMerchentIdToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'easebuzz_sub_merchent_id')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->string('easebuzz_sub_merchent_id')->nullable()->comment('easebuzz sub merchent id Payment gateway');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddEasebuzzSubMerchentIdToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

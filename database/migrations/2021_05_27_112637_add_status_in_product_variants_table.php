@@ -13,11 +13,13 @@ class AddStatusInProductVariantsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'status')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             $table->tinyInteger('status')->default(1)->comment('1 for avtive, 0 for inactive');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddStatusInProductVariantsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            $table->dropColumn('status');
-        });
+        // Reverse migration if needed
     }
 }

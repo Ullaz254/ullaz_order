@@ -2066,15 +2066,41 @@ class CartController extends FrontController
     {
         try
         {
-        $getAdditionalPreference = getAdditionalPreference(['is_price_by_role', 'order_edit_before_hours', 'is_gift_card', 'is_token_currency_enable', 'is_service_product_price_from_dispatch', 'token_currency', 'advance_booking_amount', 'advance_booking_amount_percentage', 'is_file_cart_instructions', 'is_service_price_selection', 'is_rental_weekly_monthly_price', 'cart_cms_page_status']);
+        // Safely get additional preferences with error handling
+        try {
+            $getAdditionalPreference = getAdditionalPreference(['is_price_by_role', 'order_edit_before_hours', 'is_gift_card', 'is_token_currency_enable', 'is_service_product_price_from_dispatch', 'token_currency', 'advance_booking_amount', 'advance_booking_amount_percentage', 'is_file_cart_instructions', 'is_service_price_selection', 'is_rental_weekly_monthly_price', 'cart_cms_page_status']);
+        } catch (\Exception $e) {
+            \Log::warning('getAdditionalPreference failed in getCartData', ['error' => $e->getMessage()]);
+            $getAdditionalPreference = [
+                'is_price_by_role' => 0,
+                'order_edit_before_hours' => 0,
+                'is_gift_card' => 0,
+                'is_token_currency_enable' => 0,
+                'is_service_product_price_from_dispatch' => 0,
+                'token_currency' => '',
+                'advance_booking_amount' => 0,
+                'advance_booking_amount_percentage' => 0,
+                'is_file_cart_instructions' => 0,
+                'is_service_price_selection' => 0,
+                'is_rental_weekly_monthly_price' => 0,
+                'cart_cms_page_status' => 0,
+            ];
+        }
 
         $wishListCount = 0;
         $cart_details = null;
         $user = Auth::user();
         $curId = Session::get('customerCurrency');
         $langId = Session::get('customerLanguage') ?? 1;
-        $client_timezone = DB::table('clients')->first('timezone');
-        $timezone = $client_timezone->timezone ?? ($user ?  ($user->timezone ?? 'Asia/Kolkata') : 'Asia/Kolkata');
+        
+        // Safely get client timezone
+        try {
+            $client_timezone = DB::table('clients')->first();
+            $timezone = $client_timezone->timezone ?? ($user ?  ($user->timezone ?? 'Asia/Kolkata') : 'Asia/Kolkata');
+        } catch (\Exception $e) {
+            \Log::warning('Failed to get client timezone', ['error' => $e->getMessage()]);
+            $timezone = $user ? ($user->timezone ?? 'Asia/Kolkata') : 'Asia/Kolkata';
+        }
         $address_id = 0;
         $schedule_datetime_del = '';
         if ($user) {
@@ -2180,8 +2206,21 @@ class CartController extends FrontController
         }
         // pr($cart_details);
 
-        $client_preference_detail = ClientPreference::first();
-        $client_preference_detail  = $this->hideSecretKeys($client_preference_detail);
+        // Safely get client preference
+        try {
+            $client_preference_detail = ClientPreference::first();
+            if ($client_preference_detail) {
+                $client_preference_detail = $this->hideSecretKeys($client_preference_detail);
+            } else {
+                // Create default client preference if none exists
+                $client_preference_detail = new \stdClass();
+                $client_preference_detail->id = 0;
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Failed to get client preference in getCartData', ['error' => $e->getMessage()]);
+            $client_preference_detail = new \stdClass();
+            $client_preference_detail->id = 0;
+        }
 
         $expected_vendors = [];
         //    $expected_vendors = $this->searchProductExpection($cart_details);
@@ -2250,8 +2289,21 @@ class CartController extends FrontController
 
     }catch(\Exception $e)
     {
-        // \Log::info($e->getLine().'--'.$e->getMessage());
-        return response()->json([]);
+        \Log::error('getCartData error', [
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        // Return a proper response structure even on error
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Unable to load cart data',
+            'loggedIn' => Auth::check() ? 'true' : 'false',
+            'cart_details' => null,
+            'mycart' => '',
+            'wishListCount' => 0
+        ], 200);
     }
     }
 

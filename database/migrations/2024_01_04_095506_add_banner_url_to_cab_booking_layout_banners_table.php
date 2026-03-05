@@ -13,11 +13,13 @@ class AddBannerUrlToCabBookingLayoutBannersTable extends Migration
      */
     public function up()
     {
-        Schema::table('cab_booking_layout_banners', function (Blueprint $table) {
+        if (!Schema::hasColumn('cab_booking_layout_banners', 'banner_url')) {
+            Schema::table('cab_booking_layout_banners', function (Blueprint $table) {
             $table->string('banner_url')->after('banner_image_url')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddBannerUrlToCabBookingLayoutBannersTable extends Migration
      */
     public function down()
     {
-        Schema::table('cab_booking_layout_banners', function (Blueprint $table) {
-            $table->dropColumn('banner_url');
-        });
+        // Reverse migration if needed
     }
 }

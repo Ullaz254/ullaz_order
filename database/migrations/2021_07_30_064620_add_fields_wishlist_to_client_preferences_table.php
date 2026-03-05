@@ -13,10 +13,16 @@ class AddFieldsWishlistToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->tinyInteger('show_wishlist')->after('enquire_mode')->default(0);
-            $table->tinyInteger('show_icons')->after('enquire_mode')->default(0);
-        });
+        if (!Schema::hasColumn('client_preferences', 'show_wishlist')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('show_wishlist')->after('enquire_mode')->default(0);
+            });
+        }
+        if (!Schema::hasColumn('client_preferences', 'show_icons')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->tinyInteger('show_icons')->after('enquire_mode')->default(0);
+            });
+        }
     }
 
     /**

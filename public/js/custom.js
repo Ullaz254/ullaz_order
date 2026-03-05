@@ -3885,6 +3885,19 @@ function cartHeader(address_id = null) {
     type: "get",
     dataType: "json",
     url: cart_product_url,
+    timeout: 15000,
+    error: function (xhr, status) {
+      if (status === "timeout" || status === "error") {
+        if ($("#cart_table").length > 0) {
+          $(".spinner-box").hide();
+          $("#cart_table").show();
+        }
+        if ($("#header_cart_main_ul_ondemand").length > 0) {
+          $(".spinner-box").hide();
+          $("#header_cart_main_ul_ondemand").show();
+        }
+      }
+    },
     success: function (response) {
       if (response.status == "success") {
         if (response.wishListCount > 0) {
@@ -4182,6 +4195,14 @@ function cartHeaderDilivery(address_id, code) {
     type: "get",
     dataType: "json",
     url: cart_product_url,
+    timeout: 15000,
+    error: function (xhr, status) {
+      if (status === "timeout" || status === "error") {
+        $(".spinner-box").hide();
+        if ($("#cart_table").length > 0) $("#cart_table").show();
+        if ($("#header_cart_main_ul_ondemand").length > 0) $("#header_cart_main_ul_ondemand").show();
+      }
+    },
     success: function (response) {
       if (response.status == "success") {
         $("#cart_table").html("");
@@ -8229,4 +8250,6 @@ $(".menu-slider2").slick({
   ],
 });
 
-AOS.init({ disable: "mobile" });
+if (typeof AOS !== 'undefined') {
+    AOS.init({ disable: "mobile" });
+}

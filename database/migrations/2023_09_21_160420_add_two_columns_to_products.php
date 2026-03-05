@@ -17,9 +17,8 @@ class AddTwoColumnsToProducts extends Migration
             if(!Schema::hasColumn('products','destination_id')){
                 $table->integer('destination_id')->nullable();
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

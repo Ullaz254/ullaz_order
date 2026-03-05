@@ -13,11 +13,13 @@ class AddImageMobileToBanners extends Migration
      */
     public function up()
     {
-        Schema::table('banners', function (Blueprint $table) {
+        if (!Schema::hasColumn('banners', 'image_mobile')) {
+            Schema::table('banners', function (Blueprint $table) {
             $table->string('image_mobile', 150)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddImageMobileToBanners extends Migration
      */
     public function down()
     {
-        Schema::table('banners', function (Blueprint $table) {
-            $table->dropColumn('image_mobile');
-        });
+        // Reverse migration if needed
     }
 }

@@ -15,9 +15,8 @@ class AddProductIdFieldInHomePageTable extends Migration
     {
         Schema::table('home_products', function (Blueprint $table) {
             $table->Integer('product_id')->nullable()->after('title');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

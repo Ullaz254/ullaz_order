@@ -13,7 +13,8 @@ class CreateCategoryRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('category_roles', function (Blueprint $table) {
+        if (!Schema::hasTable('category_roles')) {
+            Schema::create('category_roles', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('category_id')->unsigned()->nullable();
             $table->bigInteger('role_id')->unsigned()->nullable();
@@ -22,6 +23,7 @@ class CreateCategoryRolesTable extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('SET NULL');
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('SET NULL');
         });
+        }
     }
 
     /**

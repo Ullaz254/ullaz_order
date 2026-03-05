@@ -13,11 +13,13 @@ class AddSyncFromInventoryToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'sync_from_inventory')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->tinyInteger('sync_from_inventory')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSyncFromInventoryToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('sync_from_inventory');
-        });
+        // Reverse migration if needed
     }
 }

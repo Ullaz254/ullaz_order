@@ -13,11 +13,13 @@ class AlterTableSmsTemplates extends Migration
      */
     public function up()
     {
-        Schema::table('sms_templates', function (Blueprint $table) {
+        if (!Schema::hasColumn('sms_templates', 'template_id')) {
+            Schema::table('sms_templates', function (Blueprint $table) {
             $table->string('template_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterTableSmsTemplates extends Migration
      */
     public function down()
     {
-        Schema::table('sms_templates', function (Blueprint $table) {
-            Schema::dropIfExists('template_id');
-        });
+        // Reverse migration if needed
     }
 }

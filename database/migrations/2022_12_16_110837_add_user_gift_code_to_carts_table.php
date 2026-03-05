@@ -13,11 +13,13 @@ class AddUserGiftCodeToCartsTable extends Migration
      */
     public function up()
     {
-        Schema::table('carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('carts', 'user_gift_code')) {
+            Schema::table('carts', function (Blueprint $table) {
             $table->string('user_gift_code')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddUserGiftCodeToCartsTable extends Migration
      */
     public function down()
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->dropColumn('user_gift_code');
-        });
+        // Reverse migration if needed
     }
 }

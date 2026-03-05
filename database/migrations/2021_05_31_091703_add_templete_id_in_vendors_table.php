@@ -20,9 +20,8 @@ class AddTempleteIdInVendorsTable extends Migration
 
             $table->bigInteger('vendor_templete_id')->unsigned()->nullable();
             $table->foreign('vendor_templete_id')->references('id')->on('vendor_templetes')->onDelete('set null');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

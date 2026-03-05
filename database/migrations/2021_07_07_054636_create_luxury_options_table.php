@@ -13,11 +13,13 @@ class CreateLuxuryOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('luxury_options', function (Blueprint $table) {
+        if (!Schema::hasTable('luxury_options')) {
+            Schema::create('luxury_options', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

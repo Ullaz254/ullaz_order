@@ -13,7 +13,8 @@ class CreateUserBidRideRequestTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_bid_ride_requests', function (Blueprint $table) {
+        if (!Schema::hasTable('user_bid_ride_requests')) {
+            Schema::create('user_bid_ride_requests', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('product_id')->unsigned()->nullable();
@@ -26,6 +27,7 @@ class CreateUserBidRideRequestTable extends Migration
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+        }
     }
 
     /**

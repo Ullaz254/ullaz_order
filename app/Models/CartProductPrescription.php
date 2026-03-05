@@ -17,9 +17,16 @@ class CartProductPrescription extends Model
         $img = $value;
       }
       $ex = checkImageExtension($img);
-      $values['proxy_url'] = \Config::get('app.IMG_URL1');
+      $proxyUrl = \Config::get('app.IMG_URL1');
+      $fitUrl = \Config::get('app.FIT_URl');
+      // Use HTTP for local development
+      if (env('APP_ENV') === 'local') {
+        $proxyUrl = str_replace('https://', 'http://', $proxyUrl);
+        $fitUrl = str_replace('https://', 'http://', $fitUrl);
+      }
+      $values['proxy_url'] = $proxyUrl;
       $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
-      $values['image_fit'] = \Config::get('app.FIT_URl');
+      $values['image_fit'] = $fitUrl;
       $values['image_s3_url'] = \Storage::disk('s3')->url($img);
       return $values;
     }

@@ -13,7 +13,8 @@ class CreateOrderLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_locations', function (Blueprint $table) {
+        if (!Schema::hasTable('order_locations')) {
+            Schema::create('order_locations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
@@ -23,6 +24,7 @@ class CreateOrderLocationsTable extends Migration
             $table->text('tasks')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

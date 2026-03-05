@@ -41,9 +41,8 @@ class AlterOrdersTableOrderNo extends Migration
             $table->string('created_by')->after('id')->nullable();
             $table->string('order_number')->after('created_by')->nullable();
             $table->tinyInteger('payment_option_id')->after('order_number')->default(1);
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

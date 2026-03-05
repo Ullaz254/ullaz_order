@@ -13,9 +13,11 @@ class AddAgeRestrictionTitleFieldToClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->string('age_restriction_title')->after('age_restriction')->nullable();
-        });
+        if (!Schema::hasColumn('client_preferences', 'age_restriction_title')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
+                $table->string('age_restriction_title')->after('age_restriction')->nullable();
+            });
+        }
     }
 
     /**

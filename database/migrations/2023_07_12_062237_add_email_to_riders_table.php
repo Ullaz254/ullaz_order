@@ -13,11 +13,13 @@ class AddEmailToRidersTable extends Migration
      */
     public function up()
     {
-        Schema::table('riders', function (Blueprint $table) {
+        if (!Schema::hasColumn('riders', 'email')) {
+            Schema::table('riders', function (Blueprint $table) {
             $table->string('email')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddEmailToRidersTable extends Migration
      */
     public function down()
     {
-        Schema::table('riders', function (Blueprint $table) {
-            $table->dropColumn('email');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddStripeConnectToClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'stripe_connect')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('stripe_connect')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddStripeConnectToClientPreferences extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('stripe_connect');
-        });
+        // Reverse migration if needed
     }
 }

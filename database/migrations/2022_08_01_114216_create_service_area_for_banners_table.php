@@ -13,7 +13,8 @@ class CreateServiceAreaForBannersTable extends Migration
      */
     public function up()
     {
-        Schema::create('service_area_for_banners', function (Blueprint $table) {
+        if (!Schema::hasTable('service_area_for_banners')) {
+            Schema::create('service_area_for_banners', function (Blueprint $table) {
             $table->id();
             $table->string('name', 60)->index();
             $table->text('description')->nullable();
@@ -22,6 +23,7 @@ class CreateServiceAreaForBannersTable extends Migration
             $table->geometry('polygon')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

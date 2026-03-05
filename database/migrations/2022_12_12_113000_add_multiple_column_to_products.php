@@ -13,13 +13,15 @@ class AddMultipleColumnToProducts extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'same_day_delivery')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->tinyInteger('same_day_delivery')->default(0)->comment('1 for yes, 0 for no');
             $table->tinyInteger('next_day_delivery')->default(0)->comment('1 for yes, 0 for no');
             $table->tinyInteger('hyper_local_delivery')->default(0)->comment('1 for yes, 0 for no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -27,8 +29,6 @@ class AddMultipleColumnToProducts extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['same_day_delivery',  'next_day_delivery', 'hyper_local_delivery']);
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,18 +13,22 @@ class CreateDriverRegistrationDocumentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('driver_registration_documents', function (Blueprint $table) {
-            $table->id();
-            $table->string('file_type')->nullable();
-            $table->timestamps();
-        });
-        Schema::create('driver_registration_document_translations', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->nullable();
-            $table->bigInteger('language_id')->unsigned();
-            $table->bigInteger('driver_registration_document_id')->unsigned();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('driver_registration_documents')) {
+            Schema::create('driver_registration_documents', function (Blueprint $table) {
+                $table->id();
+                $table->string('file_type')->nullable();
+                $table->timestamps();
+            });
+        }
+        if (!Schema::hasTable('driver_registration_document_translations')) {
+            Schema::create('driver_registration_document_translations', function (Blueprint $table) {
+                $table->id();
+                $table->string('name')->nullable();
+                $table->bigInteger('language_id')->unsigned();
+                $table->bigInteger('driver_registration_document_id')->unsigned();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

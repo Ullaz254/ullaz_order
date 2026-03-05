@@ -13,11 +13,13 @@ class AddDriverIdOrderVendorstable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'driver_id')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->integer('driver_id')->nullable()->comment('lalamove driver id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AddDriverIdOrderVendorstable extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

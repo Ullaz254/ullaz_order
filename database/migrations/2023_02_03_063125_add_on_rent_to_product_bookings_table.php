@@ -13,11 +13,13 @@ class AddOnRentToProductBookingsTable extends Migration
      */
     public function up()
     {
-        Schema::table('product_bookings', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_bookings', 'on_rent')) {
+            Schema::table('product_bookings', function (Blueprint $table) {
             $table->tinyInteger('on_rent')->default(1)->comment('1=>on_rent, 0=>available');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddOnRentToProductBookingsTable extends Migration
      */
     public function down()
     {
-        Schema::table('product_bookings', function (Blueprint $table) {
-            $table->dropColumn('on_rent');
-        });
+        // Reverse migration if needed
     }
 }

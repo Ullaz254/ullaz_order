@@ -13,11 +13,13 @@ class AddSecurityAmountToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'security_amount')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->decimal('security_amount', 10, 2)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSecurityAmountToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('security_amount');
-        });
+        // Reverse migration if needed
     }
 }

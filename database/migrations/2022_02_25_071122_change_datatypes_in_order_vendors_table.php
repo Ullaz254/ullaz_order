@@ -13,7 +13,8 @@ class ChangeDatatypesInOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'delivery_fee')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->decimal('delivery_fee', 16, 8)->nullable()->change();
             $table->decimal('taxable_amount', 16, 8)->nullable()->change();
             $table->decimal('subtotal_amount', 16, 8)->nullable()->change();
@@ -22,9 +23,10 @@ class ChangeDatatypesInOrderVendorsTable extends Migration
             $table->decimal('admin_commission_percentage_amount', 16, 8)->nullable()->change();
             $table->decimal('admin_commission_fixed_amount', 16, 8)->nullable()->change();
             $table->decimal('service_fee_percentage_amount', 16, 8)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -32,8 +34,6 @@ class ChangeDatatypesInOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

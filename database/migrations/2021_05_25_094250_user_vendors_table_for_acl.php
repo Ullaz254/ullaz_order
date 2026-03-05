@@ -13,7 +13,8 @@ class UserVendorsTableForAcl extends Migration
      */
     public function up()
     {        
-        Schema::create('user_vendors', function (Blueprint $table) {
+        if (!Schema::hasTable('user_vendors')) {
+            Schema::create('user_vendors', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('vendor_id');					
@@ -22,6 +23,7 @@ class UserVendorsTableForAcl extends Migration
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+        }
     }
 
     /**

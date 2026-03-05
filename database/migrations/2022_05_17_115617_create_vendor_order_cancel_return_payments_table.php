@@ -13,7 +13,8 @@ class CreateVendorOrderCancelReturnPaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_order_cancel_return_payments', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_order_cancel_return_payments')) {
+            Schema::create('vendor_order_cancel_return_payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('order_vendor_id')->nullable();
@@ -25,6 +26,7 @@ class CreateVendorOrderCancelReturnPaymentsTable extends Migration
             $table->string('total_return_amount')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

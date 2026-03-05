@@ -13,11 +13,13 @@ class AddScheduleSlotToOrderVendorProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendor_products', 'schedule_slot')) {
+            Schema::table('order_vendor_products', function (Blueprint $table) {
             $table->string('schedule_slot')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddScheduleSlotToOrderVendorProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

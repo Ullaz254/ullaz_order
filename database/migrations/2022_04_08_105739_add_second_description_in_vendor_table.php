@@ -13,11 +13,13 @@ class AddSecondDescriptionInVendorTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'short_desc')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->text('short_desc')->nullable()->comment('for extra text below description')->after('desc');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSecondDescriptionInVendorTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('short_desc');
-        });
+        // Reverse migration if needed
     }
 }

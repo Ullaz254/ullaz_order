@@ -13,7 +13,8 @@ class CreateOrderLongTermServicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_long_term_services', function (Blueprint $table) {
+        if (!Schema::hasTable('order_long_term_services')) {
+            Schema::create('order_long_term_services', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_product_id');
             $table->unsignedBigInteger('user_id');
@@ -28,6 +29,7 @@ class CreateOrderLongTermServicesTable extends Migration
             $table->tinyInteger('status')->default(0)->comment('0-not accept, 1-accept');
             $table->timestamps();
         });
+        }
     }
 
     /**

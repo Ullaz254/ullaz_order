@@ -13,7 +13,8 @@ class CreateUserRefferalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_refferals', function (Blueprint $table) {
+        if (!Schema::hasTable('user_refferals')) {
+            Schema::create('user_refferals', function (Blueprint $table) {
             $table->id();
             $table->string('refferal_code')->nullable();
             $table->string('reffered_by')->nullable();
@@ -22,6 +23,7 @@ class CreateUserRefferalsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
+        }
     }
 
     /**

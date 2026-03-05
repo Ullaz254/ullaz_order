@@ -13,11 +13,13 @@ class AddSubscriptionDiscountToOrders extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'subscription_discount')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->decimal('subscription_discount', 12, 2)->nullable()->after('total_amount');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSubscriptionDiscountToOrders extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('subscription_discount');
-        });
+        // Reverse migration if needed
     }
 }

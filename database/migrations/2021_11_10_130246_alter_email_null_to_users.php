@@ -13,11 +13,13 @@ class AlterEmailNullToUsers extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'email')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->string('email', 60)->nullable()->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterEmailNullToUsers extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('email', 60)->nullable(false)->change();
-        });
+        // Reverse migration if needed
     }
 }

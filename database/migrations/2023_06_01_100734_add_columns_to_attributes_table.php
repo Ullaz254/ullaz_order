@@ -13,12 +13,14 @@ class AddColumnsToAttributesTable extends Migration
      */
     public function up()
     {
-        Schema::table('attributes', function (Blueprint $table) {
+        if (!Schema::hasColumn('attributes', 'is_mandatory')) {
+            Schema::table('attributes', function (Blueprint $table) {
             $table->boolean('is_mandatory')->default(0);
             $table->boolean('is_predefined')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddColumnsToAttributesTable extends Migration
      */
     public function down()
     {
-        Schema::table('attributes', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

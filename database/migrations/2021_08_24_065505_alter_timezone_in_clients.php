@@ -13,9 +13,11 @@ class AlterTimezoneInClients extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            $table->string('timezone')->nullable()->change();
-        });
+        if (!Schema::hasColumn('clients', 'timezone')) {
+            Schema::table('clients', function (Blueprint $table) {
+                $table->string('timezone')->nullable()->change();
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AlterTimezoneInClients extends Migration
     public function down()
     {
         Schema::table('clients', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('clients', 'timezone')) {
+                $table->string('timezone')->nullable()->change();
+            }
         });
     }
 }

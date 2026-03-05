@@ -13,11 +13,13 @@ class AddAhoyLocationToVendorTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'ahoy_location')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->json('ahoy_location')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAhoyLocationToVendorTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendor', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

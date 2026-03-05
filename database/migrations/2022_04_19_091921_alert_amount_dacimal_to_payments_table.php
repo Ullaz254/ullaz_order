@@ -13,11 +13,13 @@ class AlertAmountDacimalToPaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::table('payments', function (Blueprint $table) {
+        if (!Schema::hasColumn('payments', 'amount')) {
+            Schema::table('payments', function (Blueprint $table) {
             $table->decimal('amount',12,2)->default(0.00)->change();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlertAmountDacimalToPaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::table('payments', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

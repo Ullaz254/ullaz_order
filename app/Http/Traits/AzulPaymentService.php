@@ -11,41 +11,74 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\UserDataVault;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 
 trait AzulPaymentService
 {
 
     public function __construct()
     {
-        $this->creds = PaymentOption::where('code', 'azul')->where('status', 1)->first();
-        if(@$this->creds->status)
-        {
-            $this->creds_arr = json_decode($this->creds->credentials);
-            $this->MAIN_URL = $this->creds_arr->azul_main_url;
-            $this->ALTERNATE_URL = $this->creds_arr->azul_alternate_url;
-            $this->TEST_URL = $this->creds_arr->azul_test_url;
-            $this->ECOMMERCE_URL = $this->creds_arr->azul_ecommerce_url;
-            $this->TEST_MODE = $this->creds->test_mode;
-            $this->SAVE_TO_DATAVAULT = 1;
-            $this->DONT_SAVE_TO_DATAVAULT = 2;
-            $this->HOLD_TRANSACTION = 'Hold';
-            $this->REFUND_TRANSACTION = 'Refund';
-            $this->PAYMENT_CHANNEL = 'EC';
-            $this->OK_RESPONSE_CODE = '00';
-            $this->AZUL_OK_RESPONSE_CODE = 'ISO8583';
-            $this->MERCHANT_ID = $this->creds_arr->azul_merchant_id;
-            $this->POST_INPUT_MODE = 'E-Commerce';
-            $this->AUTH_1_HEADER = $this->creds_arr->azul_auth_header_one;
-            $this->AUTH_2_HEADER = $this->creds_arr->azul_auth_header_two;
-            $this->SSL_CERTIFICATE = $this->creds->getPath($this->creds_arr->azul_ssl_certificate);
-            $this->SSL_KEY = $this->creds->getPath($this->creds_arr->azul_ssl_key);
-            $this->errors = [
-                'INSUF FONDOS' => 'Tu tarjeta no tiene fondos suficientes para completar la transacción'
-            ];
-            $this->mode = true;
-            if ($this->TEST_MODE) {
-                $this->mode = false;
+        // Check if payment_options table exists before querying
+        if (Schema::hasTable('payment_options')) {
+            try {
+                $this->creds = PaymentOption::where('code', 'azul')->where('status', 1)->first();
+            } catch (\Exception $e) {
+                \Log::warning('Failed to get Azul payment option', ['error' => $e->getMessage()]);
+                $this->creds = null;
             }
+        } else {
+            $this->creds = null;
+        }
+        
+        if(@$this->creds && @$this->creds->status && !empty($this->creds->credentials))
+        {
+            try {
+                $this->creds_arr = json_decode($this->creds->credentials);
+                if ($this->creds_arr) {
+                    $this->MAIN_URL = $this->creds_arr->azul_main_url ?? '';
+                    $this->ALTERNATE_URL = $this->creds_arr->azul_alternate_url ?? '';
+                    $this->TEST_URL = $this->creds_arr->azul_test_url ?? '';
+                    $this->ECOMMERCE_URL = $this->creds_arr->azul_ecommerce_url ?? '';
+                    $this->TEST_MODE = $this->creds->test_mode ?? false;
+                    $this->SAVE_TO_DATAVAULT = 1;
+                    $this->DONT_SAVE_TO_DATAVAULT = 2;
+                    $this->HOLD_TRANSACTION = 'Hold';
+                    $this->REFUND_TRANSACTION = 'Refund';
+                    $this->PAYMENT_CHANNEL = 'EC';
+                    $this->OK_RESPONSE_CODE = '00';
+                    $this->AZUL_OK_RESPONSE_CODE = 'ISO8583';
+                    $this->MERCHANT_ID = $this->creds_arr->azul_merchant_id ?? '';
+                    $this->POST_INPUT_MODE = 'E-Commerce';
+                    $this->AUTH_1_HEADER = $this->creds_arr->azul_auth_header_one ?? '';
+                    $this->AUTH_2_HEADER = $this->creds_arr->azul_auth_header_two ?? '';
+                    if (method_exists($this->creds, 'getPath') && isset($this->creds_arr->azul_ssl_certificate)) {
+                        $this->SSL_CERTIFICATE = $this->creds->getPath($this->creds_arr->azul_ssl_certificate);
+                    } else {
+                        $this->SSL_CERTIFICATE = '';
+                    }
+                    if (method_exists($this->creds, 'getPath') && isset($this->creds_arr->azul_ssl_key)) {
+                        $this->SSL_KEY = $this->creds->getPath($this->creds_arr->azul_ssl_key);
+                    } else {
+                        $this->SSL_KEY = '';
+                    }
+                    $this->errors = [
+                        'INSUF FONDOS' => 'Tu tarjeta no tiene fondos suficientes para completar la transacción'
+                    ];
+                    $this->mode = true;
+                    if ($this->TEST_MODE) {
+                        $this->mode = false;
+                    }
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Failed to initialize Azul payment credentials', ['error' => $e->getMessage()]);
+                // Set defaults to prevent errors
+                $this->creds = null;
+                $this->creds_arr = null;
+            }
+        } else {
+            // Initialize with defaults if no credentials
+            $this->creds = null;
+            $this->creds_arr = null;
         }
     }
 

@@ -13,24 +13,26 @@ class Createestimateproductstable extends Migration
      */
     public function up()
     {
-        Schema::create('estimate_products', function (Blueprint $table) {
-            $table->id();
-            $table->string('icon')->nullable();
-             $table->timestamps();
-        });
+        if (!Schema::hasTable('estimate_products')) {
+            Schema::create('estimate_products', function (Blueprint $table) {
+                $table->id();
+                $table->string('icon')->nullable();
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('estimate_product_translations', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->nullable();
-            $table->mediumText('slug')->nullable();
-            $table->bigInteger('language_id')->unsigned();
-            $table->bigInteger('estimate_product_id')->unsigned();
-            $table->timestamps();
+        if (!Schema::hasTable('estimate_product_translations')) {
+            Schema::create('estimate_product_translations', function (Blueprint $table) {
+                $table->id();
+                $table->string('name')->nullable();
+                $table->mediumText('slug')->nullable();
+                $table->bigInteger('language_id')->unsigned();
+                $table->bigInteger('estimate_product_id')->unsigned();
+                $table->timestamps();
 
-            $table->foreign('estimate_product_id')->references('id')->on('estimate_products')->onDelete('cascade');
-        });
-
-        
+                $table->foreign('estimate_product_id')->references('id')->on('estimate_products')->onDelete('cascade');
+            });
+        }
     }
 
     /**

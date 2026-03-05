@@ -13,7 +13,8 @@ class CreateProcessorProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('processor_products', function (Blueprint $table) {
+        if (!Schema::hasTable('processor_products')) {
+            Schema::create('processor_products', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id')->unsigned();
             $table->tinyInteger('is_processor_enable')->nullable()->default(0)->comment('0-vendor, 1-processor');
@@ -26,6 +27,7 @@ class CreateProcessorProductsTable extends Migration
 
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
+        }
     }
 
     /**

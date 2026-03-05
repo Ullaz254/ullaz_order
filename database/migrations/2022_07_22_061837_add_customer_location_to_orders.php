@@ -13,12 +13,14 @@ class AddCustomerLocationToOrders extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'user_latitude')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->decimal('user_latitude', 20, 16)->nullable();
             $table->decimal('user_longitude', 20, 16)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddCustomerLocationToOrders extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('user_latitude');
-            $table->dropColumn('user_longitude');
-        });
+        // Reverse migration if needed
     }
 }

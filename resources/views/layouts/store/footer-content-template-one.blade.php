@@ -6,7 +6,7 @@ $applocale = 'en';
 if(session()->has('applocale')){
     $applocale = session()->get('applocale');
 }
-$languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
+$languageList = \App\Models\ClientLanguage::with('language')->orderBy('is_primary', 'desc')->get();
 $currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
 $preference = $client_preference_detail;
 $paymentMethod = \App\Models\PaymentMethod::where('is_show',1)->get();

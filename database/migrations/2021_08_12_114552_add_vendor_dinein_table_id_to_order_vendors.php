@@ -15,9 +15,8 @@ class AddVendorDineinTableIdToOrderVendors extends Migration
     {
         Schema::table('order_vendors', function (Blueprint $table) {
             $table->unsignedBigInteger('vendor_dinein_table_id')->nullable()->after('vendor_id');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

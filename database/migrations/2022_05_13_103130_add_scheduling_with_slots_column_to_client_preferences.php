@@ -19,9 +19,8 @@ class AddSchedulingWithSlotsColumnToClientPreferences extends Migration
                 $table->tinyInteger('same_day_delivery_for_schedule')->nullable()->default(0)->comment('0-off, 1-on');
                 $table->tinyInteger('same_day_orders_for_rescheduing')->nullable()->default(0)->comment('0-off, 1-on');
             }
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

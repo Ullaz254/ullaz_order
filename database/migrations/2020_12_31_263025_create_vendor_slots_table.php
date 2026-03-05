@@ -13,7 +13,8 @@ class CreateVendorSlotsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_slots', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_slots')) {
+            Schema::create('vendor_slots', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('vendor_id')->unsigned()->nullable();
             $table->bigInteger('category_id')->unsigned()->nullable();
@@ -33,6 +34,7 @@ class CreateVendorSlotsTable extends Migration
             $table->index('takeaway');
             $table->index('delivery');
         });
+        }
     }
 
     /**

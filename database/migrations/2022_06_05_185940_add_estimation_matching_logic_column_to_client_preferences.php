@@ -13,11 +13,13 @@ class AddEstimationMatchingLogicColumnToClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'estimation_matching_logic')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('estimation_matching_logic')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddEstimationMatchingLogicColumnToClientPreferences extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('estimation_matching_logic');
-        });
+        // Reverse migration if needed
     }
 }

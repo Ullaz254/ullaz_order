@@ -13,11 +13,13 @@ class AddAddressToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'address')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->string('address')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddAddressToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['address']);
-        });
+        // Reverse migration if needed
     }
 }

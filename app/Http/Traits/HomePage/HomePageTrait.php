@@ -601,15 +601,15 @@ trait HomePageTrait
             // check vendor Subscription0
            
             if ((empty($latitude)) && (empty($longitude)) && (empty($selectedAddress))) {
-                $selectedAddress = $preferences->Default_location_name;
-                $latitude = $preferences->Default_latitude??null;
-                $longitude = $preferences->Default_longitude??null;
+                $selectedAddress = $preferences->Default_location_name ?? null;
+                $latitude = $preferences->Default_latitude ?? null;
+                $longitude = $preferences->Default_longitude ?? null;
                 Session::put('latitude', $latitude);
                 Session::put('longitude', $longitude);
                 Session::put('selectedAddress', $selectedAddress);
             } else {
-                if ($preferences && ($latitude == $preferences->Default_latitude) && ($longitude == $preferences->Default_longitude)) {
-                    Session::put('selectedAddress', $preferences->Default_location_name);
+                if ($preferences && ($latitude == ($preferences->Default_latitude ?? null)) && ($longitude == ($preferences->Default_longitude ?? null))) {
+                    Session::put('selectedAddress', $preferences->Default_location_name ?? null);
                 }
             }
         }

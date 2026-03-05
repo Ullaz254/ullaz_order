@@ -13,11 +13,13 @@ class AddOthersTypeToUserAddresses extends Migration
      */
     public function up()
     {
-        Schema::table('user_addresses', function (Blueprint $table) {
+        if (!Schema::hasColumn('user_addresses', 'type_name')) {
+            Schema::table('user_addresses', function (Blueprint $table) {
             $table->string('type_name')->after('type')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddOthersTypeToUserAddresses extends Migration
      */
     public function down()
     {
-        Schema::table('user_addresses', function (Blueprint $table) {
-            $table->dropColumn('type_name');
-        });
+        // Reverse migration if needed
     }
 }

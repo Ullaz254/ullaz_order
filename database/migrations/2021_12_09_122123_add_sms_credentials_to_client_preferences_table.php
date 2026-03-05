@@ -13,11 +13,13 @@ class AddSmsCredentialsToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'sms_credentials')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->json('sms_credentials')->nullable()->comment('sms credentials in json format');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSmsCredentialsToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('sms_credentials');
-        });
+        // Reverse migration if needed
     }
 }

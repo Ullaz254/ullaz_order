@@ -13,7 +13,8 @@ class CreateSlotDaysTable extends Migration
      */
     public function up()
     {
-        Schema::create('slot_days', function (Blueprint $table) {
+        if (!Schema::hasTable('slot_days')) {
+            Schema::create('slot_days', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('slot_id')->unsigned()->nullable();
             $table->tinyInteger('day')->default(0)->comment('1 sunday, 2 monday, 3 tuesday, 4 wednesday, 5 thursday, 6 friday, 7 saturday');
@@ -21,6 +22,7 @@ class CreateSlotDaysTable extends Migration
             $table->foreign('slot_id')->references('id')->on('vendor_slots')->onDelete('cascade');
             $table->index('day');
         });
+        }
     }
 
     /**

@@ -13,7 +13,8 @@ class CreateSubscriptionFeaturesListTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscription_features_list', function (Blueprint $table) {
+        if (!Schema::hasTable('subscription_features_list')) {
+            Schema::create('subscription_features_list', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->longText('Description')->nullable();
@@ -21,6 +22,7 @@ class CreateSubscriptionFeaturesListTable extends Migration
             $table->tinyInteger('status')->unsigned()->default(1)->comment('0=Inactive, 1=Active');
             $table->timestamps();
         });
+        }
     }
 
     /**

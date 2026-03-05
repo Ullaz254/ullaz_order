@@ -13,11 +13,13 @@ class AddEnableLogColumnToClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'db_audit_logs')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('db_audit_logs')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddEnableLogColumnToClientPreferences extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('db_audit_logs');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,15 +13,17 @@ class AddColumnToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'rentalicon')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('rentalicon',200)->change();
             $table->string('pick_dropicon',200)->change();
             $table->string('on_demandicon',200)->change();
             $table->string('laundryicon',200)->change();
             $table->string('appointmenticon',200)->nullable()->after('laundryicon');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -29,8 +31,6 @@ class AddColumnToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

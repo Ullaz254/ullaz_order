@@ -1,0 +1,5 @@
+/* Pre-compiled from shimmer-less.less - use this in production to avoid client-side LESS compile (70+ sec delay) */
+.shimmer_effect,
+.shimmer_effect_trending_vendors {
+    overflow: hidden;
+}

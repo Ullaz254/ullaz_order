@@ -13,11 +13,13 @@ class AddMargOrderStatusFieldInOrderTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'marg_status')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->string('marg_status')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddMargOrderStatusFieldInOrderTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('marg_status');
-        });
+        // Reverse migration if needed
     }
 }

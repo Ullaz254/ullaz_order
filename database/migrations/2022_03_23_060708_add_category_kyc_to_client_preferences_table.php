@@ -13,11 +13,13 @@ class AddCategoryKycToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'category_kyc_documents')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('category_kyc_documents')->nullable()->default(0)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCategoryKycToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('category_kyc_documents');
-        });
+        // Reverse migration if needed
     }
 }

@@ -15,9 +15,8 @@ class AlterPaymentOptionsTable extends Migration
     {
         Schema::table('payment_options', function (Blueprint $table) {
             $table->unsignedTinyInteger('off_site')->nullable()->default(0)->comment('0 = on-site, 1 = off-site');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

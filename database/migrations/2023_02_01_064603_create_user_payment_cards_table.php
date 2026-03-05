@@ -13,7 +13,8 @@ class CreateUserPaymentCardsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_payment_cards', function (Blueprint $table) {
+        if (!Schema::hasTable('user_payment_cards')) {
+            Schema::create('user_payment_cards', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->nullable(); 
             $table->string('card_number')->nullable();
@@ -23,6 +24,7 @@ class CreateUserPaymentCardsTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+        }
     }
 
     /**

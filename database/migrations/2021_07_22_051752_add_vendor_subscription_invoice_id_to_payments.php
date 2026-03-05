@@ -15,9 +15,8 @@ class AddVendorSubscriptionInvoiceIdToPayments extends Migration
     {
         Schema::table('payments', function (Blueprint $table) {
             $table->unsignedBigInteger('vendor_subscription_invoice_id')->nullable()->after('user_subscription_invoice_id');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

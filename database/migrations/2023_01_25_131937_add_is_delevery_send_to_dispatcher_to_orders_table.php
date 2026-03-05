@@ -13,11 +13,13 @@ class AddIsDeleverySendToDispatcherToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'is_order_amount_send_to_dispatcher')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->tinyInteger('is_order_amount_send_to_dispatcher')->default(0)->comment('0=>no , 1=>yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsDeleverySendToDispatcherToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

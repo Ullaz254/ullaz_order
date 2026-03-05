@@ -13,7 +13,8 @@ class CreateSavedCardsTable extends Migration
      */
     public function up()
     {
-        Schema::create('saved_cards', function (Blueprint $table) {
+        if (!Schema::hasTable('saved_cards')) {
+            Schema::create('saved_cards', function (Blueprint $table) {
             $table->id();
             $table->string('card_id','255');
             $table->integer('user_id');
@@ -22,7 +23,8 @@ class CreateSavedCardsTable extends Migration
             $table->string('card_holder_name','255')->default(null);
             $table->string('customer_id','255');
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

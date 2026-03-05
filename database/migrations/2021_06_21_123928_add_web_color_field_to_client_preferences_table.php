@@ -13,12 +13,14 @@ class AddWebColorFieldToClientPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'favicon')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('favicon')->nullable();
             $table->string('web_color')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddWebColorFieldToClientPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('favicon');
-            $table->dropColumn('web_color');
-        });
+        // Reverse migration if needed
     }
 }

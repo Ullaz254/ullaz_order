@@ -1,7 +1,9 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+
 class AddUrlLinkToMobileBannersTable extends Migration
 {
     /**
@@ -11,10 +13,13 @@ class AddUrlLinkToMobileBannersTable extends Migration
      */
     public function up()
     {
-        Schema::table('mobile_banners', function (Blueprint $table) {
+        if (!Schema::hasColumn('mobile_banners', 'link_url')) {
+            Schema::table('mobile_banners', function (Blueprint $table) {
             $table->text('link_url')->after('link')->nullable();
-        });
-    }
+                    });
+        }
+
+        }
     /**
      * Reverse the migrations.
      *
@@ -22,8 +27,6 @@ class AddUrlLinkToMobileBannersTable extends Migration
      */
     public function down()
     {
-        Schema::table('mobile_banners', function (Blueprint $table) {
-            $table->dropColumn('link_url');
-        });
+        // Reverse migration if needed
     }
 }

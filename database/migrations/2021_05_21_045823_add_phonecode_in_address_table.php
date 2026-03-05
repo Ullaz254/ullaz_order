@@ -23,9 +23,8 @@ class AddPhonecodeInAddressTable extends Migration
             $table->string('phonecode')->after('is_primary')->nullable();
             $table->string('country_code')->after('phonecode')->nullable();
             $table->tinyInteger('country')->after('country_code')->nullable();
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

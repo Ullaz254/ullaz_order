@@ -13,7 +13,8 @@ class CreateStaticDropoffLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('static_dropoff_locations', function (Blueprint $table) {
+        if (!Schema::hasTable('static_dropoff_locations')) {
+            Schema::create('static_dropoff_locations', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->string('address')->nullable();
@@ -28,6 +29,7 @@ class CreateStaticDropoffLocationsTable extends Migration
             $table->softDeletes();
           
         });
+        }
     }
 
     /**

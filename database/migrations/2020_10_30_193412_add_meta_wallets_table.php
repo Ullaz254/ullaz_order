@@ -28,10 +28,11 @@ class AddMetaWalletsTable extends Migration
             $this->json($table, 'meta')
                 ->nullable()
                 ->after('description');
-        });
-    }
-
+        }); } 
+    
     /**
+     * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void

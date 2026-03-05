@@ -13,9 +13,11 @@ class AddTestmodeToPaymentOptions extends Migration
      */
     public function up()
     {
-        Schema::table('payment_options', function (Blueprint $table) {
-            $table->unsignedTinyInteger('test_mode')->default(0)->comment('0 = false, 1 = true');
-        });
+        if (!Schema::hasColumn('payment_options', 'test_mode')) {
+            Schema::table('payment_options', function (Blueprint $table) {
+                $table->unsignedTinyInteger('test_mode')->default(0)->comment('0 = false, 1 = true');
+            });
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ class AddTestmodeToPaymentOptions extends Migration
     public function down()
     {
         Schema::table('payment_options', function (Blueprint $table) {
-            $table->dropColumn('test_mode');
+            if (Schema::hasColumn('payment_options', 'test_mode')) {
+                $table->dropColumn('test_mode');
+            }
         });
     }
 }

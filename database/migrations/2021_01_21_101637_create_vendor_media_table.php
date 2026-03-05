@@ -13,7 +13,8 @@ class CreateVendorMediaTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_media', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_media')) {
+            Schema::create('vendor_media', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('media_type')->default('1')->comment('1 - image, 2 - video, 3 - file');
             $table->bigInteger('vendor_id')->unsigned()->nullable();
@@ -23,6 +24,7 @@ class CreateVendorMediaTable extends Migration
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
             $table->index('media_type');
         });
+        }
     }
 
     /**

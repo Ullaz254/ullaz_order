@@ -13,11 +13,13 @@ class AddStoreIdInProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'store_id')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->integer('store_id')->comment('Store id is a refrence of inventory store id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddStoreIdInProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('store_id');
-        });
+        // Reverse migration if needed
     }
 }

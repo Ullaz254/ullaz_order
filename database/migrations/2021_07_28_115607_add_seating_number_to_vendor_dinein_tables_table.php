@@ -13,11 +13,13 @@ class AddSeatingNumberToVendorDineinTablesTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_dinein_tables', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_dinein_tables', 'seating_number')) {
+            Schema::table('vendor_dinein_tables', function (Blueprint $table) {
             $table->integer('seating_number')->after('vendor_id')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSeatingNumberToVendorDineinTablesTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_dinein_tables', function (Blueprint $table) {
-            $table->dropColumn('seating_number');
-        });
+        // Reverse migration if needed
     }
 }

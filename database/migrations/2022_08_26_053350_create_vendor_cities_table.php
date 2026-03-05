@@ -13,7 +13,8 @@ class CreateVendorCitiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_cities', function (Blueprint $table) {
+        if (!Schema::hasTable('vendor_cities')) {
+            Schema::create('vendor_cities', function (Blueprint $table) {
             $table->id();
             $table->string('image')->nullable();
             $table->string('slug')->nullable();
@@ -22,6 +23,7 @@ class CreateVendorCitiesTable extends Migration
             $table->decimal('longitude', 16, 12)->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,11 +13,13 @@ class AddCodeInUser extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'code')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->string('code')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddCodeInUser extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('code');
-        });
+        // Reverse migration if needed
     }
 }

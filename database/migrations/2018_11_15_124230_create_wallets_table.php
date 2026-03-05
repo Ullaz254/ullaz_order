@@ -57,10 +57,11 @@ class CreateWalletsTable extends Migration
                 DB::table((new Wallet())->getTable())
                     ->insert($transactions->toArray());
             });
-        });
-    }
-
+        }); } 
+    
     /**
+     * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void

@@ -13,11 +13,13 @@ class AddTotalDeliveryFeeToOrders extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'total_delivery_fee')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->decimal('total_delivery_fee', $precision = 8, $scale = 2)->after('total_discount')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddTotalDeliveryFeeToOrders extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('total_delivery_fee');
-        });
+        // Reverse migration if needed
     }
 }

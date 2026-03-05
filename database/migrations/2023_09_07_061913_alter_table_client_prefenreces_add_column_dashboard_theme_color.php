@@ -13,11 +13,13 @@ class AlterTableClientPrefenrecesAddColumnDashboardThemeColor extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'dashboard_theme_color')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('dashboard_theme_color','10')->default('#4c4c4c');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterTableClientPrefenrecesAddColumnDashboardThemeColor extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('dashboard_theme_color');
-        });
+        // Reverse migration if needed
     }
 }

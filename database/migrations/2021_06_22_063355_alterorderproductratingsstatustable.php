@@ -15,9 +15,8 @@ class Alterorderproductratingsstatustable extends Migration
     {
         Schema::table('order_product_ratings', function (Blueprint $table) {
             $table->enum('status',[0,1])->default(1);
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

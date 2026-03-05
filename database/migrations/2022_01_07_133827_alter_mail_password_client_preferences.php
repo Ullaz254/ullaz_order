@@ -13,11 +13,13 @@ class AlterMailPasswordClientPreferences extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function ($table) {
+        if (!Schema::hasColumn('client_preferences', 'mail_password')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->string('mail_password', 100)->change();
-       });
-    }
+                   });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,6 +27,6 @@ class AlterMailPasswordClientPreferences extends Migration
      */
     public function down()
     {
-
+        // Reverse migration if needed
     }
 }

@@ -13,12 +13,14 @@ class AddFieldsToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        if (!Schema::hasColumn('products', 'square_item_id')) {
+            Schema::table('products', function (Blueprint $table) {
             $table->string('square_item_id', 150)->nullable();
             $table->string('square_item_version', 100)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddFieldsToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

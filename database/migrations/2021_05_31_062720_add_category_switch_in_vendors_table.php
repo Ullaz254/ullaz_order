@@ -13,12 +13,14 @@ class AddCategorySwitchInVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'is_show_category')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->tinyInteger('is_show_category')->default(0)->comment('1 for yes, 0 for no');
             $table->tinyInteger('show_slot')->default(1)->comment('1 for yes, 0 for no');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddCategorySwitchInVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('is_show_category');
-            $table->dropColumn('show_slot');
-        });
+        // Reverse migration if needed
     }
 }

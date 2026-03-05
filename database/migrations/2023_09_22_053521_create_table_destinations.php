@@ -13,7 +13,7 @@ class CreateTableDestinations extends Migration
      */
     public function up()
     {
-        if (!checkTableExists('destinations')) {
+        if (!Schema::hasTable('destinations')) {
             Schema::create('destinations', function (Blueprint $table) {
                 $table->id();
                 $table->string('title', 32);

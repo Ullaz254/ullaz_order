@@ -13,7 +13,8 @@ class Createtableorderreturnrequests extends Migration
      */
     public function up()
     {
-        Schema::create('order_return_requests', function (Blueprint $table) {
+        if (!Schema::hasTable('order_return_requests')) {
+            Schema::create('order_return_requests', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_vendor_product_id')->unsigned();
             $table->foreign('order_vendor_product_id')->references('id')->on('order_vendor_products')->onDelete('cascade');
@@ -26,6 +27,7 @@ class Createtableorderreturnrequests extends Migration
             $table->foreign('return_by')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
+        }
     }
 
     /**

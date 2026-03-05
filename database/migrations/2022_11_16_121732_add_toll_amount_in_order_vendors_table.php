@@ -13,11 +13,13 @@ class AddTollAmountInOrderVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'toll_amount')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->decimal('toll_amount', 16, 8)->nullable()->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddTollAmountInOrderVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

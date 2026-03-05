@@ -13,17 +13,13 @@ class AlterOrderVendorProductsForOrderVendorId extends Migration
      */
     public function up()
     {
-        Schema::table('order_vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('order_vendors', 'order_status_option_id')) {
+            Schema::table('order_vendors', function (Blueprint $table) {
             $table->tinyInteger('order_status_option_id')->unsigned()->nullable()->after('payment_option_id');
-        });
-        Schema::table('order_vendor_products', function (Blueprint $table) {
-            $table->bigInteger('order_vendor_id')->unsigned()->nullable()->after('product_id');
-        });
-        Schema::table('vendor_order_statuses', function (Blueprint $table) {
-            $table->bigInteger('order_vendor_id')->unsigned()->nullable()->after('order_id');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -31,6 +27,6 @@ class AlterOrderVendorProductsForOrderVendorId extends Migration
      */
     public function down()
     {
-        //
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddPlatformFeeToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        if (!Schema::hasColumn('orders', 'platform_fee')) {
+            Schema::table('orders', function (Blueprint $table) {
             $table->decimal('platform_fee', 16, 8)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddPlatformFeeToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('platform_fee');
-        });
+        // Reverse migration if needed
     }
 }

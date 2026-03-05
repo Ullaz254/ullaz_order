@@ -15,9 +15,8 @@ class RenameColumnInCategoriesTable extends Migration
     {
         Schema::table('categories', function (Blueprint $table) {
             $table->renameColumn('icon_2', 'icon_two');
-        });
-    }
-
+        }); } 
+    
     /**
      * Reverse the migrations.
      *

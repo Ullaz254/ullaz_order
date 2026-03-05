@@ -8,7 +8,7 @@ $urlImg = $clientData ? $clientData->dark_logo['original'] : ' ';
 $urlImg = $clientData ? $clientData->logo['original'] : ' ';
 }
 $languageList = \App\Models\ClientLanguage::with('language')
-->where('is_active', 1)
+
 ->orderBy('is_primary', 'desc')
 ->get();
 $currencyList = \App\Models\ClientCurrency::with('currency')

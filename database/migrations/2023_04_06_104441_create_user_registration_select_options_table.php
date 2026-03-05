@@ -13,12 +13,14 @@ class CreateUserRegistrationSelectOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_registration_select_options', function (Blueprint $table) {
+        if (!Schema::hasTable('user_registration_select_options')) {
+            Schema::create('user_registration_select_options', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_registration_documents_id');
             $table->tinyInteger('status')->nullable()->default(0);
             $table->timestamps();
         });
+        }
     }
 
     /**

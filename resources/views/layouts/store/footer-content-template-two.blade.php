@@ -7,7 +7,7 @@ if(Session::get('config_theme') == 'dark'){
     $urlImg = $clientData ? $clientData->logo['original'] : ' ';
 }
 $currencyList = \App\Models\ClientCurrency::with('currency')->orderBy('is_primary', 'desc')->get();
-$languageList = \App\Models\ClientLanguage::with('language')->where('is_active', 1)->orderBy('is_primary', 'desc')->get();
+$languageList = \App\Models\ClientLanguage::with('language')->orderBy('is_primary', 'desc')->get();
 $paymentMethod = \App\Models\PaymentMethod::where('is_show',1)->get();
 $pages = \App\Models\Page::with(['translations' => function($q) {$q->where('language_id', session()->get('customerLanguage') ??1);}])->whereHas('translations', function($q) {$q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguage') ??1]);})->orderBy('order_by','ASC')->get();
 $company_name = \App\Models\ClientPreferenceAdditional::where('key_name','bottom_name')->first();

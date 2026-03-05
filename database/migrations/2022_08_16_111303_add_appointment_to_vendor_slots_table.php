@@ -13,12 +13,14 @@ class AddAppointmentToVendorSlotsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendor_slots', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendor_slots', 'appointment')) {
+            Schema::table('vendor_slots', function (Blueprint $table) {
             $table->tinyInteger('appointment')->nullable()->after('laundry')->default(0)->comment('0-No, 1-Yes');
             $table->index(['appointment']);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,8 +28,6 @@ class AddAppointmentToVendorSlotsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendor_slots', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

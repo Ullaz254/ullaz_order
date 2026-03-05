@@ -13,11 +13,13 @@ class AlterClientsAddColumnCampaignService extends Migration
      */
     public function up()
     {
-        Schema::table('clients', function (Blueprint $table) {
+        if (!Schema::hasColumn('clients', 'campaign_service')) {
+            Schema::table('clients', function (Blueprint $table) {
             $table->tinyInteger('campaign_service')->default(1);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AlterClientsAddColumnCampaignService extends Migration
      */
     public function down()
     {
-        Schema::table('clients', function (Blueprint $table) {
-            $table->dropColumn('campaign_service');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,7 +13,8 @@ class CreateProductMeasurementTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_measurement', function (Blueprint $table) {
+        if (!Schema::hasTable('product_measurement')) {
+            Schema::create('product_measurement', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
@@ -24,6 +25,7 @@ class CreateProductMeasurementTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+        }
     }
 
     /**

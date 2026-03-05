@@ -13,11 +13,13 @@ class AddNeedSyncWithOrderToVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('vendors', function (Blueprint $table) {
+        if (!Schema::hasColumn('vendors', 'need_sync_with_order')) {
+            Schema::table('vendors', function (Blueprint $table) {
             $table->boolean('need_sync_with_order')->default(0)->comment("1 for yes, 0 for no");
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddNeedSyncWithOrderToVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('need_sync_with_order');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,11 +13,13 @@ class AddOrderQuantityToCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'order_quantity')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             $table->integer('order_quantity')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddOrderQuantityToCartProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }

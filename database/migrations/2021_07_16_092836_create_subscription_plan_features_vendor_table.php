@@ -13,7 +13,8 @@ class CreateSubscriptionPlanFeaturesVendorTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscription_plan_features_vendor', function (Blueprint $table) {
+        if (!Schema::hasTable('subscription_plan_features_vendor')) {
+            Schema::create('subscription_plan_features_vendor', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('subscription_plan_id')->unsigned();
             $table->foreign('subscription_plan_id')->references('id')->on('subscription_plans_vendor');
@@ -21,6 +22,7 @@ class CreateSubscriptionPlanFeaturesVendorTable extends Migration
             $table->foreign('feature_id')->references('id')->on('subscription_features_list_vendor');
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -13,7 +13,8 @@ class CreateProductVariantSetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_variant_sets', function (Blueprint $table) {
+        if (!Schema::hasTable('product_variant_sets')) {
+            Schema::create('product_variant_sets', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->bigInteger('product_variant_id')->unsigned()->nullable();
@@ -26,6 +27,7 @@ class CreateProductVariantSetsTable extends Migration
             $table->foreign('variant_type_id')->references('id')->on('variants')->onDelete('set null');
             $table->foreign('variant_option_id')->references('id')->on('variant_options')->onDelete('set null');
         });
+        }
     }
 
     /**

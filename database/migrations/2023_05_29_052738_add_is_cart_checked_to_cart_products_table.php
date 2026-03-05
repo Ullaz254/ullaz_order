@@ -13,11 +13,13 @@ class AddIsCartCheckedToCartProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
+        if (!Schema::hasColumn('cart_products', 'is_cart_checked')) {
+            Schema::table('cart_products', function (Blueprint $table) {
             $table->tinyInteger('is_cart_checked')->nullable()->default(1)->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddIsCartCheckedToCartProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cart_products', function (Blueprint $table) {
-            $table->dropColumn('is_cart_checked');
-        });
+        // Reverse migration if needed
     }
 }

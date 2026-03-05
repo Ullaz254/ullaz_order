@@ -13,7 +13,8 @@ class CreatePickDropDriverBidsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pick_drop_driver_bids', function (Blueprint $table) {
+        if (!Schema::hasTable('pick_drop_driver_bids')) {
+            Schema::create('pick_drop_driver_bids', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_bid_id')->nullable(); 
             $table->tinyInteger('status')->default(0)->comment('0=>placed, 1=>approved, 2=>declined');
@@ -26,6 +27,7 @@ class CreatePickDropDriverBidsTable extends Migration
             $table->dateTime('expired_at', $precision = 0);
             $table->timestamps();
         });
+        }
     }
 
     /**

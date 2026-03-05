@@ -13,7 +13,8 @@ class CreateInfluAttributesTable extends Migration
      */
     public function up()
     {
-        Schema::create('influ_attributes', function (Blueprint $table) {
+        if (!Schema::hasTable('influ_attributes')) {
+            Schema::create('influ_attributes', function (Blueprint $table) {
             $table->id();
             $table->string('title', 100)->nullable();
             $table->tinyInteger('type')->default(1)->comment('1 for dropdown, 2 for color');
@@ -25,6 +26,7 @@ class CreateInfluAttributesTable extends Migration
             $table->index('position');
             $table->index('status');
         });
+        }
     }
 
     /**

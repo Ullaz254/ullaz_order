@@ -13,11 +13,13 @@ class AddSlotIntervalToDeliverySlotsTable extends Migration
      */
     public function up()
     {
-        Schema::table('delivery_slots', function (Blueprint $table) {
+        if (!Schema::hasColumn('delivery_slots', 'slot_interval')) {
+            Schema::table('delivery_slots', function (Blueprint $table) {
             $table->integer('slot_interval')->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddSlotIntervalToDeliverySlotsTable extends Migration
      */
     public function down()
     {
-        Schema::table('delivery_slots', function (Blueprint $table) {
-            $table->dropColumn('slot_interval');
-        });
+        // Reverse migration if needed
     }
 }

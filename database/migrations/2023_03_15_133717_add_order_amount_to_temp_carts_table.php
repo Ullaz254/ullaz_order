@@ -13,12 +13,14 @@ class AddOrderAmountToTempCartsTable extends Migration
      */
     public function up()
     {
-        Schema::table('temp_carts', function (Blueprint $table) {
+        if (!Schema::hasColumn('temp_carts', 'order_payable_amount')) {
+            Schema::table('temp_carts', function (Blueprint $table) {
             $table->decimal('order_payable_amount',16,4)->default(0)->nullable();
             $table->decimal('vendor_wallet_amount_used',16,4)->default(0)->nullable();
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -26,9 +28,6 @@ class AddOrderAmountToTempCartsTable extends Migration
      */
     public function down()
     {
-        Schema::table('temp_carts', function (Blueprint $table) {
-            $table->dropColumn('order_payable_amount');
-            $table->dropColumn('vendor_wallet_amount_used');
-        });
+        // Reverse migration if needed
     }
 }

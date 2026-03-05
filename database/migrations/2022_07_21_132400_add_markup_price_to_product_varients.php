@@ -13,11 +13,13 @@ class AddMarkupPriceToProductVarients extends Migration
      */
     public function up()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
+        if (!Schema::hasColumn('product_variants', 'markup_price')) {
+            Schema::table('product_variants', function (Blueprint $table) {
             $table->decimal('markup_price', 12, 2)->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddMarkupPriceToProductVarients extends Migration
      */
     public function down()
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            $table->dropColumn('markup_price');
-        });
+        // Reverse migration if needed
     }
 }

@@ -13,7 +13,8 @@ class CreateTableAdditionalAttributesTranslations extends Migration
      */
     public function up()
     {
-        Schema::create('additional_attributes_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('additional_attributes_translations')) {
+            Schema::create('additional_attributes_translations', function (Blueprint $table) {
             $table->id();
             $table->string('title', 128)->nullable();
             $table->mediumText('slug')->nullable();
@@ -21,6 +22,7 @@ class CreateTableAdditionalAttributesTranslations extends Migration
             $table->bigInteger('language_id')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

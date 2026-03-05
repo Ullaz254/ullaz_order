@@ -13,11 +13,13 @@ class AddDisableOrderAcceptanceForUsers extends Migration
      */
     public function up()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
+        if (!Schema::hasColumn('client_preferences', 'stop_order_acceptance_for_users')) {
+            Schema::table('client_preferences', function (Blueprint $table) {
             $table->tinyInteger('stop_order_acceptance_for_users')->default(0)->nullable()->comment('0-No, 1-Yes');
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddDisableOrderAcceptanceForUsers extends Migration
      */
     public function down()
     {
-        Schema::table('client_preferences', function (Blueprint $table) {
-            $table->dropColumn('stop_order_acceptance_for_users');
-        });
+        // Reverse migration if needed
     }
 }

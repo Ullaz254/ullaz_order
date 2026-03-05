@@ -13,11 +13,13 @@ class AddOrderByToPagesTable extends Migration
      */
     public function up()
     {
-        Schema::table('pages', function (Blueprint $table) {
+        if (!Schema::hasColumn('pages', 'order_by')) {
+            Schema::table('pages', function (Blueprint $table) {
             $table->tinyInteger('order_by')->default(0);
-        });
-    }
+                    });
+        }
 
+        }
     /**
      * Reverse the migrations.
      *
@@ -25,8 +27,6 @@ class AddOrderByToPagesTable extends Migration
      */
     public function down()
     {
-        Schema::table('pages', function (Blueprint $table) {
-            //
-        });
+        // Reverse migration if needed
     }
 }
