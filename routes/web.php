@@ -17,38 +17,36 @@ use Illuminate\Http\Request;
 
 // Localhost routes (for local development) - MUST be before domain routes
 Route::group(['middleware' => 'languageSwitch'], function () {
-    // Home route for localhost
+    // Home route: runs for ALL hosts (localhost and production e.g. drivarr.com).
+    // Domain-group routes for GET / are registered later but Laravel matches this first,
+    // so we must serve the homepage here for both localhost and production.
     Route::get('/', function (Request $request) {
         $host = $request->getHost();
-        
-        // If accessing via localhost, show home page
-        if ($host == 'localhost' || $host == '127.0.0.1' || strpos($host, 'localhost') !== false) {
-            // Try to load the home controller
-            try {
-                $controller = app('App\Http\Controllers\Front\UserhomeController');
-                return $controller->index($request);
-            } catch (\Exception $e) {
-                // Log the error for debugging
-                \Log::error('UserhomeController failed in localhost route', [
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]);
-                // If controller fails, show a simple welcome page
+        $isLocalHost = ($host === 'localhost' || $host === '127.0.0.1' || strpos($host, 'localhost') !== false);
+
+        try {
+            $controller = app('App\Http\Controllers\Front\UserhomeController');
+            return $controller->index($request);
+        } catch (\Exception $e) {
+            \Log::error('UserhomeController failed on home route', [
+                'host' => $host,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            if ($isLocalHost) {
                 $dbName = 'Not connected';
                 try {
                     $dbName = DB::connection()->getDatabaseName();
                 } catch (\Exception $dbE) {
-                    // Database not connected
+                    // ignore
                 }
                 return response()->view('welcome', [
                     'message' => 'Laravel application is running. Database: ' . $dbName,
-                    'tables' => 'Check your database connection and run migrations if needed.'
+                    'tables' => 'Error loading homepage: ' . $e->getMessage()
                 ], 200);
             }
+            abort(500);
         }
-        
-        // Otherwise, let domain-based routes handle it
-        abort(404);
     })->name('localhost.home');
     
     // Include frontend routes for localhost (without domain restriction)
