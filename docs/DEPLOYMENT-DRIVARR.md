@@ -19,10 +19,33 @@
 ### Controllers
 - **UserhomeController:** Redirect to `categoryDetail` is skipped when host is localhost so the homepage loads. On drivarr.com the redirect runs as before (route exists in domain group).
 
+## If you see “Laravel Application” / welcome page instead of your site
+
+The app shows that page when the homepage controller throws an exception. Do the following on the server:
+
+1. **Set domain in `.env`** (required for drivarr.com):
+   ```env
+   APP_URL=https://drivarr.com
+   Main_Domain=drivarr.com
+   ```
+   Then run: `php artisan config:clear` and `php artisan config:cache`.
+
+2. **Check the real error** in `storage/logs/laravel.log` (e.g. `tail -80 storage/logs/laravel.log`). Look for `UserhomeController index failed` to see the exception.
+
+3. **Redis not installed / Connection refused**: If you see `Connection refused [tcp://127.0.0.1:6379]` in logs or when running `php artisan config:cache`, either:
+   - **Option A (recommended when Redis is not available):** In `.env` set:
+     ```env
+     CACHE_DRIVER=file
+     SESSION_DRIVER=file
+     ```
+     Then run only `php artisan config:clear` (do **not** run `config:cache` until Redis is available if you want to use it later).
+   - **Option B:** Install and start Redis on the server, then keep `CACHE_DRIVER=redis` if you prefer.
+   The app is now resilient: if Redis is down, bootstrap will still succeed (cache calls fall back or skip). Using `file` driver avoids Redis entirely.
+
 ## Before deploying to drivarr.com
 
 1. **Environment**
-   - Set `APP_URL` (and any domain config) to `https://drivarr.com` (or your production URL).
+   - Set `APP_URL=https://drivarr.com` and `Main_Domain=drivarr.com` in `.env` on the server.
    - Ensure production DB and Redis (if used) are configured and reachable.
 
 2. **Assets**

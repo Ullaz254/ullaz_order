@@ -25,12 +25,17 @@ class LocalizationServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->langPath = resource_path( 'lang/'. App::getLocale() );
+        try {
             Cache::rememberForever( 'translations', function () {
-            return collect( File::allFiles( $this->langPath ) )->flatMap( function ( $file ) {
-                return [
-                    $translation = $file->getBasename( '.php' ) => trans( $translation ),
-                ];
-            } )->toJson();
+                return collect( File::allFiles( $this->langPath ) )->flatMap( function ( $file ) {
+                    return [
+                        $translation = $file->getBasename( '.php' ) => trans( $translation ),
+                    ];
+                } )->toJson();
             } );
+        } catch (\Exception $e) {
+            \Log::warning('Cache failed in LocalizationServiceProvider (e.g. Redis down), skipping translation cache', ['error' => $e->getMessage()]);
+            // Translations still work via Laravel's trans() when needed
+        }
     }
 }

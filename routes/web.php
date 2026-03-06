@@ -68,20 +68,19 @@ Route::group(['middleware' => 'languageSwitch'], function () {
     include_once "images.php";
     include_once "godpanel.php";
 
-    // Main domain route - explicit route for drivarr.com (must come before {domain})
-    // This ensures drivarr.com matches before the generic {domain} route
-    Route::domain('drivarr.com')->middleware(['subdomain'])->group(function() {
-        // Home route for drivarr.com - defined here to ensure it's registered
-        // This route takes precedence over the one in frontend.php
-        Route::get('/', 'Front\UserhomeController@index')->name('userHome');
-        
+    // Generic domain route first so that drivarr.com route names win (registered second).
+    // Otherwise the last-registered route wins: {domain} has params [domain, slug], so
+    // route('categoryDetail', $slug) would fail with "not defined" / missing params.
+    Route::domain('{domain}')->middleware(['subdomain'])->group(function() {
         include_once "commonRoute.php";
         include_once "frontend.php";
         include_once "backend.php";
     });
 
-    // Generic domain route for all other domains/subdomains
-    Route::domain('{domain}')->middleware(['subdomain'])->group(function() {
+    // Main domain route - register AFTER {domain} so named routes (categoryDetail, etc.)
+    // are the drivarr.com ones (slug only). Views call route('categoryDetail', $slug).
+    Route::domain('drivarr.com')->middleware(['subdomain'])->group(function() {
+        Route::get('/', 'Front\UserhomeController@index')->name('userHome');
         include_once "commonRoute.php";
         include_once "frontend.php";
         include_once "backend.php";

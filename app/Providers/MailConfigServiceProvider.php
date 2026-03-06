@@ -25,29 +25,38 @@ public function boot(Request $request)
 		// Check if database connection is available
 		DB::connection()->getPdo();
 		
-	// $mail = ClientPreference::where('id', '>', 0)->first(['id', 'mail_type', 'mail_driver', 'mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption', 'mail_from']);
-	$mail = Cache::remember('client_preference', 60 * 60, function () {
-			try {
-		return ClientPreference::where('id', '>', 0)->first(['id', 'mail_type', 'mail_driver', 'mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption', 'mail_from']);
-			} catch (\Exception $e) {
-				Log::warning('Failed to fetch client preference from cache callback', ['error' => $e->getMessage()]);
-				return null;
-			}
-	});
+		try {
+			$mail = Cache::remember('client_preference', 60 * 60, function () {
+				try {
+					return ClientPreference::where('id', '>', 0)->first(['id', 'mail_type', 'mail_driver', 'mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption', 'mail_from']);
+				} catch (\Exception $e) {
+					Log::warning('Failed to fetch client preference from cache callback', ['error' => $e->getMessage()]);
+					return null;
+				}
+			});
+		} catch (\Exception $e) {
+			Log::warning('Cache failed in MailConfigServiceProvider (e.g. Redis down), fetching directly', ['error' => $e->getMessage()]);
+			$mail = ClientPreference::where('id', '>', 0)->first(['id', 'mail_type', 'mail_driver', 'mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption', 'mail_from']);
+		}
 
+		$client = null;
 	if (array_key_exists("code", $request->header())) {
 	$header = $request->header();
 	$clientCode = $header['code'][0];
 
-	// $client = Client::where('code',$clientCode)->first();
-	$client = Cache::remember('client', 60 * 60, function () use($clientCode) {
+		try {
+			$client = Cache::remember('client', 60 * 60, function () use($clientCode) {
 				try {
-		return Client::where('code',$clientCode)->first();
+					return Client::where('code',$clientCode)->first();
 				} catch (\Exception $e) {
 					Log::warning('Failed to fetch client from cache callback', ['error' => $e->getMessage()]);
 					return null;
 				}
-	});
+			});
+		} catch (\Exception $e) {
+			Log::warning('Cache failed in MailConfigServiceProvider for client (e.g. Redis down), fetching directly', ['error' => $e->getMessage()]);
+			$client = Client::where('code',$clientCode)->first();
+		}
 			
 	if($client){
 				try {

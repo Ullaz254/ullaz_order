@@ -36,9 +36,9 @@ class UserhomeController extends FrontController
 
     public function __construct(Request $request)
     {
-        $this->additionalPreference = getAdditionalPreference(['is_token_currency_enable', 'token_currency','is_long_term_service','is_admin_vendor_rating', 'is_service_product_price_from_dispatch','is_service_price_selection','is_cache_enable_for_home','cache_reset_time_for_home','cache_radius_for_home']);
-        $this->cache_minutes =  ($this->additionalPreference['cache_reset_time_for_home']!='') ? $this->additionalPreference['cache_reset_time_for_home'] :  $this->cache_minutes;
-        $this->radius =  ($this->additionalPreference['cache_radius_for_home']!='') ? $this->additionalPreference['cache_radius_for_home'] :  $this->radius;
+        $this->additionalPreference = getAdditionalPreference(['is_token_currency_enable', 'token_currency','is_long_term_service','is_admin_vendor_rating', 'is_service_product_price_from_dispatch','is_service_price_selection','is_cache_enable_for_home','cache_reset_time_for_home','cache_radius_for_home']) ?: [];
+        $this->cache_minutes =  (!empty($this->additionalPreference['cache_reset_time_for_home'])) ? $this->additionalPreference['cache_reset_time_for_home'] :  $this->cache_minutes;
+        $this->radius =  (!empty($this->additionalPreference['cache_radius_for_home'])) ? $this->additionalPreference['cache_radius_for_home'] :  $this->radius;
 
         $this->middleware(function ($request, $next) {
             if (Session::has('preferences') && !empty(Session::get('preferences'))) {
@@ -616,7 +616,7 @@ class UserhomeController extends FrontController
                 }
             }
 
-            if ($this->additionalPreference['is_cache_enable_for_home'] == 1 && @$find_key['data']) {
+            if (($this->additionalPreference['is_cache_enable_for_home'] ?? 0) == 1 && !empty($find_key['data'])) {
                 $homeData = $find_key['data'];
                 // Logging the retrieved data
 
@@ -816,10 +816,13 @@ class UserhomeController extends FrontController
                 $html = view('frontend.'.$view_page)->with($homeData)->render();
                 if($client_preferences && isset($client_preferences->is_hyperlocal) && $client_preferences->is_hyperlocal == 1) {
                     $this->storeLocations($locations,$html,$this->loc_key);
-                }else{
-                    Redis::set($this->loc_key, json_encode($html));
-
-                    Redis::expire($this->loc_key, $this->cache_minutes);
+                } else {
+                    try {
+                        Redis::set($this->loc_key, json_encode($html));
+                        Redis::expire($this->loc_key, $this->cache_minutes);
+                    } catch (\Exception $e) {
+                        \Log::warning('Redis set/expire failed in UserhomeController index (non-fatal)', ['error' => $e->getMessage()]);
+                    }
                 }
 
             // Your code to be measured goes here
