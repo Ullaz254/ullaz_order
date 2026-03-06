@@ -85,14 +85,14 @@ $is_map_search_perticular_country = getMapConfigrationPreference();
 <script defer type="text/javascript" src="{{asset('front-assets/js/script.js')}}"></script>
 <script src="{{asset('assets/libs/select2/select2.min.js')}}"></script>
 @yield('home-page')
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{$mapKey}}&v=3.exp&libraries=places,drawing"></script>
+<script defer type="text/javascript" src="{{asset('js/location.js')}}"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{$mapKey}}&v=3.exp&libraries=places,drawing&loading=async&callback=initMap"></script>
 <script type="text/javascript" src="{{asset('assets/libs/sweetalert2/sweetalert2.min.js')}}"></script>
 <script defer type="text/javascript" src="{{asset('js/spinner.js')}}"></script>
 <script defer type="text/javascript" src="{{asset('js/image_blur.js')}}"></script>
 
 @yield('custom-js')
 <script defer type="text/javascript" src="{{asset('js/custom.js')}}"></script>
-<script defer type="text/javascript" src="{{asset('js/location.js')}}"></script>
 {{--
 <!-- All js merged -->
 <script type="text/javascript" src="{{asset('front-assets/js/all-min.js')}}" defer></script>

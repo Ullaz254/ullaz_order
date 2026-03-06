@@ -1340,7 +1340,7 @@ function setLocationCoordinates(key, lat, lng) {
     latitudeField.value = lat;
     longitudeField.value = lng;
 }
-google.maps.event.addDomListener(window, 'load', initMap);
+// initMap is called by Google Maps script callback=initMap when API loads (async).
 
 
 ////   cab booking section

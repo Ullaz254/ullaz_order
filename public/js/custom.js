@@ -186,6 +186,7 @@ window.easyZoomInitialize = function easyZoomInitialize() {
 };
 
 window.loadMainMenuSlider = function loadMainMenuSlider() {
+  if (!$(".menu-slider").length) return;
   $(".slick-track").css("display", "flex");
   // $(".menu-slider").slick({arrows:true,dots:!1,infinite:!1,variableWidth:!0,autoplay:!1,speed:300,slidesToShow:6,slidesToScroll:1});
   $(".menu-slider").slick({

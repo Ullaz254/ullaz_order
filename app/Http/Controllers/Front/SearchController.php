@@ -15,25 +15,40 @@ class SearchController extends FrontController
     use ApiResponser,VendorTrait;
     public function postAutocompleteSearch(Request $request)
     {
-        $response = [];
-        $keyword = $request->input('keyword');
-        $language_id = Session::get('customerLanguage');
-       // $preferences = getClientPreferenceDetail();
-        $preferences = !empty(Session::get('preferences')) ? (object)Session::get('preferences'):  getClientPreferenceDetail();
+        try {
+            $response = [];
+            $keyword = $request->input('keyword');
+            if (empty($keyword) || strlen($keyword) < 1) {
+                return $this->successResponse($response);
+            }
+            $language_id = Session::get('customerLanguage') ?? 1;
+            $preferences = !empty(Session::get('preferences')) ? (object) Session::get('preferences') : null;
+            try {
+                if (!$preferences) {
+                    $preferences = getClientPreferenceDetail();
+                }
+            } catch (\Throwable $e) {
+                $preferences = null;
+            }
 
-        $latitude = session('latitude');
-        $longitude = session('longitude');
-        $selectedAddress = session('selectedPlaceId');
-        $vendorType = Session::get('vendorType');
-        $allowed_vendors = $this->getServiceAreaVendors();
+            $latitude = session('latitude');
+            $longitude = session('longitude');
+            $selectedAddress = session('selectedPlaceId');
+            $vendorType = Session::get('vendorType');
+            $allowed_vendors = $this->getServiceAreaVendors();
+            if (!is_array($allowed_vendors)) {
+                $allowed_vendors = [];
+            }
 
-        $vendors = Vendor::byVendorSubscriptionRule($preferences)->select('id', 'name', 'logo', 'slug', 'show_slot');
-        if (count($allowed_vendors) > 0) {
-            $vendors = $vendors->whereIn('id', $allowed_vendors);
-        }
+            $vendors = $preferences
+                ? Vendor::byVendorSubscriptionRule($preferences)->select('id', 'name', 'logo', 'slug', 'show_slot')
+                : Vendor::select('id', 'name', 'logo', 'slug', 'show_slot');
+            if (count($allowed_vendors) > 0) {
+                $vendors = $vendors->whereIn('id', $allowed_vendors);
+            }
 
 
-        if (@$preferences) {
+            if ($preferences) {
             if ((empty($latitude)) && (empty($longitude)) && (empty($selectedAddress))) {
                 $selectedAddress = @$preferences->Default_location_name;
                 $latitude = @$preferences->Default_latitude;
@@ -73,28 +88,37 @@ class SearchController extends FrontController
         })->where('status', '!=', 2)->get();
         $vender_results = [];
         foreach ($vendors as $vendor) {
-            $vendor->redirect_url = route('vendorDetail', $vendor->slug);
-            $vendor->image_url = $vendor->logo['proxy_url'] . '80/80' . $vendor->logo['image_path'];
-            $vender_results[] = $vendor;
-        }
+                try {
+                    $vendor->redirect_url = route('vendorDetail', $vendor->slug);
+                } catch (\Throwable $e) {
+                    $vendor->redirect_url = url('vendor/' . $vendor->slug);
+                }
+                $vendor->image_url = (isset($vendor->logo['proxy_url'], $vendor->logo['image_path'])) ? ($vendor->logo['proxy_url'] . '80/80' . $vendor->logo['image_path']) : '';
+                $vender_results[] = $vendor;
+            }
 
 
         $products = Product::with(['media', 'vendor'])->join('product_translations as pt', 'pt.product_id', 'products.id')->join('vendors', 'vendors.id', 'products.vendor_id')
-            ->select('products.id', 'products.sku', 'products.url_slug', 'pt.title  as dataname', 'pt.body_html', 'pt.meta_title', 'pt.meta_keyword', 'pt.meta_description', 'products.vendor_id', 'vendors.slug as vendor_slug')
-            ->where('pt.language_id', $language_id)
-            ->where(function ($q) use ($keyword) {
-                $q->where('products.sku', ' LIKE', '%' . $keyword . '%')->orWhere('products.url_slug', 'LIKE', '%' . $keyword . '%')->orWhere('pt.title', 'LIKE', '%' . $keyword . '%');
-            })->where('products.is_live', 1);
-        //if( (isset($preferences->is_hyperlocal)) && ($preferences->is_hyperlocal == 1) ){
-        $products = $products->whereIn('vendor_id', $allowed_vendors);
-        //}
-        $products = $products->whereNull('deleted_at')->groupBy('products.id')->get();
-        // $product_results = [];
-        foreach ($products as $product) {
-            $redirect_url = route('productDetail', [$product->vendor_slug, $product->url_slug]);
-            $image_url = $product->media->first() ? $product->media->first()->image->path['proxy_url'] . '80/80' . $product->media->first()->image->path['image_path'] : '';
-            $product_results[] = ['id' => $product->id, 'name' => $product->dataname, 'image_url' => $image_url, 'redirect_url' => $redirect_url];
-        }
+                ->select('products.id', 'products.sku', 'products.url_slug', 'pt.title  as dataname', 'pt.body_html', 'pt.meta_title', 'pt.meta_keyword', 'pt.meta_description', 'products.vendor_id', 'vendors.slug as vendor_slug')
+                ->where('pt.language_id', $language_id)
+                ->where(function ($q) use ($keyword) {
+                    $q->where('products.sku', 'LIKE', '%' . $keyword . '%')->orWhere('products.url_slug', 'LIKE', '%' . $keyword . '%')->orWhere('pt.title', 'LIKE', '%' . $keyword . '%');
+                })->where('products.is_live', 1);
+            if (count($allowed_vendors) > 0) {
+                $products = $products->whereIn('vendor_id', $allowed_vendors);
+            }
+            $products = $products->whereNull('deleted_at')->groupBy('products.id')->get();
+            $product_results = [];
+            foreach ($products as $product) {
+                try {
+                    $redirect_url = route('productDetail', [$product->vendor_slug, $product->url_slug]);
+                } catch (\Throwable $e) {
+                    $redirect_url = url('vendor/' . $product->vendor_slug . '/product/' . $product->url_slug);
+                }
+                $mediaFirst = $product->media->first();
+                $image_url = ($mediaFirst && isset($mediaFirst->image->path['proxy_url'], $mediaFirst->image->path['image_path'])) ? ($mediaFirst->image->path['proxy_url'] . '80/80' . $mediaFirst->image->path['image_path']) : '';
+                $product_results[] = ['id' => $product->id, 'name' => $product->dataname, 'image_url' => $image_url, 'redirect_url' => $redirect_url];
+            }
         if (@$product_results) {
             $response[] = ['title' => '', 'result' => $product_results];
         }
@@ -110,10 +134,14 @@ class SearchController extends FrontController
             ->orderBy('brands.position', 'asc')->get();
         $brand_results = [];
         foreach ($brands as $brand) {
-            $brand->redirect_url = route('brandDetail', $brand->id);
-            $brand->image_url = $brand->image['proxy_url'] . '80/80' . $brand->image['image_path'];
-            $brand_results[] = $brand;
-        }
+                try {
+                    $brand->redirect_url = route('brandDetail', $brand->id);
+                } catch (\Throwable $e) {
+                    $brand->redirect_url = url('brand/' . $brand->id);
+                }
+                $brand->image_url = (isset($brand->image['proxy_url'], $brand->image['image_path'])) ? ($brand->image['proxy_url'] . '80/80' . $brand->image['image_path']) : '';
+                $brand_results[] = $brand;
+            }
 
         if (@$brand_results) {
             $response[] = ['title' => __('Brands'), 'result' => $brand_results];
@@ -138,24 +166,26 @@ class SearchController extends FrontController
         //                   });
         //       }
         $categories = $categories->where(function ($q) use ($keyword) {
-            $q->where('cts.name', ' LIKE', '%' . $keyword . '%')
+            $q->where('cts.name', 'LIKE', '%' . $keyword . '%')
                 ->orWhere('categories.slug', 'LIKE', '%' . $keyword . '%')
                 ->orWhere('cts.trans-slug', 'LIKE', '%' . $keyword . '%');
         })->orderBy('categories.parent_id', 'asc')
             ->orderBy('categories.position', 'asc')->get();
         $category_results = [];
         foreach ($categories as $category) {
-            $redirect_url = category_detail_url($category->slug);
-            $image_url = $category->image['proxy_url'] . '80/80' . $category->image['image_path'];
-            $category_results[] = ['id' => $category->id, 'name' => $category->name, 'image_url' => $image_url, 'redirect_url' => $redirect_url];
-        }
-        if (@$category_results) {
-            $response[] = ['title' => __('Categories'), 'result' => $category_results];
-        }
+                $redirect_url = category_detail_url($category->slug);
+                $image_url = (isset($category->image['proxy_url'], $category->image['image_path'])) ? ($category->image['proxy_url'] . '80/80' . $category->image['image_path']) : '';
+                $category_results[] = ['id' => $category->id, 'name' => $category->name, 'image_url' => $image_url, 'redirect_url' => $redirect_url];
+            }
+            if (!empty($category_results)) {
+                $response[] = ['title' => __('Categories'), 'result' => $category_results];
+            }
 
-
-        // dd($response);
-        return $this->successResponse($response);
+            return $this->successResponse($response);
+        } catch (\Throwable $e) {
+            \Log::warning('postAutocompleteSearch failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return $this->successResponse([]);
+        }
     }
 
     public function showSearchResults($domain = "", $keyword)
