@@ -15,15 +15,15 @@ cd /path/to/ullaz_order
 composer install --no-dev --optimize-autoloader
 ```
 
-- `--no-dev`: no dev packages in production  
-- If you don’t have Composer on the server, use Hostinger’s PHP/Composer from panel or install Composer in your home dir.
+-   `--no-dev`: no dev packages in production
+-   If you don’t have Composer on the server, use Hostinger’s PHP/Composer from panel or install Composer in your home dir.
 
 ## 3. Environment file
 
 Make sure `.env` exists on the server (it’s usually **not** in git).
 
-- If you already have `.env` on the server, keep it and only change what’s needed after pull.
-- If this is a fresh deploy, copy from example and edit:
+-   If you already have `.env` on the server, keep it and only change what’s needed after pull.
+-   If this is a fresh deploy, copy from example and edit:
 
 ```bash
 cp .env.example .env
@@ -50,8 +50,8 @@ php artisan view:cache
 php artisan migrate --force
 ```
 
-- `--force` is needed in production.  
-- If you don’t use migrations, skip this.
+-   `--force` is needed in production.
+-   If you don’t use migrations, skip this.
 
 ## 6. Permissions
 
@@ -67,10 +67,13 @@ chmod -R 775 storage bootstrap/cache
 
 ## 7. Document root
 
-- The **document root** of the domain (e.g. drivarr.com) must point to the **`public`** folder of this project, e.g.  
-  `.../ullaz_order/public`  
-- In Hostinger: Domain → Advanced → Document Root (or similar) and set it to that `public` path.  
-- Do **not** point the domain to the project root (no `public`); Laravel must serve from `public`.
+-   The **document root** of the domain (e.g. drivarr.com) must point to the **`public`** folder of this project.  
+    **Example:** If the app lives in `/home/u714731071/laravel_app`, set document root to `/home/u714731071/laravel_app/public` (not `laravel_app` or `public_html`).
+-   In Hostinger: Domain → Advanced → Document Root (or similar) and set it to that `public` path.
+-   If the domain currently points to `public_html`, either:
+    -   Change document root to `laravel_app/public`, or
+    -   Add a symlink: e.g. `public_html` → `laravel_app/public` (only if your panel allows it).
+-   Do **not** point the domain to the project root; Laravel must serve from `public`.
 
 ## 8. After each future `git pull`
 
@@ -118,3 +121,27 @@ echo "Done."
 ```
 
 Make it executable once: `chmod +x deploy.sh`
+
+---
+
+## Troubleshooting
+
+### Homepage shows "Laravel Application" / welcome page instead of the store
+
+That usually means `UserhomeController@index` is throwing an exception and the controller’s catch is returning the welcome view. Fix by finding the real error.
+
+**1. Check the Laravel log on the server**
+
+```bash
+cd /home/u714731071/laravel_app
+tail -100 storage/logs/laravel.log
+```
+
+Or open the latest log file and look for the most recent `UserhomeController` or homepage-related error and stack trace.
+
+**2. Typical causes**
+
+-   **Route not found** (e.g. `route('categoryDetail')` or similar): often due to route cache or domain. Try `php artisan route:clear` then `php artisan route:cache` again after ensuring `APP_URL` in `.env` is `https://drivarr.com`.
+-   **Missing view or wrong path**: error message will name the view file.
+-   **Database/query error**: error message or stack trace will point to the query or model.
+-   **Wrong document root**: if the domain points to `public_html` instead of `laravel_app/public`, the app may not run correctly. Set document root to `laravel_app/public` (see §7 above).
