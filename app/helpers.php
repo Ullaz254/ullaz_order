@@ -812,6 +812,42 @@ if (!function_exists('productvariantQuantity')) {
 }
 
 
+if (!function_exists('storage_asset_url')) {
+    /**
+     * URL for a storage key. When STATIC_ASSETS_BASE_URL is set (e.g. Hostinger), returns base/key; otherwise S3 URL.
+     */
+    function storage_asset_url($key)
+    {
+        $key = normalize_storage_key($key);
+        $base = \Config::get('app.STATIC_ASSETS_BASE_URL');
+        if (!empty($base)) {
+            return $base . '/' . ltrim($key, '/');
+        }
+        return \Storage::disk('s3')->url($key);
+    }
+}
+
+if (!function_exists('normalize_storage_key')) {
+    /**
+     * If value is a full URL (e.g. S3), return the storage key only to avoid double-URL / 403.
+     * Otherwise return the value as-is (already a key).
+     */
+    function normalize_storage_key($value)
+    {
+        if (empty($value) || (strpos($value, 'http://') !== 0 && strpos($value, 'https://') !== 0)) {
+            return $value;
+        }
+        $path = parse_url($value, PHP_URL_PATH);
+        if (!$path) {
+            return 'default/default_image.png';
+        }
+        $path = ltrim($path, '/');
+        // S3 path can be "bucket/key" or "key"; use segment after first slash when present
+        $parts = explode('/', $path, 2);
+        return count($parts) > 1 ? $parts[1] : $path;
+    }
+}
+
 if (!function_exists('checkImageExtension')) {
     function checkImageExtension($image)
     {
@@ -833,6 +869,12 @@ if (!function_exists('getDefaultImagePath')) {
     {
         $values = array();
         $img = 'default/default_image.png';
+        if (\Config::get('app.STATIC_ASSETS_BASE_URL')) {
+            $url = storage_asset_url($img);
+            $values['proxy_url'] = $values['image_fit'] = $url;
+            $values['image_path'] = '';
+            return $values;
+        }
         $proxyUrl = \Config::get('app.IMG_URL1');
         $fitUrl = \Config::get('app.FIT_URl');
         // Use HTTP for local development
@@ -848,6 +890,9 @@ if (!function_exists('getDefaultImagePath')) {
 }
 if (!function_exists('loadDefaultImage')) {
     function loadDefaultImage(){
+        if (\Config::get('app.STATIC_ASSETS_BASE_URL')) {
+            return storage_asset_url('default/default_image.png');
+        }
         $proxy_url = \Config::get('app.IMG_URL1');
         $image_path = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url('default/default_image.png');
         $image_fit = \Config::get('app.FIT_URl');
@@ -904,12 +949,20 @@ if (!function_exists('getImageUrl')) {
             return str_replace('https://', 'http://', $image);
         }
         
+        if (\Config::get('app.STATIC_ASSETS_BASE_URL')) {
+            return storage_asset_url($image);
+        }
+
         $fitUrl = \Config::get('app.FIT_URl');
         $imgUrl2 = \Config::get('app.IMG_URL2');
         
         // Always convert HTTPS to HTTP for local development
         if ($isLocal) {
             $fitUrl = str_replace('https://', 'http://', $fitUrl);
+        }
+        // In production, avoid images.drivarr.com over HTTPS if it has no valid SSL (fallback to royoorders)
+        if (!$isLocal && strpos($fitUrl, 'images.drivarr.com') !== false) {
+            $fitUrl = str_replace('images.drivarr.com', 'images.royoorders.com', $fitUrl);
         }
         
         $finalUrl = $fitUrl.$dim.$imgUrl2.'/'.$image.'@webp';
@@ -940,6 +993,10 @@ if (!function_exists('get_file_path')) {
             return asset('assets/images/bg-material.png');
         }
         
+        if (\Config::get('app.STATIC_ASSETS_BASE_URL')) {
+            return storage_asset_url($image);
+        }
+        
         // If image already has protocol, use it directly (for local development)
         if (strpos($image, 'http://') === 0 || strpos($image, 'https://') === 0) {
             // For local development, convert HTTPS to HTTP
@@ -956,6 +1013,10 @@ if (!function_exists('get_file_path')) {
         // Use HTTP for local development
         if (env('APP_ENV') === 'local') {
             $fitUrl = str_replace('https://', 'http://', $fitUrl);
+        }
+        // In production, avoid images.drivarr.com over HTTPS if it has no valid SSL (fallback to royoorders)
+        if (env('APP_ENV') !== 'local' && strpos($fitUrl, 'images.drivarr.com') !== false) {
+            $fitUrl = str_replace('images.drivarr.com', 'images.royoorders.com', $fitUrl);
         }
         
         return $fitUrl . $width . '/' . $height . $imgUrl2 . '/' . $image . '@webp';
@@ -2313,14 +2374,20 @@ if( !function_exists('get_file_path') ) {
         $img = $url;
       }
 
+      $img = str_replace(' ', '', $img);
+      if (\Config::get('app.STATIC_ASSETS_BASE_URL')) {
+        return storage_asset_url($img);
+      }
+
       $ex = checkImageExtension($img);
       $return_url = $values =  \Config::get('app.'.$type);
 
-      $img = str_replace(' ', '', $img);
       if (substr($img, 0, 7) == "http://" || substr($img, 0, 8) == "https://"){
-        $return_url  = $values.$height.'/'.$width.\Config::get('app.IMG_URL2').'/'.$img;
+        // Use storage key only so proxy URL is not double-prefixed (avoids 403)
+        $img = normalize_storage_key($img);
+        $return_url = $values.$height.'/'.$width.\Config::get('app.IMG_URL2').'/'.$img.$ex;
       } else {
-        $return_url  = $values.$height.'/'.$width.\Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+        $return_url  = $values.$height.'/'.$width.\Config::get('app.IMG_URL2').'/'.$img.$ex;
       }
 
       //pr($values);

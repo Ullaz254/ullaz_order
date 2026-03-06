@@ -688,7 +688,12 @@ class UserhomeController extends FrontController
                     $enable_layout = [];
                 }
                 
-                $homePageData = $this->postHomePageData($request, $set_template, $enable_layout, $additionalPreference);
+                try {
+                    $homePageData = $this->postHomePageData($request, $set_template, $enable_layout, $additionalPreference);
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to get home page data in UserhomeController index', ['error' => $e->getMessage()]);
+                    $homePageData = [];
+                }
 
                 $home_page_labels = $home_page_labels->map(function($da) use ($homePageData, $navCategories) {
                     if($da->slug!='pickup_delivery' && $da->slug!='dynamic_page' ){
@@ -1009,7 +1014,12 @@ class UserhomeController extends FrontController
             }
         }
         $vendor_ids = $this->getRandomVendorIdsForHomePage($preferences, $request->type, $this->additionalPreference['is_admin_vendor_rating'], $latitude, $longitude);
-        $home_page_labels = HomePageLabel::with('translations')->get();
+        try {
+            $home_page_labels = Schema::hasTable('home_page_labels') ? HomePageLabel::with('translations')->get() : collect();
+        } catch (\Exception $e) {
+            \Log::warning('Failed to get home_page_labels in postHomePageData', ['error' => $e->getMessage()]);
+            $home_page_labels = collect();
+        }
         if (in_array('brands', $enable_layout)) {     # if enable brands section in
             $brands = $this->getBrandsForHomePage($language_id, $this->field_status);
         }else{

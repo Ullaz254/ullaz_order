@@ -99,32 +99,48 @@ class Client extends Authenticatable implements Auditable
     {
       $values = array();
       $img = 'default/default_image.png';
-      if(!empty($value)){
-        $img = $value;
+      if (!empty($value)) {
+        $img = normalize_storage_key($value);
       }
+      $values['logo_db_value'] = $value;
+
+      if (\Config::get('app.STATIC_ASSETS_BASE_URL')) {
+        $url = storage_asset_url($img);
+        $values['proxy_url'] = $values['image_fit'] = $values['original'] = $url;
+        $values['image_path'] = '';
+        return $values;
+      }
+
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$img.$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
       $values['original'] = \Storage::disk('s3')->url($img);
-      $values['logo_db_value'] = $value;
 
       return $values;
     }
-    
+
     public function getDarkLogoAttribute($value)
     {
       $values = array();
       $img = 'default/default_image.png';
-      if(!empty($value)){
-        $img = $value;
+      if (!empty($value)) {
+        $img = normalize_storage_key($value);
       }
+      $values['logo_db_value'] = $value;
+
+      if (\Config::get('app.STATIC_ASSETS_BASE_URL')) {
+        $url = storage_asset_url($img);
+        $values['proxy_url'] = $values['image_fit'] = $values['original'] = $url;
+        $values['image_path'] = '';
+        return $values;
+      }
+
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$img.$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
       $values['original'] = \Storage::disk('s3')->url($img);
-      $values['logo_db_value'] = $value;
 
       return $values;
     }

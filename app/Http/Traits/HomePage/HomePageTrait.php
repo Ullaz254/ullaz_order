@@ -521,20 +521,26 @@ trait HomePageTrait
 
         $slugs = array("featured_products", "vendors", "new_products", "on_sale", "brands", "best_sellers", "recent_orders", "banner", "selected_products", "trending");
 
-        $results = DB::select("
-            SELECT 
-                cab_booking_layout_transaltions.title, 
-                cab_booking_layout_transaltions.cab_booking_layout_id, 
-                cab_booking_layouts.slug 
-            FROM 
-                cab_booking_layout_transaltions 
-                INNER JOIN 	cab_booking_layouts ON cab_booking_layout_transaltions.cab_booking_layout_id = 	cab_booking_layouts.id 
-            WHERE 
-                cab_booking_layout_transaltions.language_id = ? 
-                AND cab_booking_layout_transaltions.title IS NOT NULL 
-                AND 	cab_booking_layouts.slug IN (" . implode(',', array_fill(0, count($slugs), '?')) . ")
-        ", array_merge([$language_id], $slugs));
-       // pr($results);
+        $results = [];
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('cab_booking_layout_transaltions') && \Illuminate\Support\Facades\Schema::hasTable('cab_booking_layouts')) {
+                $results = DB::select("
+                    SELECT 
+                        cab_booking_layout_transaltions.title, 
+                        cab_booking_layout_transaltions.cab_booking_layout_id, 
+                        cab_booking_layouts.slug 
+                    FROM 
+                        cab_booking_layout_transaltions 
+                        INNER JOIN 	cab_booking_layouts ON cab_booking_layout_transaltions.cab_booking_layout_id = 	cab_booking_layouts.id 
+                    WHERE 
+                        cab_booking_layout_transaltions.language_id = ? 
+                        AND cab_booking_layout_transaltions.title IS NOT NULL 
+                        AND 	cab_booking_layouts.slug IN (" . implode(',', array_fill(0, count($slugs), '?')) . ")
+                ", array_merge([$language_id], $slugs));
+            }
+        } catch (\Exception $e) {
+            \Log::warning('HomePageTrait: failed to get cab_booking_layout titles', ['error' => $e->getMessage()]);
+        }
 
         $titles = [];
         foreach ($results as $result) {
@@ -586,7 +592,12 @@ trait HomePageTrait
         $trending_vendors_title = $titles['trending_vendors_title'] ?? null;
 
         $vendor_ids = $this->getRandomVendorIdsForHomePage($preferences, $request->type, $preferences['is_admin_vendor_rating'], $latitude, $longitude,@$request->momo);
-        $home_page_labels = HomePageLabel::with('translations')->get();
+        try {
+            $home_page_labels = \Illuminate\Support\Facades\Schema::hasTable('home_page_labels') ? HomePageLabel::with('translations')->get() : collect();
+        } catch (\Exception $e) {
+            \Log::warning('HomePageTrait: failed to get home_page_labels', ['error' => $e->getMessage()]);
+            $home_page_labels = collect();
+        }
         if (in_array('brands', $enable_layout)) {     # if enable brands section in
              
             $brands = $this->getBrandsForHomePage($language_id, $this->field_status);

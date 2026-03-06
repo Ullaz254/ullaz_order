@@ -56,9 +56,10 @@ return [
         ? 'http://localhost:8000' 
         : env('APP_URL', 'http://localhost'),
 
-    // Use HTTP for local development, HTTPS for production
-    // Get URL from env, then convert HTTPS to HTTP for local
-    'IMG_URL1' => env('APP_ENV') === 'local' 
+    // Use HTTP for local development, HTTPS for production.
+    // In production, IMG_URL1/FIT_URl must use HTTPS with a valid certificate when the site is served over HTTPS.
+    // Defaults use images.royoorders.com; avoid images.drivarr.com over HTTPS unless that host has valid SSL.
+    'IMG_URL1' => env('APP_ENV') === 'local'
         ? str_replace('https://', 'http://', env('IMG_URL1', 'https://images.royoorders.com/insecure/fill/'))
         : env('IMG_URL1', 'https://images.royoorders.com/insecure/fill/'),
 
@@ -70,6 +71,9 @@ return [
         : env('FILL_URL', 'https://images.royoorders.com/insecure/fit/'),
 
     'IMG_URL2' => env('IMG_URL2', '/sm/0/plain'),
+
+    // When set (e.g. Hostinger where S3 dump is deployed), all image/static asset URLs use this base instead of S3 or image proxy. No trailing slash. Same path structure as S3 (e.g. default/default_logo.png).
+    'STATIC_ASSETS_BASE_URL' => env('STATIC_ASSETS_BASE_URL') ? rtrim(env('STATIC_ASSETS_BASE_URL'), '/') : null,
 
     'asset_url' => env('ASSET_URL', null),
 

@@ -1,7 +1,7 @@
-
-<link defer type="text/css" rel="stylesheet" media="all" href="{{asset('front-assets/css/icons-style.css')}}">
-<link defer type="text/css" href="{{asset('assets/css/bootstrap.min.css')}}" rel="stylesheet" id="bs-default-stylesheet" />
-<link defer type="text/css" rel="stylesheet" media="all" href="{{asset('front-assets/css/color1-style.css')}}">
+{{-- Critical CSS without defer so they load in order and are not canceled on slow/localhost --}}
+<link type="text/css" rel="stylesheet" media="all" href="{{asset('front-assets/css/icons-style.css')}}">
+<link type="text/css" href="{{asset('assets/css/bootstrap.min.css')}}" rel="stylesheet" id="bs-default-stylesheet" />
+<link type="text/css" rel="stylesheet" media="all" href="{{asset('front-assets/css/color1-style.css')}}">
 
 
 @if(@getAdditionalPreference(['enable_pwa'])['enable_pwa'] == 1)

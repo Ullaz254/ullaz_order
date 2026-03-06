@@ -504,6 +504,9 @@ class FrontController extends Controller
     }
 
     public function loadDefaultImage(){
+        if (\Config::get('app.STATIC_ASSETS_BASE_URL')) {
+            return storage_asset_url('default/default_image.png');
+        }
         $proxy_url = \Config::get('app.IMG_URL1');
         $image_path = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url('default/default_image.png');
         $image_fit = \Config::get('app.FIT_URl');

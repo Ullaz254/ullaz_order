@@ -186,47 +186,51 @@ window.easyZoomInitialize = function easyZoomInitialize() {
 };
 
 window.loadMainMenuSlider = function loadMainMenuSlider() {
-  if (!$(".menu-slider").length) return;
-  $(".slick-track").css("display", "flex");
-  // $(".menu-slider").slick({arrows:true,dots:!1,infinite:!1,variableWidth:!0,autoplay:!1,speed:300,slidesToShow:6,slidesToScroll:1});
-  $(".menu-slider").slick({
-    dots: false,
-    infinite: false,
-    speed: 300,
-    slidesToShow: 10,
-    slidesToScroll: 1,
-    arrows: true,
-    responsive: [
-      {
-        breakpoint: 1366,
-        settings: {
-          slidesToShow: 8,
-          slidesToScroll: 1,
+  var $menuSlider = $(".menu-slider");
+  if (!$menuSlider.length || !$menuSlider.first().children().length) return;
+  try {
+    $(".slick-track").css("display", "flex");
+    $menuSlider.slick({
+      dots: false,
+      infinite: false,
+      speed: 300,
+      slidesToShow: 10,
+      slidesToScroll: 1,
+      arrows: true,
+      responsive: [
+        {
+          breakpoint: 1366,
+          settings: {
+            slidesToShow: 8,
+            slidesToScroll: 1,
+          },
         },
-      },
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 6,
-          slidesToScroll: 1,
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 6,
+            slidesToScroll: 1,
+          },
         },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
+        {
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1,
+          },
         },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
+        {
+          breakpoint: 480,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1,
+          },
         },
-      },
-    ],
-  });
+      ],
+    });
+  } catch (e) {
+    return;
+  }
 };
 
 loadMainMenuSlider();

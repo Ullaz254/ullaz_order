@@ -480,18 +480,22 @@ if($showSubscriptionPlanPopUp == 1){
 
     var bindLatlng, bindmapProp, bindMap = '';
     function bindLatestCoords(userLatitude, userLongitude){
-        if (typeof google === 'undefined' || !google.maps) return;
+        if (typeof google === 'undefined' || !google.maps || typeof google.maps.LatLng !== 'function') return;
         var el = document.getElementById("nearmap");
         if (!el) return;
-        bindLatlng = new google.maps.LatLng(userLatitude, userLongitude);
-        bindmapProp = {
-            center:bindLatlng,
-            zoom:13,
-            mapTypeId:google.maps.MapTypeId.ROADMAP
-        };
-        bindMap=new google.maps.Map(el, bindmapProp);
+        try {
+            bindLatlng = new google.maps.LatLng(userLatitude, userLongitude);
+            bindmapProp = {
+                center:bindLatlng,
+                zoom:13,
+                mapTypeId:google.maps.MapTypeId.ROADMAP
+            };
+            bindMap=new google.maps.Map(el, bindmapProp);
+        } catch (e) {
+            return;
+        }
     }
-    if (typeof google !== 'undefined' && google.maps && document.getElementById("nearmap")) {
+    if (typeof google !== 'undefined' && google.maps && typeof google.maps.LatLng === 'function' && document.getElementById("nearmap")) {
         bindLatestCoords(userLatitude, userLongitude);
     }
 
