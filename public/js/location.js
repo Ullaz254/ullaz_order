@@ -370,7 +370,7 @@ $(document).ready(async function () {
                     var path = window.location.pathname;
                     if (path == '/') {
 
-                        const layouts = response.data.data;
+                        const layouts = (response.data && Array.isArray(response.data.data)) ? response.data.data : [];
                         layouts.forEach(function (obj, index) {
                             setTimeout(function () {
                                 myFunctionGetDataHomePage(obj, index);

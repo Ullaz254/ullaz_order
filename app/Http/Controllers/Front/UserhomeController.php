@@ -900,6 +900,8 @@ class UserhomeController extends FrontController
         }
         $additionalPreference = getAdditionalPreference(['is_token_currency_enable', 'token_currency', 'is_long_term_service', 'is_admin_vendor_rating', 'is_service_product_price_from_dispatch', 'is_service_price_selection']) ?: [];
         $data = $this->postHomePageData($request, $set_template, $enable_layout, $additionalPreference);
+        // Frontend (location.js) expects response.data.data to be array of layout slugs for myFunctionGetDataHomePage
+        $data['data'] = $enable_layout;
         return $this->successResponse($data);
     }
 

@@ -145,7 +145,7 @@ class SearchController extends FrontController
             ->orderBy('categories.position', 'asc')->get();
         $category_results = [];
         foreach ($categories as $category) {
-            $redirect_url = route('categoryDetail', $category->slug);
+            $redirect_url = category_detail_url($category->slug);
             $image_url = $category->image['proxy_url'] . '80/80' . $category->image['image_path'];
             $category_results[] = ['id' => $category->id, 'name' => $category->name, 'image_url' => $image_url, 'redirect_url' => $redirect_url];
         }
@@ -307,7 +307,7 @@ class SearchController extends FrontController
             ->orderBy('categories.position', 'asc')->get();
         $category_results = [];
         foreach ($categories as $category) {
-            $redirect_url = route('categoryDetail', $category->slug);
+            $redirect_url = category_detail_url($category->slug);
             $image_url = $category->image['proxy_url'] . '300/300' . $category->image['image_path'];
             $category_results[] = ['id' => $category->id, 'name' => $category->name, 'latitude' => $category->latitude, 'longitude' => $category->longitude, 'address' => $category->address, 'image_url' => $image_url, 'redirect_url' => $redirect_url];
             if (!empty($vendorMapView)) {
