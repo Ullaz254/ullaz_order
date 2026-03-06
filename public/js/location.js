@@ -1,5 +1,10 @@
 let nav_click_vendor_mode = 0;
 let redirect = 0;
+
+function getCsrfToken() {
+    return $('meta[name="csrf-token"]').attr('content') || $('meta[name="_token"]').attr('content') || '';
+}
+
 jQuery(window).scroll(function () {
     var scroll = jQuery(window).scrollTop();
 
@@ -339,7 +344,7 @@ $(document).ready(async function () {
         // return 0;
         let selected_place_id = $("#address-place-id").val();
         $(".homepage-address span").text(selected_address).attr({ "title": selected_address, "data-original-title": selected_address });
-        let ajaxData = { type: vendor_type };
+        let ajaxData = { type: vendor_type, _token: getCsrfToken() };
         if ((latitude) && (longitude) && (selected_address)) {
             ajaxData.latitude = latitude;
             ajaxData.longitude = longitude;
@@ -355,6 +360,7 @@ $(document).ready(async function () {
             dataType: 'json',
             url: home_page_data_url_new,
             timeout: 30000,
+            headers: { 'X-CSRF-TOKEN': getCsrfToken() },
             beforeSend: function () {
 
                 //$(".no-store-wrapper, .home-slider, .home-banner-slider, #our_vendor_main_div").hide();
@@ -1038,7 +1044,8 @@ $(document).ready(async function () {
         $("#edit-address").modal('hide');
         let ajaxData = {
             type: vendor_type,
-            request_from: nav_click_vendor_mode
+            request_from: nav_click_vendor_mode,
+            _token: getCsrfToken()
         };
         if ((latitude) && (longitude) && (selected_address)) {
             ajaxData.latitude = latitude;
@@ -1055,6 +1062,7 @@ $(document).ready(async function () {
                 dataType: 'json',
                 url: home_page_data_url_category_menu,
                 timeout: 30000,
+                headers: { 'X-CSRF-TOKEN': getCsrfToken() },
                 beforeSend: function () {
                     $("#main-menu").hide();
                     $(".shimmer_effect .menu-slider").css("display", "flex");
