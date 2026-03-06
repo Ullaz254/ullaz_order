@@ -12,6 +12,8 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
+        'homePageDataNew',
+        'homePageDataCategoryMenu',
         'payment/payfast/notify',
         'payment/payfast/notify/app',
         'payment/paypal/notify',

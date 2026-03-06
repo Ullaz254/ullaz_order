@@ -937,6 +937,11 @@ if (!function_exists('imageExistsS3')) {
 if (!function_exists('getImageUrl')) {
     function getImageUrl($image, $dim)
     {
+        // Same-origin URLs (e.g. asset('images/no-stores.svg')) must not be rewritten to Hostinger
+        $appUrl = rtrim(\Config::get('app.url'), '/');
+        if ((strpos($image, 'http://') === 0 || strpos($image, 'https://') === 0) && strpos($image, $appUrl) === 0) {
+            return $image;
+        }
         // Check if image URL contains localhost - if so, skip proxy or use HTTP
         $isLocal = env('APP_ENV') === 'local' || 
                    strpos($image, 'localhost') !== false || 
