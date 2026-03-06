@@ -548,7 +548,7 @@ class UserhomeController extends FrontController
                 || strpos($request->getHost(), 'localhost') !== false;
             if (!$isLocalHost && count($navCategories) > 0 && ($vendor_type =='pick_drop') &&  ($count!=1) ){
                 $categoriesSlug = $navCategories[0]->slug;
-                return redirect()->route('categoryDetail',$categoriesSlug);
+                return redirect()->to(category_detail_url($categoriesSlug));
             }
 
             // Handle case where client_preferences might be null
@@ -711,7 +711,7 @@ class UserhomeController extends FrontController
                     // Continue with default value
                 }
                 if ($only_cab_booking == 1 && !$isLocalHost)
-                    return Redirect::route('categoryDetail', 'cabservice');
+                    return redirect()->to(category_detail_url('cabservice'));
 
                 // Get pickup labels with error handling
                 if ($CabBookingLayout) {
@@ -884,6 +884,25 @@ class UserhomeController extends FrontController
         ///pr(Session::get('onDemandPricingSelected'));
         return redirect()->route('userHome');
     }
+
+    /**
+     * API: Home page data (used by frontend AJAX). Delegates to postHomePageData.
+     */
+    public function postHomePageDataNew(Request $request)
+    {
+        $request->request->add(['type' => Session::get('vendorType') ?? 'delivery', 'noTinJson' => 1]);
+        $set_template = WebStylingOption::where('web_styling_id', 1)->where('is_selected', 1)->first();
+        $enable_layout = [];
+        try {
+            $enable_layout = CabBookingLayout::web()->where('is_active', 1)->orderBy('order_by', 'asc')->pluck('slug')->toArray();
+        } catch (\Exception $e) {
+            \Log::warning('postHomePageDataNew: failed to get enable_layout', ['error' => $e->getMessage()]);
+        }
+        $additionalPreference = getAdditionalPreference(['is_token_currency_enable', 'token_currency', 'is_long_term_service', 'is_admin_vendor_rating', 'is_service_product_price_from_dispatch', 'is_service_price_selection']) ?: [];
+        $data = $this->postHomePageData($request, $set_template, $enable_layout, $additionalPreference);
+        return $this->successResponse($data);
+    }
+
     /**
      * postHomePageData
      *
@@ -1416,7 +1435,7 @@ class UserhomeController extends FrontController
 
             $only_cab_booking = OnboardSetting::where('key_value', 'home_page_cab_booking')->count();
             if ($only_cab_booking == 1)
-                return Redirect::route('categoryDetail', 'cabservice');
+                return redirect()->to(category_detail_url('cabservice'));
             $home_page_pickup_labels = CabBookingLayout::with(['translations' => function ($q) use ($langId) {
                 $q->where('language_id', $langId);
             }])->where('is_active', 1)->orderBy('order_by')->where('for_no_product_found_html',0)->get();

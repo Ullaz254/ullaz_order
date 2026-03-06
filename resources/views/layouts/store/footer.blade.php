@@ -322,7 +322,7 @@ if($showSubscriptionPlanPopUp == 1){
     else
     var home_page_url = "{{ route('userHome') }}";
 
-    var category_page_url = "{{ route('categoryDetail', ':id') }}";
+    var category_page_url = "{{ category_detail_url(':id') }}";
     var home_page_url_template_one = "{{ route('indexTemplateOne') }}";
     let home_page_url2 = home_page_url.concat("/");
     var add_to_whishlist_url = "{{ route('addWishlist') }}";

@@ -303,7 +303,7 @@ $preference = $client_preference_detail ?? new class {
       <div id="myCarousel" class="carousel slide al_desktop_banner" data-ride="carousel">
          <div class="carousel-inner">
             @foreach($banners as $key => $banner)
-            @php $url=''; if($banner->link=='category'){if(!empty($banner->category_slug)){$url=route('categoryDetail', $banner->category_slug);}}else if($banner->link=='vendor'){if(!empty($banner->vendor_slug)){$url=route('vendorDetail', $banner->vendor_slug);}}else if($banner->link=='url'){if($banner->link_url !=null){$url=$banner->link_url;}}@endphp
+            @php $url=''; if($banner->link=='category'){if(!empty($banner->category_slug)){$url=category_detail_url($banner->category_slug);}}else if($banner->link=='vendor'){if(!empty($banner->vendor_slug)){$url=route('vendorDetail', $banner->vendor_slug);}}else if($banner->link=='url'){if($banner->link_url !=null){$url=$banner->link_url;}}@endphp
             <div class="carousel-item @if($key == 0) active @endif">
                <a class="banner-img-outer" href="{{$url??'#'}}">
                <link rel="preload" as="image" href="{{ get_file_path($banner->image,'IMG_URL1','1370','300') }}" />
@@ -324,7 +324,7 @@ $preference = $client_preference_detail ?? new class {
       <div id="myMobileCarousel" class="carousel slide al_mobile_banner mb-2" data-ride="carousel" style="display:none;">
          <div class="carousel-inner">
             @foreach($mobile_banners as $key => $banner)
-            @php $url=''; if($banner->link=='category'){if(!empty($banner->category_slug)){$url=route('categoryDetail', $banner->category_slug);}}else if($banner->link=='vendor'){if(!empty($banner->vendor_slug)){$url=route('vendorDetail', $banner->vendor_slug);}}@endphp
+            @php $url=''; if($banner->link=='category'){if(!empty($banner->category_slug)){$url=category_detail_url($banner->category_slug);}}else if($banner->link=='vendor'){if(!empty($banner->vendor_slug)){$url=route('vendorDetail', $banner->vendor_slug);}}@endphp
             <div class="carousel-item @if($key == 0) active @endif">
                <a class="banner-img-outer" href="{{$url??'#'}}">
                   <link rel="preload" as="image" href="{{ get_file_path($banner->image,'IMG_URL1','1370','300') }}" />
@@ -361,7 +361,7 @@ $preference = $client_preference_detail ?? new class {
 		  var url='#';
 		  if(banner.link == 'category'){
 			 if(banner.category != null){
-				url = "{{route('categoryDetail')}}" + "/" + banner.category.slug;
+				url = "{{ url('category') }}/" + banner.category.slug;
 			 }
 		  }
           else if(banner.link == 'vendor'){
@@ -395,7 +395,7 @@ $preference = $client_preference_detail ?? new class {
 		  var url='#';
 		  if(banner.link == 'category'){
 			 if(banner.category != null){
-				url = "{{route('categoryDetail')}}" + "/" + banner.category.slug;
+				url = "{{ url('category') }}/" + banner.category.slug;
 			 }
 		  }
           else if(banner.link == 'vendor'){

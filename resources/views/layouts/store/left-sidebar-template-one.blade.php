@@ -654,7 +654,7 @@ $q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguag
                                         @endif{{$cate['name']}}
                                     </a>
                                 @else
-                                    <a href="{{route('categoryDetail', $cate['slug'])}}">
+                                    <a href="{{ category_detail_url($cate['slug']) }}">
                                         @if($client_preference_detail->show_icons==1 && (\Request::route()->getName()=='userHome' || \Request::route()->getName()=='homeTest'))
                                         <div class="nav-cate-img" > <img class="blur blurload" data-src="{{$cate['icon']['image_fit']}}200/200{{$cate['icon']['image_path']}}" src="{{$cate['icon']['image_fit']}}20/20{{$cate['icon']['image_path']}}" alt=""> </div>
                                         @endif{{$cate['name']}}
@@ -665,13 +665,13 @@ $q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguag
                                 <ul class="al_main_category_list">
                                     @foreach($cate['children'] as $childs)
                                     <li>
-                                        <a href="{{route('categoryDetail', $childs['slug'])}}"><span
+                                        <a href="{{ category_detail_url($childs['slug']) }}"><span
                                                 class="new-tag">{{$childs['name']}}</span></a>
                                         @if(!empty($childs['children']))
                                         <ul class="al_main_category_sub_list">
                                             @foreach($childs['children'] as $chld)
                                             <li><a
-                                                    href="{{route('categoryDetail', $chld['slug'])}}">{{$chld['name']}}</a>
+                                                    href="{{ category_detail_url($chld['slug']) }}">{{$chld['name']}}</a>
                                             </li>
                                             @endforeach
                                         </ul>
@@ -1151,7 +1151,7 @@ c-13 -26 -36 -53 -58 -66 l-37 -23 -1465 0 -1465 0 -37 23 c-22 13 -45 40 -58
                                        
                                     </a>
                                 @else
-                                    <a href="{{route('categoryDetail', $cate['slug'])}}">
+                                    <a href="{{ category_detail_url($cate['slug']) }}">
                                         @if($client_preference_detail->show_icons==1 && (\Request::route()->getName()=='userHome' || \Request::route()->getName()=='homeTest'))
                                         <div class="nav-cate-img" > <img class="blur blurload" data-src="{{$cate['icon']['image_fit']}}200/200{{$cate['icon']['image_path']}}" src="{{$cate['icon']['image_fit']}}20/20{{$cate['icon']['image_path']}}" alt=""> </div>
                                         @endif
@@ -1172,13 +1172,13 @@ c-13 -26 -36 -53 -58 -66 l-37 -23 -1465 0 -1465 0 -37 23 c-22 13 -45 40 -58
                                 <ul class="al_main_category_list">
                                     @foreach($cate['children'] as $childs)
                                     <li>
-                                        <a href="{{route('categoryDetail', $childs['slug'])}}"><span
+                                        <a href="{{ category_detail_url($childs['slug']) }}"><span
                                                 class="new-tag">{{$childs['name']}}</span></a>
                                         @if(!empty($childs['children']))
                                         <ul class="al_main_category_sub_list">
                                             @foreach($childs['children'] as $chld)
                                             <li><a
-                                                    href="{{route('categoryDetail', $chld['slug'])}}">{{$chld['name']}}</a>
+                                                    href="{{ category_detail_url($chld['slug']) }}">{{$chld['name']}}</a>
                                             </li>
                                             @endforeach
                                         </ul>
@@ -1215,16 +1215,16 @@ c-13 -26 -36 -53 -58 -66 l-37 -23 -1465 0 -1465 0 -37 23 c-22 13 -45 40 -58
    @if ($client_preference_detail->view_get_estimation_in_category == 1 && $client_preference_detail->business_type == "laundry")
    <li class="al_main_category"> <a href="/get-estimation#<%=category.slug %>"> @if($client_preference_detail->show_icons==1 && \Request::route()->getName()=='userHome') <div class="nav-cate-img"> <img class="blur-up lazyload" data-src="<%=category.icon.image_fit %>200/200<%=category.icon.image_path %>" alt=""> </div>@endif <%=category.name %> </a> <% if(category.children){%> <ul class="al_main_category_list"> <% _.each(category.children, function(childs, key1){%> <li> <a href="/get-estimation#<%=category.slug %>"><span class="new-tag"><%=childs.name %></span></a> <% if(childs.children){%> <ul class="al_main_category_sub_list"> <% _.each(childs.children, function(chld, key2){%> <li><a href="/get-estimation#<%=category.slug %>"><%=chld.name %></a></li><%}); %> </ul> <%}%> </li><%}); %> </ul> <%}%> </li>
    @else
-    <li class="al_main_category"> <a href="{{route('categoryDetail')}}/<%=category.slug %>" >
+    <li class="al_main_category"> <a href="{{ url('category') }}/<%=category.slug %>" >
             @if($client_preference_detail->show_icons==1 && \Request::route()->getName()=='userHome') <div
                 class="nav-cate-img"> <img class="blur-up lazyload" data-icon_two="<%=icon_two_url %>" data-icon="<%=category.icon.image_fit %>200/200<%=category.icon.image_path %>"
                     data-src="<%=category.icon.image_fit %>200/200<%=category.icon.image_path %>" alt="" onmouseover='changeImage(this,1)' onmouseout='changeImage(this,0)'> </div>@endif
             <%=category.name %> </a> <% if(category.children){%> <ul class="al_main_category_list">
             <% _.each(category.children, function(childs, key1){%> <li> <a
-                    href="{{route('categoryDetail')}}/<%=childs.slug %>"><span
+                    href="{{ url('category') }}/<%=childs.slug %>"><span
                         class="new-tag"><%=childs.name %></span></a> <% if(childs.children){%> <ul
                     class="al_main_category_sub_list"> <% _.each(childs.children, function(chld, key2){%> <li><a
-                            href="{{route('categoryDetail')}}/<%=chld.slug %>"><%=chld.name %></a></li><%}); %> </ul>
+                            href="{{ url('category') }}/<%=chld.slug %>"><%=chld.name %></a></li><%}); %> </ul>
                 <%}%> </li><%}); %> </ul> <%}%> </li>
     @endif
         <% }); %>

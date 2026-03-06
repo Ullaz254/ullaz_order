@@ -59,6 +59,7 @@ Route::group(['middleware' => 'languageSwitch'], function () {
     Route::post('homePageData', 'Front\UserhomeController@postHomePageData')->name('homePageData');
     Route::post('homePageDataNew', 'Front\UserhomeController@postHomePageDataNew')->name('homePageDataNew');
     Route::post('homePageDataCategoryMenu', 'Front\UserhomeController@homePageDataCategoryMenu')->name('homePageDataCategoryMenu');
+    Route::get('/autocomplete-search', 'Front\SearchController@postAutocompleteSearch')->name('autocomplete');
 });
 
 Route::group(['middleware' => 'languageSwitch'], function () {

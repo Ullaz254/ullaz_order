@@ -2564,6 +2564,29 @@ if (!function_exists('recurringCalculationFunction')) {
     }
 }
 
+if (!function_exists('category_detail_url')) {
+    /**
+     * Generate category URL for current host. Use this instead of route('categoryDetail', $slug)
+     * when on main domain (drivarr.com) to avoid "Missing parameter: domain" from {domain} route.
+     */
+    function category_detail_url($slug, $slug1 = null) {
+        $host = request()->getHost();
+        $mainDomain = env('Main_Domain', 'localhost');
+        if ($host === $mainDomain || $host === 'drivarr.com' || $host === 'localhost' || $host === '127.0.0.1' || strpos($host, 'localhost') !== false) {
+            $path = 'category/' . $slug;
+            if ($slug1 !== null && $slug1 !== '') {
+                $path .= '/' . $slug1;
+            }
+            return url($path);
+        }
+        try {
+            return $slug1 !== null && $slug1 !== '' ? route('categoryDetail', [$slug, $slug1]) : route('categoryDetail', $slug);
+        } catch (\Exception $e) {
+            return url('category/' . $slug . ($slug1 ? '/' . $slug1 : ''));
+        }
+    }
+}
+
 if (!function_exists('mastercardGateway')) {
     function mastercardGateway() {
         $payopt = PaymentOption::where('code', 'mastercard')->get(['test_mode', 'credentials'])->first();
