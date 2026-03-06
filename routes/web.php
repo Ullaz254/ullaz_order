@@ -68,22 +68,21 @@ Route::group(['middleware' => 'languageSwitch'], function () {
     include_once "images.php";
     include_once "godpanel.php";
 
-    // Generic domain route first so that drivarr.com route names win (registered second).
-    // Otherwise the last-registered route wins: {domain} has params [domain, slug], so
-    // route('categoryDetail', $slug) would fail with "not defined" / missing params.
+    // Generic domain route first. Use include (not include_once) so frontend.php runs
+    // again in the drivarr.com group and registers route names for the main domain.
     Route::domain('{domain}')->middleware(['subdomain'])->group(function() {
-        include_once "commonRoute.php";
-        include_once "frontend.php";
-        include_once "backend.php";
+        include "commonRoute.php";
+        include "frontend.php";
+        include "backend.php";
     });
 
-    // Main domain route - register AFTER {domain} so named routes (categoryDetail, etc.)
-    // are the drivarr.com ones (slug only). Views call route('categoryDetail', $slug).
+    // Main domain - register AFTER {domain} so named routes (categoryDetail, etc.)
+    // are the drivarr.com ones (slug only). include (not include_once) required.
     Route::domain('drivarr.com')->middleware(['subdomain'])->group(function() {
         Route::get('/', 'Front\UserhomeController@index')->name('userHome');
-        include_once "commonRoute.php";
-        include_once "frontend.php";
-        include_once "backend.php";
+        include "commonRoute.php";
+        include "frontend.php";
+        include "backend.php";
     });
 
     Route::get('showImg/{folder}/{img}',function($folder, $img){
