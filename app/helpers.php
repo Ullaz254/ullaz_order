@@ -821,6 +821,12 @@ if (!function_exists('storage_asset_url')) {
         $key = normalize_storage_key($key);
         $base = \Config::get('app.STATIC_ASSETS_BASE_URL');
         if (!empty($base)) {
+            // Fallback for default logo/image when file may not exist on static host (avoids 404)
+            $defaultKeys = ['default/default_logo.png', 'default/default_image.png'];
+            if (in_array($key, $defaultKeys, true)) {
+                $fallback = asset('images/no-order.svg');
+                return $fallback;
+            }
             return $base . '/' . ltrim($key, '/');
         }
         return \Storage::disk('s3')->url($key);
@@ -941,6 +947,10 @@ if (!function_exists('getImageUrl')) {
         $appUrl = rtrim(\Config::get('app.url'), '/');
         if ((strpos($image, 'http://') === 0 || strpos($image, 'https://') === 0) && strpos($image, $appUrl) === 0) {
             return $image;
+        }
+        // Path-style app assets (images/..., assets/...) must be served from app public, not Hostinger storage
+        if (strpos($image, 'http') !== 0 && (strpos($image, 'images/') === 0 || strpos($image, 'assets/') === 0)) {
+            return asset($image);
         }
         // Check if image URL contains localhost - if so, skip proxy or use HTTP
         $isLocal = env('APP_ENV') === 'local' || 

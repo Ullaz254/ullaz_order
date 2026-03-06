@@ -188,7 +188,10 @@ window.easyZoomInitialize = function easyZoomInitialize() {
 window.loadMainMenuSlider = function loadMainMenuSlider() {
   var $menuSlider = $(".menu-slider");
   if (!$menuSlider.length || !$menuSlider.first().children().length) return;
+  var el = $menuSlider[0];
+  if (!el || !el.parentNode) return;
   try {
+    if ($menuSlider.hasClass("slick-initialized")) $menuSlider.slick("unslick");
     $(".slick-track").css("display", "flex");
     $menuSlider.slick({
       dots: false,

@@ -972,6 +972,8 @@ $(document).ready(async function () {
     }
 
     function displayLocation(latitude, longitude, placeId = '', location = '') {
+        if (typeof google === 'undefined' || !google.maps || typeof google.maps.Geocoder !== 'function') return;
+        if (!document.getElementById('address-map')) return;
         var geocoder;
         geocoder = new google.maps.Geocoder();
         var latlng = new google.maps.LatLng(latitude, longitude);
@@ -1204,10 +1206,11 @@ function addressInputHide(locationWrapper, inputWrapper, input) {
 }
 
 function initMap() {
+    if (typeof google === 'undefined' || !google.maps || typeof google.maps.Geocoder !== 'function') return;
     const locationInputs = document.getElementsByClassName("map-input");
 
     const autocompletes = [];
-    let geocoder = new google.maps.Geocoder;
+    let geocoder = new google.maps.Geocoder();
     for (let i = 0; i < locationInputs.length; i++) {
 
         const input = locationInputs[i];
@@ -1366,7 +1369,9 @@ $(document).delegate("#edit-address #address-input", "focus", function () {
 
 
 function initializeNewCabHome(random_id, rel) {
+    if (typeof google === 'undefined' || !google.maps || !google.maps.places) return;
     var input = document.getElementById(random_id);
+    if (!input) return;
     var autocomplete = new google.maps.places.Autocomplete(input);
     if (is_map_search_perticular_country) {
         autocomplete.setComponentRestrictions({ 'country': [is_map_search_perticular_country] });
@@ -1408,6 +1413,7 @@ function autoFillPickupLocation(position) {
     }
     
     // Reverse geocode to get address from coordinates
+    if (typeof google === 'undefined' || !google.maps || typeof google.maps.Geocoder !== 'function') return;
     var geocoder = new google.maps.Geocoder();
     var latlng = { lat: lat, lng: lng };
     
