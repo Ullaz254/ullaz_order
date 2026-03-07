@@ -79,11 +79,14 @@ If the homepage loads but stays white or shows only a spinner, and the Network t
    This lists tables (client_preferences, categories, cab_booking_layouts, client_languages, types, etc.) and reports EMPTY or OK.
 
 2. **Seed minimal homepage data (safe to run multiple times):**
-   ```bash
-   php artisan home:seed-minimal
-   ```
-   Or, if the seeder class is available: `php artisan db:seed --class=HomepageMinimalSeeder`
-   Both insert only when a table is empty:
+   - **If the Artisan command is available:** `php artisan home:seed-minimal`
+   - **If the seeder class is available:** `php artisan db:seed --class=HomepageMinimalSeeder`
+   - **If neither is on the server** (e.g. "Command not defined" / "HomepageMinimalSeeder does not exist"): upload the one-off script from the repo root and run:
+     ```bash
+     php seed-homepage-once.php
+     ```
+     Then delete `seed-homepage-once.php`. The script bootstraps Laravel and inserts the same data; safe to run multiple times.
+   All of the above insert only when a table is empty:
    - 1 language, 1 country, 1 currency
    - 1 client (code `DRIVARR`), 1 client_preference, 1 client_language
    - Types (via TypeSeeder), categories + category_translations (via CategorySeeder)
