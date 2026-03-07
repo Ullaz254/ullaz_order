@@ -943,14 +943,19 @@ if (!function_exists('imageExistsS3')) {
 if (!function_exists('getImageUrl')) {
     function getImageUrl($image, $dim)
     {
-        // Same-origin URLs (e.g. asset('images/no-stores.svg')) must not be rewritten to Hostinger
+        // Same-origin or app asset URLs must not be rewritten to Hostinger storage
         $appUrl = rtrim(\Config::get('app.url'), '/');
         if ((strpos($image, 'http://') === 0 || strpos($image, 'https://') === 0) && strpos($image, $appUrl) === 0) {
             return $image;
         }
-        // Path-style app assets (images/..., assets/...) must be served from app public, not Hostinger storage
+        // Path-style app assets (images/..., assets/...) must be served from app public
         if (strpos($image, 'http') !== 0 && (strpos($image, 'images/') === 0 || strpos($image, 'assets/') === 0)) {
             return asset($image);
+        }
+        // Full URL containing /images/ or /assets/ path (any origin) = treat as app asset, use path only so we don't rewrite to storage
+        if ((strpos($image, 'http://') === 0 || strpos($image, 'https://') === 0) && (strpos($image, '/images/') !== false || strpos($image, '/assets/') !== false)) {
+            $path = parse_url($image, PHP_URL_PATH);
+            if ($path !== false && $path !== null) return asset(ltrim($path, '/'));
         }
         // Check if image URL contains localhost - if so, skip proxy or use HTTP
         $isLocal = env('APP_ENV') === 'local' || 

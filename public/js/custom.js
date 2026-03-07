@@ -191,7 +191,9 @@ window.loadMainMenuSlider = function loadMainMenuSlider() {
   var el = $menuSlider[0];
   if (!el || !el.parentNode) return;
   try {
-    if ($menuSlider.hasClass("slick-initialized")) $menuSlider.slick("unslick");
+    if ($menuSlider.hasClass("slick-initialized")) {
+      try { $menuSlider.slick("unslick"); } catch (u) { /* ignore */ }
+    }
     $(".slick-track").css("display", "flex");
     $menuSlider.slick({
       dots: false,
@@ -200,6 +202,7 @@ window.loadMainMenuSlider = function loadMainMenuSlider() {
       slidesToShow: 10,
       slidesToScroll: 1,
       arrows: true,
+      accessibility: false,
       responsive: [
         {
           breakpoint: 1366,
@@ -232,11 +235,16 @@ window.loadMainMenuSlider = function loadMainMenuSlider() {
       ],
     });
   } catch (e) {
+    console.warn("Menu slider init skipped:", e && e.message);
     return;
   }
 };
 
-loadMainMenuSlider();
+if (typeof document !== 'undefined' && document.readyState === 'loading') {
+  $(document).ready(loadMainMenuSlider);
+} else {
+  loadMainMenuSlider();
+}
 
 window.resizeMenuSlider = function resizeMenuSlider() {
   var windowWidth = $(window).width();

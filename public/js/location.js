@@ -1364,7 +1364,7 @@ $(document).on("input", ".edit-other-stop", function () {
 
 
 $(document).delegate("#edit-address #address-input", "focus", function () {
-    initMap();
+    if (typeof google !== 'undefined' && google.maps) initMap();
 });
 
 
