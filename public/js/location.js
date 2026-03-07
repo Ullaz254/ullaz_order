@@ -369,6 +369,8 @@ $(document).ready(async function () {
                 remove_spinner('#our_vendor_main_div');
                 $(".shimmer_effect").hide();
                 $(".home-slider, .home-banner-slider").show();
+                // Show main content even on API error so user sees Pickup and Delivery form
+                $('#our_vendor_main_div').removeClass('d-none');
             },
             success: function (response) {
                 if (response.status == "Success") {
@@ -383,6 +385,10 @@ $(document).ready(async function () {
                             }, 500 * (index + 1));
                         });
 
+                        // Show main content (Pickup and Delivery, etc.) as soon as home page data loads.
+                        // Prevents white page when layout has no vendors or APIs are slow.
+                        $('#our_vendor_main_div').removeClass('d-none');
+                        $(".no-store-wrapper").hide();
 
                         // let vendors = response.data.vendors;
 
@@ -457,7 +463,8 @@ $(document).ready(async function () {
                 }
 
                 $(".home-slider, .home-banner-slider").show();
-                //  $("#our_vendor_main_div").show();
+                // Ensure main content is visible after request completes (handles slow/timeout)
+                $('#our_vendor_main_div').removeClass('d-none');
             }
         });
     }
@@ -826,13 +833,14 @@ $(document).ready(async function () {
                                 break;
                         }
 
-                        let vendors = response.data.vendors;
+                        // Safe read: sections like pickup_delivery may not have response.data.vendors
+                        let vendors = (response.data && Array.isArray(response.data.vendors)) ? response.data.vendors : [];
 
                         if (vendors.length > 0) {
                             $('#our_vendor_main_div').removeClass('d-none');
                             $(".no-store-wrapper").hide();
                         } else {
-                            $('#our_vendor_main_div').addClass('d-none');
+                            // Show "no stores" message but keep main content visible (e.g. Pickup and Delivery form)
                             $(".no-store-wrapper").show();
                         }
 
