@@ -13,14 +13,15 @@ class AddColumnToPageTranslationsTable extends Migration
      */
     public function up()
     {
+        if (!Schema::hasTable('page_translations')) {
+            return;
+        }
         if (!Schema::hasColumn('page_translations', 'type_of_form')) {
             Schema::table('page_translations', function (Blueprint $table) {
-            //
-            $table->tinyInteger('type_of_form')->default(0)->comment('0 for none; 1 for vendor registration; 2 for driver registration;');
-                    });
+                $table->tinyInteger('type_of_form')->default(0)->comment('0 for none; 1 for vendor registration; 2 for driver registration;');
+            });
         }
-
-        }
+    }
     /**
      * Reverse the migrations.
      *
