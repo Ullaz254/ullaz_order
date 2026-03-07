@@ -68,6 +68,38 @@ The app shows that page when the homepage controller throws an exception. Do the
         - Homepage load (no redirect loop, content loads).
         - Network tab: `homePageDataCategoryMenu`, `homePageDataNew`, `cartProducts`, `getConfig` return 200 and reasonable response times.
 
+## Homepage blank / APIs return 200 but empty data
+
+If the homepage loads but stays white or shows only a spinner, and the Network tab shows `getConfig`, `homePageDataNew`, `homePageDataCategoryMenu` with **200 OK** but very small payloads (~1 KB), the database is missing the data those APIs need.
+
+1. **Check which tables are empty:**
+   ```bash
+   php artisan home:check-data
+   ```
+   This lists tables (client_preferences, categories, cab_booking_layouts, client_languages, types, etc.) and reports EMPTY or OK.
+
+2. **Seed minimal homepage data (safe to run multiple times):**
+   ```bash
+   php artisan db:seed --class=HomepageMinimalSeeder
+   ```
+   This inserts only when a table is empty:
+   - 1 language, 1 country, 1 currency
+   - 1 client (code `DRIVARR`), 1 client_preference, 1 client_language
+   - Types (via TypeSeeder), categories + category_translations (via CategorySeeder)
+   - 2 cab_booking_layouts (pickup_delivery, vendors) with `type=1`, `is_active=1` for web
+
+3. **Verify:**
+   ```bash
+   php artisan home:check-data
+   ```
+   Then reload the site; getConfig and home sections should return data and the main content area can render.
+
+4. **Optional:** To add more layout sections (e.g. featured_products, brands), run:
+   ```bash
+   php artisan db:seed --class=HomePageLabelSeederDefault
+   ```
+   (Only if cab_booking_layouts already has rows; this adds or updates layout slugs.)
+
 ## Summary
 
 | Item              | localhost                              | drivarr.com (after deploy)          |
