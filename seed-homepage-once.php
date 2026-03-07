@@ -125,10 +125,14 @@ try {
     if (!Schema::hasTable('client_languages')) { echo "  skip client_languages (table missing)\n"; }
     elseif (DB::table('client_languages')->count() > 0) { echo "  skip client_languages (has data)\n"; }
     else {
-        DB::table('client_languages')->insert([
-            'client_code' => $clientCode, 'language_id' => 1, 'is_primary' => 1, 'is_active' => 1,
+        $clientLangRow = [
+            'client_code' => $clientCode, 'language_id' => 1, 'is_primary' => 1,
             'created_at' => $now, 'updated_at' => $now,
-        ]);
+        ];
+        if (Schema::hasColumn('client_languages', 'is_active')) {
+            $clientLangRow['is_active'] = 1;
+        }
+        DB::table('client_languages')->insert($clientLangRow);
         echo "  + 1 client_language\n";
     }
 } catch (\Throwable $e) { echo "  ERROR client_languages: " . $e->getMessage() . "\n"; }

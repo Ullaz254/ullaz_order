@@ -126,14 +126,17 @@ class HomepageMinimalSeeder extends Seeder
 
         // 6. Client languages (categoryNav, primary language)
         if (Schema::hasTable('client_languages') && DB::table('client_languages')->count() === 0) {
-            DB::table('client_languages')->insert([
+            $clientLangRow = [
                 'client_code' => $clientCode,
                 'language_id' => 1,
                 'is_primary' => 1,
-                'is_active' => 1,
                 'created_at' => $now,
                 'updated_at' => $now,
-            ]);
+            ];
+            if (Schema::hasColumn('client_languages', 'is_active')) {
+                $clientLangRow['is_active'] = 1;
+            }
+            DB::table('client_languages')->insert($clientLangRow);
             $this->command->info('Inserted 1 client_language.');
         }
 
