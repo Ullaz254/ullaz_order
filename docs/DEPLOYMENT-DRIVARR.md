@@ -80,9 +80,10 @@ If the homepage loads but stays white or shows only a spinner, and the Network t
 
 2. **Seed minimal homepage data (safe to run multiple times):**
    ```bash
-   php artisan db:seed --class=HomepageMinimalSeeder
+   php artisan home:seed-minimal
    ```
-   This inserts only when a table is empty:
+   Or, if the seeder class is available: `php artisan db:seed --class=HomepageMinimalSeeder`
+   Both insert only when a table is empty:
    - 1 language, 1 country, 1 currency
    - 1 client (code `DRIVARR`), 1 client_preference, 1 client_language
    - Types (via TypeSeeder), categories + category_translations (via CategorySeeder)
