@@ -612,7 +612,8 @@ $preference = $client_preference_detail ?? new class {
    				<% }); %>
    					<% }); %>
 </script>
-<section class="section-b-space ratio_asos d-none pt-0 mt-0 pb-0 mt-0" id="our_vendor_main_div">
+{{-- Show main content by default so Pickup and Delivery is visible even when APIs return empty or JS hasn't run --}}
+<section class="section-b-space ratio_asos pt-0 mt-0 pb-0 mt-0" id="our_vendor_main_div">
    <div class="vendors">
       @foreach($homePageLabels as $key => $homePageLabel) @if($homePageLabel->slug == 'pickup_delivery')
       @if(isset($homePageLabel->pickupCategories) && count($homePageLabel->pickupCategories))

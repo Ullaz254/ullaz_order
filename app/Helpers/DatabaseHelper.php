@@ -15,6 +15,11 @@ class DatabaseHelper
             return [];
         }
 
+        // Skip SSL when using DB without SSL (e.g. Hostinger). Set DB_SSL_DISABLED=true in .env.
+        if (env('DB_SSL_DISABLED', false)) {
+            return [];
+        }
+
         $caPath = env('MYSQL_ATTR_SSL_CA');
         
         // If not set in env, check if file exists
