@@ -65,7 +65,7 @@ try {
         ]);
         echo "  + 1 country\n";
     }
-} catch (\Throwable $e) { echo "  ERROR countries: " . $e->getMessage() . "\n"; }
+} catch (\Throwable $e) { echo "  ERROR countries: " . $e->getMessage() . "\n"; 
 
 // 3. Currencies
 try {
