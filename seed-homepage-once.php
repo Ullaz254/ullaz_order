@@ -9,6 +9,13 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 echo "seed-homepage-once: starting (cwd=" . getcwd() . ")\n";
 
+$autoloadPath = __DIR__ . '/vendor/autoload.php';
+if (!is_file($autoloadPath)) {
+    echo "ERROR: vendor/autoload.php not found. Run 'composer install' in project root.\n";
+    exit(1);
+}
+require $autoloadPath;
+
 $bootstrapPath = __DIR__ . '/bootstrap/app.php';
 if (!is_file($bootstrapPath)) {
     echo "ERROR: bootstrap not found at {$bootstrapPath}. Run from project root.\n";
@@ -75,20 +82,24 @@ try {
     }
 } catch (\Throwable $e) { echo "  ERROR currencies: " . $e->getMessage() . "\n"; }
 
-// 4. Client
+// 4. Client (only include columns that exist; server may not have language_id)
 try {
     if (!Schema::hasTable('clients')) { echo "  skip clients (table missing)\n"; }
     elseif (DB::table('clients')->where('code', $clientCode)->count() > 0) { echo "  skip clients (DRIVARR exists)\n"; }
     else {
-        DB::table('clients')->insert([
+        $clientRow = [
             'name' => 'Drivarr', 'email' => 'admin@drivarr.com', 'phone_number' => null,
             'password' => \Illuminate\Support\Facades\Hash::make('ChangeMe@123'), 'encpass' => null,
             'country_id' => 1, 'timezone' => 'Africa/Nairobi', 'custom_domain' => 'drivarr.com', 'sub_domain' => null,
             'is_deleted' => 0, 'is_blocked' => 0,
             'database_path' => null, 'database_name' => null, 'database_username' => null, 'database_password' => null,
-            'logo' => null, 'company_name' => 'Drivarr', 'company_address' => null, 'language_id' => 1,
+            'logo' => null, 'company_name' => 'Drivarr', 'company_address' => null,
             'status' => 1, 'code' => $clientCode, 'created_at' => $now, 'updated_at' => $now,
-        ]);
+        ];
+        if (Schema::hasColumn('clients', 'language_id')) {
+            $clientRow['language_id'] = 1;
+        }
+        DB::table('clients')->insert($clientRow);
         echo "  + 1 client\n";
     }
 } catch (\Throwable $e) { echo "  ERROR clients: " . $e->getMessage() . "\n"; }

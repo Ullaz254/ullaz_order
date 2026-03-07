@@ -71,7 +71,7 @@ class HomepageMinimalSeeder extends Seeder
         // 4. Client (required for client_preferences and client_languages)
         $clientCode = 'DRIVARR';
         if (Schema::hasTable('clients') && DB::table('clients')->where('code', $clientCode)->count() === 0) {
-            DB::table('clients')->insert([
+            $clientRow = [
                 'name' => 'Drivarr',
                 'email' => 'admin@drivarr.com',
                 'phone_number' => null,
@@ -90,12 +90,15 @@ class HomepageMinimalSeeder extends Seeder
                 'logo' => null,
                 'company_name' => 'Drivarr',
                 'company_address' => null,
-                'language_id' => 1,
                 'status' => 1,
                 'code' => $clientCode,
                 'created_at' => $now,
                 'updated_at' => $now,
-            ]);
+            ];
+            if (Schema::hasColumn('clients', 'language_id')) {
+                $clientRow['language_id'] = 1;
+            }
+            DB::table('clients')->insert($clientRow);
             $this->command->info('Inserted 1 client (code: ' . $clientCode . ').');
         }
 

@@ -73,9 +73,9 @@ class SeedHomepageMinimal extends Command
             $this->info('Inserted 1 currency.');
         }
 
-        // 4. Client
+        // 4. Client (only include columns that exist; server may not have language_id yet)
         if (Schema::hasTable('clients') && DB::table('clients')->where('code', $clientCode)->count() === 0) {
-            DB::table('clients')->insert([
+            $clientRow = [
                 'name' => 'Drivarr',
                 'email' => 'admin@drivarr.com',
                 'phone_number' => null,
@@ -94,12 +94,15 @@ class SeedHomepageMinimal extends Command
                 'logo' => null,
                 'company_name' => 'Drivarr',
                 'company_address' => null,
-                'language_id' => 1,
                 'status' => 1,
                 'code' => $clientCode,
                 'created_at' => $now,
                 'updated_at' => $now,
-            ]);
+            ];
+            if (Schema::hasColumn('clients', 'language_id')) {
+                $clientRow['language_id'] = 1;
+            }
+            DB::table('clients')->insert($clientRow);
             $this->info('Inserted 1 client (code: ' . $clientCode . ').');
         }
 
