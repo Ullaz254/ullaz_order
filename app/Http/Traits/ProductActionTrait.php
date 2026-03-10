@@ -21,7 +21,7 @@ trait ProductActionTrait{
         try
         {
             $vendors = Vendor::vendorOnline()->select('id')->where('status', 1)->where($type, 1);
-            if (($preferences->is_hyperlocal == 1) && ($latitude) && ($longitude)) {
+            if ($preferences && ($preferences->is_hyperlocal == 1) && ($latitude) && ($longitude)) {
                     $point = new Point($longitude, $latitude);
                     $vendors->whereHas('serviceArea', function ($query) use ($point) {
                         $query->whereRaw("ST_Contains(service_areas.polygon, ST_GeomFromText(?))", [$point->toWKT()]);
@@ -849,7 +849,7 @@ trait ProductActionTrait{
             if(isset($client_preferences->is_service_area_for_banners) && ($client_preferences->is_service_area_for_banners == 1) && ($client_preferences->is_hyperlocal == 1) && (!empty($latitude) && !empty($longitude))){
 
                 $point = new Point($longitude, $latitude);
-                //$mainQuery .= " HAVING (SELECT `id` FROM `$banner_service_areas_table` AS `bsa` where `ba`.`id` = `bsa`.`banner_id` AND EXISTS (select `id` from `$service_area_for_banners_table` AS `safb` WHERE `bsa`.`service_area_id` = `safb`.`id` AND ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT($latitude $longitude)')) and `type` = $type) > 0) > 0 ";
+                //$mainQuery .= " HAVING (SELECT `id` FROM `$banner_service_areas_table` AS `bsa` where `ba`.`id` = `bsa`.`banner_id` AND EXISTS (select `id` from `$service_area_for_banners_table` AS `safb` WHERE `bsa`.`service_area_id` = `safb`.`id` AND ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT($latitude $longitude)')) and `type` = $type) > 0) > 0 ";
                 $mainQuery .= " HAVING (SELECT `id` FROM `$banner_service_areas_table` AS `bsa` where `ba`.`id` = `bsa`.`banner_id` AND EXISTS (select `id`,'polygon' from `$service_area_for_banners_table` AS `safb` WHERE `bsa`.`service_area_id` = `safb`.`id` AND ST_Contains(safb.polygon, ST_GeomFromText('".$point->toWKT()."')) and `type` = $type) > 0) > 0 ";
             }
 

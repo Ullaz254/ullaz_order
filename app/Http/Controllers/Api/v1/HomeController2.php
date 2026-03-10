@@ -458,7 +458,7 @@ class HomeController2 extends BaseController
             if(isset($preferences->is_service_area_for_banners) && ($preferences->is_service_area_for_banners == 1) && ($preferences->is_hyperlocal == 1)){
                 if(!empty($latitude) && !empty($longitude)){
                     $mobile_banners = $mobile_banners->whereHas('geos.serviceArea', function($query) use ($latitude, $longitude) {
-                        $query->select('id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
+                        $query->select('id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
                     });
                 }
             }
@@ -874,7 +874,7 @@ class HomeController2 extends BaseController
                     if (!empty($latitude) && !empty($longitude)) {
                         $vendors = $vendors->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
                             $query->select('vendor_id')
-                        ->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
+                        ->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
                         });
 
                         if (isset($preferences->slots_with_service_area) && ($preferences->slots_with_service_area == 1)) {
@@ -884,10 +884,10 @@ class HomeController2 extends BaseController
                                 $vendors = $vendors->when(($value->show_slot == 0), function($query) use ($latitude, $longitude) {
                                     return $query->where(function($query1) use ($latitude, $longitude) {
                                         $query1->whereHas('slot.geos.serviceArea', function ($q) use ($latitude, $longitude) {
-                                            $q->select('vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
+                                            $q->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
                                         })
                                         ->orWhereHas('slotDate.geos.serviceArea', function ($q) use ($latitude, $longitude) {
-                                            $q->select('vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
+                                            $q->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
                                         });
                                     });
                                 });

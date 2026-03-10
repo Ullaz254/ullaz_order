@@ -1005,7 +1005,7 @@ class CartController extends FrontController
                             if (!empty($latitude) && !empty($longitude)) {
                                 $serviceArea = $vendorData->vendor->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
                                     $query->select('vendor_id')
-                                        ->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
+                                        ->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
                                 })->where('id', $vendorData->vendor_id)->get();
                             }
                         }
@@ -1017,10 +1017,10 @@ class CartController extends FrontController
                         if (($preferences->slots_with_service_area == 1) && ($vendorData->vendor->show_slot == 0)) {
                             $serviceArea = $vendorData->vendor->where(function ($query) use ($latitude, $longitude) {
                                 $query->whereHas('slot.geos.serviceArea', function ($q) use ($latitude, $longitude) {
-                                    $q->select('vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
+                                    $q->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
                                 })
                                     ->orWhereHas('slotDate.geos.serviceArea', function ($q) use ($latitude, $longitude) {
-                                        $q->select('vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
+                                        $q->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
                                     });
                             })->where('id', $vendorData->vendor_id)->get();
                         }

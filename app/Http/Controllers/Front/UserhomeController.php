@@ -942,12 +942,16 @@ class UserhomeController extends FrontController
         $latitude = Session::get('latitude');
         $longitude = Session::get('longitude');
         $clientdata = Session::get('clientdata');
+        $preferences = $this->client_preferences;
 
-        if( (empty($latitude)) && (empty($longitude)) ){
+        if ( (empty($latitude)) && (empty($longitude)) && $preferences ) {
             $latitude = (!empty($preferences->Default_latitude)) ? floatval($preferences->Default_latitude) : 0;
-            $longitude = (!empty($preferences->Default_latitude)) ? floatval($preferences->Default_longitude) : 0;
+            $longitude = (!empty($preferences->Default_longitude)) ? floatval($preferences->Default_longitude) : 0;
+        } elseif ( (empty($latitude)) && (empty($longitude)) ) {
+            $latitude = 0;
+            $longitude = 0;
         }
-        if($request->has('latitude') ){
+        if ($request->has('latitude') ){
             $latitude = $request->latitude;
             Session::put('latitude', $latitude);
         }
@@ -957,7 +961,6 @@ class UserhomeController extends FrontController
         }
         $selectedAddress = ($request->has('selectedAddress')) ? Session::put('selectedAddress', $request->selectedAddress) : Session::get('selectedAddress');
         $selectedPlaceId = ($request->has('selectedPlaceId')) ? Session::put('selectedPlaceId', $request->selectedPlaceId) : Session::get('selectedPlaceId');
-        $preferences = $this->client_preferences;
         $currency_id = Session::get('customerCurrency');
         $language_id = Session::get('customerLanguage');
 
@@ -1535,7 +1538,7 @@ class UserhomeController extends FrontController
         if(isset($preferences->is_service_area_for_banners) && ($preferences->is_service_area_for_banners == 1) && ($preferences->is_hyperlocal == 1)){
             if(!empty($latitude) && !empty($longitude)){
                 $banners = $banners->whereHas('geos.serviceArea', function($query) use ($latitude, $longitude) {
-                    $query->select('id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
+                    $query->select('id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
                 });
             }
         }
@@ -1553,7 +1556,7 @@ class UserhomeController extends FrontController
         if(isset($preferences->is_service_area_for_banners) && ($preferences->is_service_area_for_banners == 1) && ($preferences->is_hyperlocal == 1)){
             if(!empty($latitude) && !empty($longitude)){
                 $mobile_banners = $mobile_banners->whereHas('geos.serviceArea', function($query) use ($latitude, $longitude) {
-                    $query->select('id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
+                    $query->select('id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
                 });
             }
         }

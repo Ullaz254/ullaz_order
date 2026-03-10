@@ -70,13 +70,13 @@ trait YachtTrait
                 ->where(function ($q) use ($request, $pickup, $dropOff) {
                     if (isset($pickup->latitude) && isset($pickup->longitude)) {
                         $q->whereHas('vendor.serviceArea', function ($q) use ($pickup) {
-                            $q->select('id', 'vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $pickup->latitude . " " . $pickup->longitude . ")'))");
+                            $q->select('id', 'vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $pickup->latitude . " " . $pickup->longitude . ")'))");
                         });
                     }
 
                     if ($request->has('diff-location') && !empty($dropOff->latitude) && !empty($dropOff->longitude)) {
                         $q->whereHas('vendor.serviceArea', function ($q) use ($dropOff) {
-                            $q->select('id', 'vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $dropOff->latitude . " " . $dropOff->longitude . ")'))");
+                            $q->select('id', 'vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $dropOff->latitude . " " . $dropOff->longitude . ")'))");
                         });
                     }
                 })
