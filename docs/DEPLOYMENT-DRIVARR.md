@@ -73,57 +73,66 @@ The app shows that page when the homepage controller throws an exception. Do the
 If the homepage loads but stays white or shows only a spinner, and the Network tab shows `getConfig`, `homePageDataNew`, `homePageDataCategoryMenu` with **200 OK** but very small payloads (~1 KB), the database is missing the data those APIs need.
 
 1. **Check which tables are empty:**
-   ```bash
-   php artisan home:check-data
-   ```
-   This lists tables (client_preferences, categories, cab_booking_layouts, client_languages, types, etc.) and reports EMPTY or OK.
+
+    ```bash
+    php artisan home:check-data
+    ```
+
+    This lists tables (client_preferences, categories, cab_booking_layouts, client_languages, types, etc.) and reports EMPTY or OK.
 
 2. **Seed minimal homepage data (safe to run multiple times):**
-   - **If the Artisan command is available:** `php artisan home:seed-minimal`
-   - **If the seeder class is available:** `php artisan db:seed --class=HomepageMinimalSeeder`
-   - **If neither is on the server** (e.g. "Command not defined" / "HomepageMinimalSeeder does not exist"): upload the one-off script from the repo root and run:
-     ```bash
-     php seed-homepage-once.php
-     ```
-     Then delete `seed-homepage-once.php`. The script bootstraps Laravel and inserts the same data; safe to run multiple times.
-   All of the above insert only when a table is empty:
-   - 1 language, 1 country, 1 currency
-   - 1 client (code `DRIVARR`), 1 client_preference, 1 client_language
-   - Types (via TypeSeeder), categories + category_translations (via CategorySeeder)
-   - 2 cab_booking_layouts (pickup_delivery, vendors) with `type=1`, `is_active=1` for web
+
+    - **If the Artisan command is available:** `php artisan home:seed-minimal`
+    - **If the seeder class is available:** `php artisan db:seed --class=HomepageMinimalSeeder`
+    - **If neither is on the server** (e.g. "Command not defined" / "HomepageMinimalSeeder does not exist"): upload the one-off script from the repo root and run:
+        ```bash
+        php seed-homepage-once.php
+        ```
+        Then delete `seed-homepage-once.php`. The script bootstraps Laravel and inserts the same data; safe to run multiple times.
+        All of the above insert only when a table is empty:
+    - 1 language, 1 country, 1 currency
+    - 1 client (code `DRIVARR`), 1 client_preference, 1 client_language
+    - Types (via TypeSeeder), categories + category_translations (via CategorySeeder)
+    - 2 cab_booking_layouts (pickup_delivery, vendors) with `type=1`, `is_active=1` for web
 
 3. **Verify:**
-   ```bash
-   php artisan home:check-data
-   ```
-   Then reload the site; getConfig and home sections should return data and the main content area can render.
+
+    ```bash
+    php artisan home:check-data
+    ```
+
+    Then reload the site; getConfig and home sections should return data and the main content area can render.
 
 4. **Optional:** To add more layout sections (e.g. featured_products, brands), run:
-   ```bash
-   php artisan db:seed --class=HomePageLabelSeederDefault
-   ```
-   (Only if cab_booking_layouts already has rows; this adds or updates layout slugs.)
+    ```bash
+    php artisan db:seed --class=HomePageLabelSeederDefault
+    ```
+    (Only if cab_booking_layouts already has rows; this adds or updates layout slugs.)
 
 ## HTTP 500 on homepage (This page isn't working)
 
 If the site shows **HTTP ERROR 500** or "This page isn't working", the app is throwing an exception. The exact error is written to the Laravel log.
 
 1. **On the server**, from the project root, run:
-   ```bash
-   tail -150 storage/logs/laravel.log
-   ```
-   Or open the latest log file (e.g. `storage/logs/laravel-2026-03-07.log`).
+
+    ```bash
+    tail -150 storage/logs/laravel.log
+    ```
+
+    Or open the latest log file (e.g. `storage/logs/laravel-2026-03-07.log`).
 
 2. **Look for** the most recent error entry. You should see either:
-   - `UserhomeController failed on home route` (exception in the route wrapper), or
-   - `UserhomeController index failed` (exception inside the controller),
-   plus the **error message** and **stack trace**.
+
+    - `UserhomeController failed on home route` (exception in the route wrapper), or
+    - `UserhomeController index failed` (exception inside the controller),
+      plus the **error message** and **stack trace**.
 
 3. **Common causes** after seeding:
-   - **Missing column**: e.g. "Unknown column 'xyz' in 'field list'" → run `php artisan migrate` or add the column.
-   - **Missing table**: e.g. "Table 'db.client_preference_additional' doesn't exist" → run migrations.
-   - **Class or file not found**: e.g. "Class 'X' not found" → run `composer dump-autoload` or deploy the missing file.
-   - **Storage/S3 or .env**: e.g. "Unable to locate bucket" or "AWS_ACCESS_KEY_ID" → fix `.env` or disable S3 for public assets if not used.
+
+    - **Missing column**: e.g. "Unknown column 'xyz' in 'field list'" → run `php artisan migrate` or add the column.
+    - **Missing table**: e.g. "Table 'db.client_preference_additional' doesn't exist" → run migrations.
+    - **Class or file not found**: e.g. "Class 'X' not found" → run `composer dump-autoload` or deploy the missing file.
+    - **Storage/S3 or .env**: e.g. "Unable to locate bucket" or "AWS_ACCESS_KEY_ID" → fix `.env` or disable S3 for public assets if not used.
 
 4. **Temporarily show errors in the browser** (only for debugging): In `.env` set `APP_DEBUG=true`, then reload the page. You will see the exception and trace on screen. Set `APP_DEBUG=false` again when done.
 

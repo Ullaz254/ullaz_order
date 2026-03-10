@@ -23,9 +23,17 @@ trait RedisCacheTrait{
     public function isPointInRadius($latitude, $longitude, $radius= '5', $key='geo_fence:locations') {
 
         $redis = Redis::connection();
-        //echo $key;
         $ret = [];
-        $result = $redis->georadius($key, $longitude, $latitude, $radius, 'km', 'WITHDIST');
+        // Redis GEORADIUS requires numeric lat/long; skip and return no cache when missing
+        if ($latitude === null || $longitude === null || !is_numeric($latitude) || !is_numeric($longitude)) {
+            return $ret;
+        }
+        try {
+            $result = $redis->georadius($key, (float) $longitude, (float) $latitude, $radius, 'km', 'WITHDIST');
+        } catch (\Throwable $e) {
+            \Log::warning('Redis georadius failed in isPointInRadius', ['error' => $e->getMessage()]);
+            return $ret;
+        }
         $ret = $result;
         if(@$result[0][0]) {
             $cachedResult = Redis::get($result[0][0]);

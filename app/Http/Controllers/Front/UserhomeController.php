@@ -591,6 +591,12 @@ class UserhomeController extends FrontController
                 }
             }
 
+            // Ensure lat/long for hyperlocal/cache when session has none (e.g. first visit or localhost)
+            if ((empty($latitude) || empty($longitude)) && $client_preferences && isset($client_preferences->Default_latitude, $client_preferences->Default_longitude)) {
+                $latitude = $latitude ?? $client_preferences->Default_latitude;
+                $longitude = $longitude ?? $client_preferences->Default_longitude;
+            }
+
             if($client_preferences && isset($client_preferences->is_hyperlocal) && $client_preferences->is_hyperlocal == 1) {
                 $client_code = $client_preferences->client_code ?? 'default';
                 $this->loc_key = $this->loc_key.":hyperlocal:".$vendor_type.":".$client_code;
@@ -603,6 +609,7 @@ class UserhomeController extends FrontController
                 $client_code = $client_preferences->client_code ?? 'default';
                 $this->loc_key = $this->loc_key.':'.$vendor_type.':'.$client_code;
                 $cacheKey = $this->loc_key;
+                $find_key = [];
                 $cachedResult = null;
                 try {
                     $cachedResult = Redis::get($this->loc_key);

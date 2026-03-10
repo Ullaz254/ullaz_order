@@ -65,7 +65,7 @@ try {
         ]);
         echo "  + 1 country\n";
     }
-} catch (\Throwable $e) { echo "  ERROR countries: " . $e->getMessage() . "\n"; 
+} catch (\Throwable $e) { echo "  ERROR countries: " . $e->getMessage() . "\n"; }
 
 // 3. Currencies
 try {
@@ -192,5 +192,89 @@ try {
         echo "  + " . count($layouts) . " cab_booking_layouts\n";
     }
 } catch (\Throwable $e) { echo "  ERROR cab_booking_layouts: " . $e->getMessage() . "\n"; }
+
+// 10. Web styling (required for set_template - homepage template selection)
+try {
+    if (!Schema::hasTable('web_stylings')) { echo "  skip web_stylings (table missing)\n"; }
+    elseif (DB::table('web_stylings')->count() > 0) { echo "  skip web_stylings (has data)\n"; }
+    else {
+        DB::table('web_stylings')->insert([
+            'id' => 1, 'name' => 'Home Page Style', 'type' => '1',
+            'created_at' => $now, 'updated_at' => $now,
+        ]);
+        echo "  + 1 web_styling\n";
+    }
+} catch (\Throwable $e) { echo "  ERROR web_stylings: " . $e->getMessage() . "\n"; }
+
+try {
+    if (!Schema::hasTable('web_styling_options')) { echo "  skip web_styling_options (table missing)\n"; }
+    elseif (DB::table('web_styling_options')->where('web_styling_id', 1)->where('is_selected', 1)->count() > 0) { echo "  skip web_styling_options (has selected)\n"; }
+    else {
+        $cols = ['web_styling_id' => 1, 'name' => 'Home Page 1', 'image' => 'template-one.png', 'is_selected' => 1, 'template_id' => 1, 'created_at' => $now, 'updated_at' => $now];
+        if (Schema::hasColumn('web_styling_options', 'is_template')) {
+            $cols['is_template'] = 1;
+        }
+        DB::table('web_styling_options')->insert($cols);
+        echo "  + 1 web_styling_option (selected)\n";
+    }
+} catch (\Throwable $e) { echo "  ERROR web_styling_options: " . $e->getMessage() . "\n"; }
+
+// 11. Categories (need visible+core for navCategories; add if only root or empty)
+try {
+    if (!Schema::hasTable('categories')) { echo "  skip categories (table missing)\n"; }
+    else {
+        $visibleCount = DB::table('categories')->where('id', '>', 1)->where('is_visible', 1)->where('is_core', 1)->count();
+        if ($visibleCount > 0) { echo "  skip categories (has visible core)\n"; }
+        else {
+            $existingIds = DB::table('categories')->pluck('id')->toArray();
+            $categories = [
+                ['id' => 1, 'slug' => 'Root', 'type_id' => 3, 'is_visible' => 0, 'status' => 1, 'position' => 1, 'is_core' => 1, 'can_add_products' => 0, 'display_mode' => 1, 'parent_id' => null],
+                ['id' => 2, 'slug' => 'Delivery', 'type_id' => 1, 'is_visible' => 1, 'status' => 1, 'position' => 1, 'is_core' => 1, 'can_add_products' => 1, 'display_mode' => 1, 'parent_id' => 1],
+                ['id' => 3, 'slug' => 'Restaurant', 'type_id' => 1, 'is_visible' => 1, 'status' => 1, 'position' => 1, 'is_core' => 1, 'can_add_products' => 1, 'display_mode' => 1, 'parent_id' => 1],
+                ['id' => 4, 'slug' => 'Supermarket', 'type_id' => 1, 'is_visible' => 1, 'status' => 1, 'position' => 1, 'is_core' => 1, 'can_add_products' => 1, 'display_mode' => 1, 'parent_id' => 1],
+                ['id' => 5, 'slug' => 'Pharmacy', 'type_id' => 1, 'is_visible' => 1, 'status' => 1, 'position' => 1, 'is_core' => 1, 'can_add_products' => 1, 'display_mode' => 1, 'parent_id' => 1],
+            ];
+            $added = 0;
+            foreach ($categories as $c) {
+                if (in_array($c['id'], $existingIds)) continue;
+                $c['created_at'] = $now;
+                $c['updated_at'] = $now;
+                DB::table('categories')->insert($c);
+                $added++;
+            }
+            if ($added > 0) echo "  + {$added} categories\n";
+            // Ensure category_translations for visible categories (nav)
+            $catIds = [2, 3, 4, 5];
+            $names = ['Delivery', 'Restaurant', 'Supermarket', 'Pharmacy'];
+            $transAdded = 0;
+            foreach ($catIds as $i => $cid) {
+                if (DB::table('category_translations')->where('category_id', $cid)->where('language_id', 1)->exists()) continue;
+                DB::table('category_translations')->insert([
+                    'name' => $names[$i] ?? 'Category ' . $cid, 'trans-slug' => strtolower(str_replace(' ', '-', $names[$i] ?? 'cat-' . $cid)),
+                    'meta_title' => $names[$i] ?? 'Category', 'meta_description' => '', 'meta_keywords' => '',
+                    'category_id' => $cid, 'language_id' => 1, 'created_at' => $now, 'updated_at' => $now,
+                ]);
+                $transAdded++;
+            }
+            if ($transAdded > 0) echo "  + {$transAdded} category_translations\n";
+        }
+    }
+} catch (\Throwable $e) { echo "  ERROR categories: " . $e->getMessage() . "\n"; }
+
+// 12. Cab booking layout translations (optional - for labels)
+try {
+    if (!Schema::hasTable('cab_booking_layout_translations')) { echo "  skip cab_booking_layout_translations (table missing)\n"; }
+    elseif (DB::table('cab_booking_layout_translations')->count() > 0) { echo "  skip cab_booking_layout_translations (has data)\n"; }
+    else {
+        $layoutIds = DB::table('cab_booking_layouts')->pluck('id')->toArray();
+        foreach ($layoutIds as $lid) {
+            DB::table('cab_booking_layout_translations')->insert([
+                'cab_booking_layout_id' => $lid, 'language_id' => 1, 'title' => 'Layout ' . $lid,
+                'created_at' => $now, 'updated_at' => $now,
+            ]);
+        }
+        echo "  + " . count($layoutIds) . " cab_booking_layout_translations\n";
+    }
+} catch (\Throwable $e) { echo "  ERROR cab_booking_layout_translations: " . $e->getMessage() . "\n"; }
 
 echo "Done. Run: php artisan home:check-data\n";
