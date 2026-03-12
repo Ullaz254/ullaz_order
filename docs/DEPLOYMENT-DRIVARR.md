@@ -24,28 +24,41 @@
 
 ## If you see “Laravel Application” / welcome page instead of your site
 
-The app shows that page when the homepage controller throws an exception. Do the following on the server:
+The app shows that page when the homepage controller throws an exception. The welcome page shows **short tips** when the error is Redis or DB-related. Do the following on the server.
 
-1. **Set domain in `.env`** (required for drivarr.com):
+### 1. Set domain in `.env` (required for drivarr.com)
 
-    ```env
-    APP_URL=https://drivarr.com
-    Main_Domain=drivarr.com
-    ```
+```env
+APP_URL=https://drivarr.com
+Main_Domain=drivarr.com
+```
 
-    Then run: `php artisan config:clear` and `php artisan config:cache`.
+Then run: `php artisan config:clear` and `php artisan config:cache`.
 
-2. **Check the real error** in `storage/logs/laravel.log` (e.g. `tail -80 storage/logs/laravel.log`). Look for `UserhomeController index failed` to see the exception.
+### 2. Check the real error
 
-3. **Redis not installed / Connection refused**: If you see `Connection refused [tcp://127.0.0.1:6379]` in logs or when running `php artisan config:cache`, either:
-    - **Option A (recommended when Redis is not available):** In `.env` set:
-        ```env
-        CACHE_DRIVER=file
-        SESSION_DRIVER=file
-        ```
-        Then run only `php artisan config:clear` (do **not** run `config:cache` until Redis is available if you want to use it later).
-    - **Option B:** Install and start Redis on the server, then keep `CACHE_DRIVER=redis` if you prefer.
-      The app is now resilient: if Redis is down, bootstrap will still succeed (cache calls fall back or skip). Using `file` driver avoids Redis entirely.
+- In **browser**: read the “Error loading homepage: …” line and the tip box (if shown).
+- In **logs**: `tail -80 storage/logs/laravel.log` and look for `UserhomeController index failed` or “Redis unavailable”.
+
+### 3. Redis: “Connection refused [tcp://127.0.0.1:6379]”
+
+If Redis is not running or not reachable:
+
+- **Option A (recommended when Redis is not available):** In `.env` set:
+  ```env
+  CACHE_DRIVER=file
+  SESSION_DRIVER=file
+  ```
+  Then run: `php artisan config:clear`. Do **not** run `config:cache` until you fix Redis if you plan to use it later.
+
+- **Option B:** Install and start Redis on the server (e.g. `redis-server`), then keep `CACHE_DRIVER=redis` and `SESSION_DRIVER=redis` if you prefer.
+
+The app **auto-fallbacks**: if Redis is configured but unavailable at bootstrap, session and cache are switched to `file` for that request so the site can load. Setting file drivers in `.env` avoids Redis entirely.
+
+### 4. Database: “Access denied for user '…'@'…' (using password: YES)” (SQLSTATE 1045)
+
+- **On the server (drivarr.com):** Ensure `.env` has the correct `DB_USERNAME`, `DB_PASSWORD`, and `DB_HOST`. The MySQL user must be allowed to connect from the **web server’s host** (e.g. create user with `@'%'` or the server IP).
+- **On local (localhost:8000):** The DB user in `.env` is often for the production host. Either use a **local MySQL** user that allows connections from `127.0.0.1` or `%`, or on the DB server grant access for your machine’s host (e.g. the IPv6 in the error). Then run: `php artisan config:clear`.
 
 ## Before deploying to drivarr.com
 

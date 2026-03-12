@@ -34,7 +34,19 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(Request $request){
+    public function boot(Request $request)
+    {
+        // If Redis is configured but unavailable, fall back to file for session/cache so the app still loads
+        if (config('session.driver') === 'redis' || config('cache.default') === 'redis') {
+            try {
+                Redis::connection()->ping();
+            } catch (\Throwable $e) {
+                Log::warning('Redis unavailable, falling back to file driver for session and cache', ['error' => $e->getMessage()]);
+                config(['session.driver' => 'file']);
+                config(['cache.default' => 'file']);
+            }
+        }
+
         // Force localhost URL for local development FIRST, before anything else
         if (config('app.env') === 'local') {
             config(['app.url' => 'http://localhost:8000']);
