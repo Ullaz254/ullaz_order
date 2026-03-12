@@ -918,6 +918,38 @@ class UserhomeController extends FrontController
     }
 
     /**
+     * API: Single home page section (used by frontend AJAX getHomePageDataSingleBySingle).
+     * Returns data for one slug (e.g. trending_vendors, vendors, featured_products).
+     */
+    public function postHomePageDataSingle(Request $request)
+    {
+        try {
+            $request->request->add(['type' => $request->get('type', Session::get('vendorType', 'delivery')), 'noTinJson' => 1]);
+            $set_template = null;
+            $enable_layout = [];
+            try {
+                $set_template = WebStylingOption::where('web_styling_id', 1)->where('is_selected', 1)->first();
+                $enable_layout = CabBookingLayout::web()->where('is_active', 1)->orderBy('order_by', 'asc')->pluck('slug')->toArray();
+            } catch (\Exception $e) {
+                \Log::warning('postHomePageDataSingle: failed to get layout', ['error' => $e->getMessage()]);
+            }
+            $additionalPreference = getAdditionalPreference(['is_token_currency_enable', 'token_currency', 'is_long_term_service', 'is_admin_vendor_rating', 'is_service_product_price_from_dispatch', 'is_service_price_selection']) ?: [];
+            $full = $this->postHomePageData($request, $set_template, $enable_layout, $additionalPreference);
+            $slug = $request->get('slug', '');
+            // Frontend expects response.data.feature_products (no "d"); noTinJson uses "featured_products"
+            $responseKey = $slug === 'featured_products' ? 'feature_products' : $slug;
+            $value = $full[$slug] ?? $full[$responseKey] ?? [];
+            $payload = [$responseKey => $value];
+            return $this->successResponse($payload);
+        } catch (\Throwable $e) {
+            \Log::warning('postHomePageDataSingle failed', ['error' => $e->getMessage(), 'slug' => $request->get('slug')]);
+            $slug = $request->get('slug', '');
+            $responseKey = $slug === 'featured_products' ? 'feature_products' : $slug;
+            return $this->successResponse([$responseKey => []]);
+        }
+    }
+
+    /**
      * postHomePageData
      *
      * @param  mixed $request
