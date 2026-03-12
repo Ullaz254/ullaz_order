@@ -86,6 +86,8 @@ $is_map_search_perticular_country = getMapConfigrationPreference();
 <script src="{{asset('assets/libs/select2/select2.min.js')}}"></script>
 @yield('home-page')
 <script defer type="text/javascript" src="{{asset('js/location.js')}}"></script>
+<!-- Ensure initMap exists before Google Maps callback (avoids "initMap is not a function") -->
+<script>window.initMap = window.initMap || function() {};</script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$mapKey}}&v=3.exp&libraries=places,drawing&loading=async&callback=initMap"></script>
 <script type="text/javascript" src="{{asset('assets/libs/sweetalert2/sweetalert2.min.js')}}"></script>
 <script defer type="text/javascript" src="{{asset('js/spinner.js')}}"></script>

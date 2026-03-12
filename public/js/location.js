@@ -19,7 +19,8 @@ jQuery(window).scroll(function () {
     }
 });
 $(document).ready(async function () {
-    getLocation();
+    // Do not call getLocation() here - geolocation requires a user gesture (browser violation).
+    // Use default lat/long from page or session for initial load; getLocation() can run on button click.
 
     if (window.location.pathname == "/") {
         let latitude = "";
@@ -1283,9 +1284,8 @@ $(document).ready(async function () {
     }
 
     if (is_hyperlocal) {
-        // if (!selected_address) {
-        getLocation();
-        // }
+        // Defer getLocation() to user gesture (e.g. "Use my location" click) to avoid geolocation violation.
+        // getLocation();
         // let lat = $("#address-latitude").val();
         // let long = $("#address-longitude").val();
         // let placeId = $("#address-place-id").val();
@@ -1654,7 +1654,8 @@ function addressInputHide(locationWrapper, inputWrapper, input) {
     $(locationWrapper).addClass("d-flex").removeClass("d-none");
 }
 
-function initMap() {
+// Expose globally so Google Maps callback=initMap can call it (script load order may run Maps before this file)
+window.initMap = function initMap() {
     if (
         typeof google === "undefined" ||
         !google.maps ||
