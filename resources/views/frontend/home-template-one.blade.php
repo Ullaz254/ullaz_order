@@ -712,7 +712,7 @@ $preference = $client_preference_detail ?? new class {
       </div>
       <div class="row">
          <div class="col-12 text-center mt-2">
-            <h4>{{__('There are no stores available in your area currently.')}}</h4>
+            <h4>{{ __('There are no stores available in your area currently.') }}</h4>
          </div>
       </div>
       @endif

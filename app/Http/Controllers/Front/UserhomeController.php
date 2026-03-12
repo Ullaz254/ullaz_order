@@ -1024,6 +1024,18 @@ class UserhomeController extends FrontController
             }
         }
         $vendor_ids = $this->getRandomVendorIdsForHomePage($preferences, $request->type, $this->additionalPreference['is_admin_vendor_rating'], $latitude, $longitude);
+        // Fallback: when no vendors found (e.g. coords outside service areas), retry with client default so demo/custom data can render
+        if (count($vendor_ids) === 0 && $preferences && ! empty($preferences->Default_latitude) && ! empty($preferences->Default_longitude)) {
+            $defaultLat = (float) $preferences->Default_latitude;
+            $defaultLng = (float) $preferences->Default_longitude;
+            $vendor_ids = $this->getRandomVendorIdsForHomePage($preferences, $request->type, $this->additionalPreference['is_admin_vendor_rating'], $defaultLat, $defaultLng);
+            if (count($vendor_ids) > 0) {
+                $latitude = $defaultLat;
+                $longitude = $defaultLng;
+                Session::put('latitude', $latitude);
+                Session::put('longitude', $longitude);
+            }
+        }
         try {
             $home_page_labels = Schema::hasTable('home_page_labels') ? HomePageLabel::with('translations')->get() : collect();
         } catch (\Exception $e) {

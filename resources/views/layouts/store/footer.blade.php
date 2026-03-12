@@ -293,24 +293,13 @@ if($showSubscriptionPlanPopUp == 1){
 
      is_service_product_price_from_dispatch_forOnDemand ="{{ $is_service_product_price_from_dispatch_forOnDemand  }}";
     @php
-        // Define URL variables BEFORE first use (local vs domain)
-        $appEnv = config('app.env', env('APP_ENV', 'production'));
-        $isLocal = ($appEnv === 'local' || $appEnv === 'development' || request()->getHost() === 'localhost' || request()->getHost() === '127.0.0.1');
-        if ($isLocal) {
-            $baseUrl = 'http://localhost:8000';
-            $cartProductsUrl = $baseUrl . '/cartProducts';
-            $configGetUrl = $baseUrl . '/getConfig';
-            $homePageDataUrl = $baseUrl . '/homePageData';
-            $homePageDataUrlNew = $baseUrl . '/homePageDataNew';
-            $homePageDataCategoryMenuUrl = $baseUrl . '/homePageDataCategoryMenu';
-        } else {
-            $baseUrl = config('app.url');
-            $cartProductsUrl = route('getCartProducts');
-            $configGetUrl = route('config.get');
-            $homePageDataUrl = route('homePageData');
-            $homePageDataUrlNew = route('homePageDataNew');
-            $homePageDataCategoryMenuUrl = route('homePageDataCategoryMenu');
-        }
+        // Use same origin as current request so API calls work on any port (e.g. 8000, 8001)
+        $baseUrl = rtrim(request()->getSchemeAndHttpHost(), '/');
+        $cartProductsUrl = $baseUrl . '/' . ltrim(route('getCartProducts', [], false), '/');
+        $configGetUrl = $baseUrl . '/' . ltrim(route('config.get', [], false), '/');
+        $homePageDataUrl = $baseUrl . '/' . ltrim(route('homePageData', [], false), '/');
+        $homePageDataUrlNew = $baseUrl . '/' . ltrim(route('homePageDataNew', [], false), '/');
+        $homePageDataCategoryMenuUrl = $baseUrl . '/' . ltrim(route('homePageDataCategoryMenu', [], false), '/');
     @endphp
     var autocomplete_url = "{{ route('autocomplete') }}";
     let stripe_publishable_key = '{{ $stripe_publishable_key }}';

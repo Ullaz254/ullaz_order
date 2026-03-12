@@ -109,6 +109,12 @@ If the homepage loads but stays white or shows only a spinner, and the Network t
     ```
     (Only if cab_booking_layouts already has rows; this adds or updates layout slugs.)
 
+5. **Use custom data to render UI (demo store + products):** If the homepage shows “There are no stores available in your area” and you want visible vendors/products for development or demo:
+    ```bash
+    php artisan db:seed --class=HomepageDemoDataSeeder
+    ```
+    This adds one **demo vendor** with a service area covering the default location, plus two **demo products**, so the vendors and product sections render. Safe to run multiple times: it only runs when no delivery vendors exist.
+
 ## HTTP 500 on homepage (This page isn't working)
 
 If the site shows **HTTP ERROR 500** or "This page isn't working", the app is throwing an exception. The exact error is written to the Laravel log.
