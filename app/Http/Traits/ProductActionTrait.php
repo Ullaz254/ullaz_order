@@ -33,7 +33,18 @@ trait ProductActionTrait{
             }else{
                 $vendors = $vendors->inRandomOrder();
             }
-            return $vendors->pluck('id')->toArray();
+            $ids = $vendors->pluck('id')->toArray();
+            // Fallback: if hyperlocal filter returned none (e.g. no service_areas or polygon), return all delivery vendors so demo/custom data can show
+            if (count($ids) === 0 && $preferences && ($preferences->is_hyperlocal == 1)) {
+                $fallback = Vendor::vendorOnline()->select('id')->where('status', 1)->where($type, 1);
+                if ($is_admin_vendor_rating == 1) {
+                    $fallback = $fallback->orderBy('admin_rating', 'DESC');
+                } else {
+                    $fallback = $fallback->inRandomOrder();
+                }
+                $ids = $fallback->pluck('id')->toArray();
+            }
+            return $ids;
         }
         catch (\Exception $e) {
             return [];

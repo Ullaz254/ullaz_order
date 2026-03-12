@@ -126,7 +126,7 @@ If the homepage loads but stays white or shows only a spinner, and the Network t
     ```bash
     php artisan db:seed --class=HomepageDemoDataSeeder
     ```
-    This adds one **demo vendor** with a service area covering the default location, plus two **demo products**, so the vendors and product sections render. Safe to run multiple times: it only runs when no delivery vendors exist.
+    This adds one **demo vendor** with a **worldwide service area** (any default or user location will see it), plus two **demo products**, so the vendors and product sections render. Safe to run multiple times: it only runs when no delivery vendors exist or when the existing vendor has no products.
 
 ## HTTP 500 on homepage (This page isn't working)
 

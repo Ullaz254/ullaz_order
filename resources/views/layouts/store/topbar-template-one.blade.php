@@ -20,6 +20,13 @@ $preference = $client_preference_detail;
 .alOneTemplate{position: fixed !important; background-color:#fff;width: 100%;top:0;z-index: 999 !important;}
 .top_bar{height:50px;}
 .logoArea_bar{height:164px;margin:5px 0;}
+/* Ensure header icons (cart, settings, account) are visible on light background */
+.top-header .header-dropdown i,
+.top-header .al_iconsMb i,
+.menu-right_.oneTemplateMobile .icon-nav i,
+.menu-right_.oneTemplateMobile .al_iconsMb i,
+.mobile-menu .al_iconsMb i { color: #333; }
+.top-header .header-dropdown a:not(:hover) { color: inherit; }
 @media(max-width:767px){.cardbanner {height:120px;}}
 </style>
 

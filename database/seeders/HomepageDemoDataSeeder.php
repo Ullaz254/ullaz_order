@@ -18,12 +18,12 @@ use Illuminate\Support\Facades\Schema;
  */
 class HomepageDemoDataSeeder extends Seeder
 {
-    /** Default location (Nairobi) - must be inside the service area polygon */
+    /** Default location (Nairobi) - used for vendor lat/lng only */
     private const DEFAULT_LAT = -1.2921;
     private const DEFAULT_LNG = 36.8219;
 
-    /** WKT polygon (lng lat) - rectangle containing DEFAULT_LAT, DEFAULT_LNG */
-    private const DEMO_POLYGON_WKT = 'POLYGON((36 -2, 38 -2, 38 0, 36 0, 36 -2))';
+    /** WKT polygon (lng lat) - worldwide so any Default_latitude/longitude is inside and demo vendor always shows */
+    private const DEMO_POLYGON_WKT = 'POLYGON((-179.99 -89.99, 179.99 -89.99, 179.99 89.99, -179.99 89.99, -179.99 -89.99))';
 
     public function run(): void
     {
@@ -121,7 +121,7 @@ class HomepageDemoDataSeeder extends Seeder
             return;
         }
 
-        $geoArray = '((36,-2),(38,-2),(38,0),(36,0),(36,-2))';
+        $geoArray = '((-179.99,-89.99),(179.99,-89.99),(179.99,89.99),(-179.99,89.99),(-179.99,-89.99))';
         $wkt = self::DEMO_POLYGON_WKT;
 
         if (Schema::hasColumn('service_areas', 'polygon')) {
