@@ -2,6 +2,21 @@
 
 use Illuminate\Support\Str;
 
+// Only add MySQL SSL options when SSL is enabled and CA path is set; respect DB_SSL_DISABLED and resolve relative paths
+$mysqlSslOptions = extension_loaded('pdo_mysql') ? (function () {
+    if (filter_var(env('DB_SSL_DISABLED', false), FILTER_VALIDATE_BOOLEAN)) {
+        return [];
+    }
+    $ca = env('MYSQL_ATTR_SSL_CA');
+    if (empty($ca)) {
+        return [];
+    }
+    if (!str_contains($ca, '/') && !str_contains($ca, '\\') && !preg_match('#^[A-Z]:#i', $ca)) {
+        $ca = base_path($ca);
+    }
+    return [PDO::MYSQL_ATTR_SSL_CA => $ca];
+})() : [];
+
 return [
 
     /*
@@ -58,9 +73,7 @@ return [
             'prefix_indexes' => true,
             'strict' => false,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => $mysqlSslOptions,
         ],
         'god' => [
             'driver' => 'mysql',
@@ -77,9 +90,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => $mysqlSslOptions,
         ],
         'DEV' => [
             'driver' => 'mysql',
@@ -101,9 +112,7 @@ return [
                 'use_single_transaction',
                 'timeout' => 60 * 5, // 5 minute timeout
             ], 
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => $mysqlSslOptions,
         ],
         'STAGING' => [
             'driver' => 'mysql',
@@ -125,9 +134,7 @@ return [
                 'use_single_transaction',
                 'timeout' => 60 * 5, // 5 minute timeout
             ],
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => $mysqlSslOptions,
         ],
         'PROD' => [
             'driver' => 'mysql',
@@ -149,9 +156,7 @@ return [
                 'use_single_transaction',
                 'timeout' => 60 * 5, // 5 minute timeout
             ],
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => $mysqlSslOptions,
         ],
         'mysql2' => [
             'driver' => 'mysql',
@@ -168,9 +173,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => $mysqlSslOptions,
         ],
 
         'mysql3' => [
@@ -188,9 +191,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => $mysqlSslOptions,
         ],
 
         'pgsql' => [
