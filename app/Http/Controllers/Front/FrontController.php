@@ -423,83 +423,119 @@ class FrontController extends Controller
     }
 
     public function getServiceAreaVendors(){
-        $client_preferences = ClientPreference::where('id', '>', 0)->first();
-        $latitude = Session::get('latitude');
-        $longitude = Session::get('longitude');
-        $vendorType = Session::get('vendorType');
-        if($vendorType=="car_rental"){
-            $vendorType = "rental";
-        }
-        $preferences = Session::has('preferences') ? Session::get('preferences') : $client_preferences;
-        $serviceAreaVendors = Vendor::vendorOnline()->select('id', 'show_slot');
-        $vendors = [];
-        if($vendorType){
-            $serviceAreaVendors = $serviceAreaVendors->where($vendorType, 1);
-        }
-        $hasPolygonColumn = Schema::hasColumn('service_areas', 'polygon');
-        if ( (isset($preferences->is_hyperlocal)) && ($preferences->is_hyperlocal == 1) && $hasPolygonColumn ){
+        try {
+            $client_preferences = ClientPreference::where('id', '>', 0)->first();
+            $latitude = Session::get('latitude');
+            $longitude = Session::get('longitude');
+            $vendorType = Session::get('vendorType');
+            if($vendorType=="car_rental"){
+                $vendorType = "rental";
+            }
+            $preferences = Session::has('preferences') ? Session::get('preferences') : $client_preferences;
+            $serviceAreaVendors = Vendor::vendorOnline()->select('id', 'show_slot');
+            $vendors = [];
+            if($vendorType){
+                $serviceAreaVendors = $serviceAreaVendors->where($vendorType, 1);
+            }
+            $hasPolygonColumn = false;
+            try {
+                $hasPolygonColumn = Schema::hasColumn('service_areas', 'polygon');
+            } catch (\Throwable $e) {
+                Log::warning('getServiceAreaVendors: schema check failed', ['message' => $e->getMessage()]);
+            }
+            if ( (isset($preferences->is_hyperlocal)) && ($preferences->is_hyperlocal == 1) && $hasPolygonColumn ){
 
-            if (!empty($latitude) && !empty($longitude)) {
-                $serviceAreaVendors = $serviceAreaVendors->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
-                    $query->select('vendor_id')
-                    ->whereRaw("ST_Contains(service_areas.polygon, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
-                });
+                if (!empty($latitude) && !empty($longitude)) {
+                    $serviceAreaVendors = $serviceAreaVendors->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
+                        $query->select('vendor_id')
+                        ->whereRaw("ST_Contains(service_areas.polygon, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
+                    });
 
 
-                if (isset($preferences->slots_with_service_area) && ($preferences->slots_with_service_area == 1)) {
-                    $slot_vendors = clone $serviceAreaVendors;
-                    $data = $slot_vendors->get();
-                    foreach ($data as $key => $value) {
-                        $serviceAreaVendors = $serviceAreaVendors->when(($value->show_slot == 0), function($query) use ($latitude, $longitude) {
-                            return $query->where(function($query1) use ($latitude, $longitude) {
-                                $query1->whereHas('slot.geos.serviceArea', function ($q) use ($latitude, $longitude) {
-                                    $q->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
-                                })
-                                ->orWhereHas('slotDate.geos.serviceArea', function ($q) use ($latitude, $longitude) {
-                                    $q->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
+                    if (isset($preferences->slots_with_service_area) && ($preferences->slots_with_service_area == 1)) {
+                        $slot_vendors = clone $serviceAreaVendors;
+                        $data = $slot_vendors->get();
+                        foreach ($data as $key => $value) {
+                            $serviceAreaVendors = $serviceAreaVendors->when(($value->show_slot == 0), function($query) use ($latitude, $longitude) {
+                                return $query->where(function($query1) use ($latitude, $longitude) {
+                                    $query1->whereHas('slot.geos.serviceArea', function ($q) use ($latitude, $longitude) {
+                                        $q->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
+                                    })
+                                    ->orWhereHas('slotDate.geos.serviceArea', function ($q) use ($latitude, $longitude) {
+                                        $q->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
+                                    });
                                 });
                             });
                         });
                     }
                 }
             }
-        }
-        $serviceAreaVendors = $serviceAreaVendors->where('status', 1)->get();
-        if($serviceAreaVendors->isNotEmpty()){
-            foreach($serviceAreaVendors as $value){
-                $vendors[] = $value->id;
+            $serviceAreaVendors = $serviceAreaVendors->where('status', 1)->get();
+            if($serviceAreaVendors->isNotEmpty()){
+                foreach($serviceAreaVendors as $value){
+                    $vendors[] = $value->id;
+                }
             }
+
+            Session::put('vendors', $vendors);
+
+            return $vendors;
+        } catch (\Throwable $e) {
+            Log::error('getServiceAreaVendors failed', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            $fallback = Vendor::vendorOnline()->where('status', 1);
+            $vendorType = Session::get('vendorType');
+            if ($vendorType === 'car_rental') {
+                $vendorType = 'rental';
+            }
+            if ($vendorType) {
+                $fallback = $fallback->where($vendorType, 1);
+            }
+            $vendors = $fallback->pluck('id')->toArray();
+            Session::put('vendors', $vendors);
+            return $vendors;
         }
-
-        Session::put('vendors', $vendors);
-
-        return $vendors;
     }
 
     public function getServiceAreaVendorsWithoutHyperlocal($latitude, $longitude){
-        $vendorType = Session::get('vendorType');
-        $preferences = Session::has('preferences') ? Session::get('preferences') : ClientPreference::where('id', '>', 0)->first();;
-        $serviceAreaVendors = Vendor::vendorOnline()->select('id', 'show_slot');
-        $vendors = [];
-        if($vendorType){
-            $serviceAreaVendors = $serviceAreaVendors->where($vendorType, 1);
-        }
-
-        if (!empty($latitude) && !empty($longitude) && Schema::hasColumn('service_areas', 'polygon')) {
-            $serviceAreaVendors = $serviceAreaVendors->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
-                $query->select('vendor_id')
-                ->whereRaw("ST_Contains(service_areas.polygon, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
-            });
-        }
-        $serviceAreaVendors = $serviceAreaVendors->where('status', 1)->get();
-
-
-        if($serviceAreaVendors->isNotEmpty()){
-            foreach($serviceAreaVendors as $value){
-                $vendors[] = $value->id;
+        try {
+            $vendorType = Session::get('vendorType');
+            $preferences = Session::has('preferences') ? Session::get('preferences') : ClientPreference::where('id', '>', 0)->first();;
+            $serviceAreaVendors = Vendor::vendorOnline()->select('id', 'show_slot');
+            $vendors = [];
+            if($vendorType){
+                $serviceAreaVendors = $serviceAreaVendors->where($vendorType, 1);
             }
+
+            $hasPolygonColumn = false;
+            try {
+                $hasPolygonColumn = Schema::hasColumn('service_areas', 'polygon');
+            } catch (\Throwable $e) {
+                Log::warning('getServiceAreaVendorsWithoutHyperlocal: schema check failed', ['message' => $e->getMessage()]);
+            }
+            if (!empty($latitude) && !empty($longitude) && $hasPolygonColumn) {
+                $serviceAreaVendors = $serviceAreaVendors->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
+                    $query->select('vendor_id')
+                    ->whereRaw("ST_Contains(service_areas.polygon, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
+                });
+            }
+            $serviceAreaVendors = $serviceAreaVendors->where('status', 1)->get();
+
+
+            if($serviceAreaVendors->isNotEmpty()){
+                foreach($serviceAreaVendors as $value){
+                    $vendors[] = $value->id;
+                }
+            }
+            return $vendors;
+        } catch (\Throwable $e) {
+            Log::error('getServiceAreaVendorsWithoutHyperlocal failed', ['message' => $e->getMessage()]);
+            $fallback = Vendor::vendorOnline()->where('status', 1);
+            $vendorType = Session::get('vendorType');
+            if ($vendorType) {
+                $fallback = $fallback->where($vendorType, 1);
+            }
+            return $fallback->pluck('id')->toArray();
         }
-        return $vendors;
     }
 
     public function loadDefaultImage(){
