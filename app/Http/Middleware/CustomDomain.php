@@ -25,19 +25,34 @@ class CustomDomain
    */
   public function handle($request, Closure $next)
   {
-    $path = $request->path();
     $domain = $request->getHost();
     $domain = str_replace(array('http://', '.test.com/login'), '', $domain);
+
+    // Main domain must use .env default DB only — never switch to a client DB (avoids "Unknown database royo_royoorders" etc.)
+    $mainDomain = env('Main_Domain', '');
+    if ($domain === $mainDomain || $domain === 'drivarr.com' || $domain === 'localhost' || $domain === '127.0.0.1' || strpos($domain, 'localhost') !== false) {
+      return $next($request);
+    }
+
     $subDomain = explode('.', $domain);
-    $existRedis = Redis::get($domain);
+    $existRedis = null;
+    try {
+      $existRedis = Redis::get($domain);
+    } catch (\Throwable $e) {
+      // Redis down: continue with DB lookup below
+    }
     if (!$existRedis) {
       $client = Client::select('name', 'email', 'phone_number', 'is_deleted', 'is_blocked', 'logo', 'company_name', 'company_address', 'status', 'code', 'database_name', 'database_host', 'database_port', 'database_username', 'database_password', 'custom_domain', 'sub_domain')
         ->where(function ($q) use ($domain, $subDomain) {
           $q->where('custom_domain', $domain)
             ->orWhere('sub_domain', $subDomain[0]);
         })->firstOrFail();
-      Redis::set($domain, json_encode($client->toArray()), 'EX', 36000);
-      $existRedis = Redis::get($domain);
+      try {
+        Redis::set($domain, json_encode($client->toArray()), 'EX', 36000);
+        $existRedis = Redis::get($domain);
+      } catch (\Throwable $e) {
+        $existRedis = json_encode($client->toArray());
+      }
     }
     $callback = '';
     $redisData = json_decode($existRedis);

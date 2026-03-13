@@ -141,8 +141,18 @@ class AppServiceProvider extends ServiceProvider
         } else {
             $domain = $request->getHost();
             $domain = str_replace(array('http://', '.test.com/login'), '', $domain);
+            $mainDomain = env('Main_Domain', '');
+            $isMainDomain = ($domain === $mainDomain || $domain === 'drivarr.com' || $domain === 'localhost' || $domain === '127.0.0.1' || strpos($domain, 'localhost') !== false);
+            if ($isMainDomain) {
+                return;
+            }
             $subDomain = explode('.', $domain);
-            $existRedis = Redis::get($domain);
+            $existRedis = null;
+            try {
+                $existRedis = Redis::get($domain);
+            } catch (\Throwable $e) {
+                // Redis down: continue with DB lookup
+            }
 
             if ($domain != env('Main_Domain')) {
 
@@ -156,8 +166,12 @@ class AppServiceProvider extends ServiceProvider
 
 
                     if ($client) {
-                        Redis::set($domain, json_encode($client->toArray()), 'EX', 36000);
-                        $existRedis = Redis::get($domain);
+                        try {
+                            Redis::set($domain, json_encode($client->toArray()), 'EX', 36000);
+                            $existRedis = Redis::get($domain);
+                        } catch (\Throwable $e) {
+                            $existRedis = json_encode($client->toArray());
+                        }
                     }
                 }
 
