@@ -524,10 +524,14 @@ class UserhomeController extends FrontController
             } else {
                 $this->loc_key = $this->loc_key.':'.$vendor_type.':'.$client_preferences->client_code;
                 $cacheKey = $this->loc_key;
-                $cachedResult = Redis::get($this->loc_key);
-                //$cachedResult['cacheKey'] = $cacheKey??'';
-                if ($cachedResult) {
-                    $find_key['data'] = json_decode($cachedResult);
+                try {
+                    $cachedResult = Redis::get($this->loc_key);
+                    if ($cachedResult) {
+                        $find_key['data'] = json_decode($cachedResult);
+                    }
+                } catch (\Throwable $redisEx) {
+                    \Illuminate\Support\Facades\Log::warning('UserhomeController::index Redis get failed', ['message' => $redisEx->getMessage()]);
+                    $cachedResult = null;
                 }
             }
 
@@ -664,10 +668,13 @@ class UserhomeController extends FrontController
                 $html = view('frontend.'.$view_page)->with($homeData)->render();
                 if($client_preferences->is_hyperlocal == 1) {
                     $this->storeLocations($locations,$html,$this->loc_key);
-                }else{
-                    Redis::set($this->loc_key, json_encode($html));
-
-                    Redis::expire($this->loc_key, $this->cache_minutes);
+                } else {
+                    try {
+                        Redis::set($this->loc_key, json_encode($html));
+                        Redis::expire($this->loc_key, $this->cache_minutes);
+                    } catch (\Throwable $redisEx) {
+                        \Illuminate\Support\Facades\Log::warning('UserhomeController::index Redis set failed', ['message' => $redisEx->getMessage()]);
+                    }
                 }
 
             // Your code to be measured goes here
@@ -680,9 +687,42 @@ class UserhomeController extends FrontController
                 return view('frontend.'.$view_page)->with($homeData);
             }
 
-        } catch (Exception $e) {
-            pr($e->getCode());
-            die;
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('UserhomeController::index failed', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            try {
+                $client_preferences = $this->client_preferences ?? ClientPreference::where('id', '>', 0)->first();
+                $navCategories = Session::get('navCategories') ?? collect();
+                $latitude = Session::get('latitude') ?? ($client_preferences ? $client_preferences->Default_latitude : null);
+                $longitude = Session::get('longitude') ?? ($client_preferences ? $client_preferences->Default_longitude : null);
+                $homeData = [
+                    'categories' => [],
+                    'home' => [],
+                    'count' => 0,
+                    'for_no_product_found_html' => collect(),
+                    'homePagePickupLabels' => collect(),
+                    'homePageLabels' => collect(),
+                    'clientPreferences' => $client_preferences,
+                    'banners' => collect(),
+                    'mobile_banners' => collect(),
+                    'navCategories' => $navCategories,
+                    'selectedAddress' => null,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'enable_layout' => [],
+                    'homePageData' => [],
+                    'is_service_product_price_from_dispatch_forOnDemand' => 0,
+                    'vendor_type' => Session::get('vendorType') ?? 'delivery',
+                ];
+                return view('frontend.home-template-test-one')->with($homeData);
+            } catch (\Throwable $e2) {
+                \Illuminate\Support\Facades\Log::error('UserhomeController::index fallback view failed', ['message' => $e2->getMessage()]);
+                return response()->view('welcome', [], 200);
+            }
         }
     }
     /**
@@ -1244,9 +1284,13 @@ class UserhomeController extends FrontController
             $for_no_product_found_html = CabBookingLayout::with('translations')->where('is_active', 1)->where('for_no_product_found_html',1)->orderBy('order_by')->get();
 
             return view('frontend.home-template-one')->with(['home' => $home, 'count' => $count, 'for_no_product_found_html' => $for_no_product_found_html,'homePagePickupLabels' => $home_page_pickup_labels, 'homePageLabels' => $home_page_labels, 'clientPreferences' => $clientPreferences, 'banners' => $banners, 'navCategories' => $navCategories, 'selectedAddress' => $selectedAddress, 'latitude' => $latitude, 'longitude' => $longitude]);
-        } catch (Exception $e) {
-            pr($e->getCode());
-            die;
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('UserhomeController home page failed', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            return redirect()->route('userhome')->with('error', __('Something went wrong. Please try again.'));
         }
     }
 
