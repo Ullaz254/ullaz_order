@@ -440,7 +440,7 @@ class FrontController extends Controller
             if (!empty($latitude) && !empty($longitude)) {
                 $serviceAreaVendors = $serviceAreaVendors->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
                     $query->select('vendor_id')
-                    ->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
+                    ->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
                 });
 
 
@@ -451,10 +451,10 @@ class FrontController extends Controller
                         $serviceAreaVendors = $serviceAreaVendors->when(($value->show_slot == 0), function($query) use ($latitude, $longitude) {
                             return $query->where(function($query1) use ($latitude, $longitude) {
                                 $query1->whereHas('slot.geos.serviceArea', function ($q) use ($latitude, $longitude) {
-                                    $q->select('vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
+                                    $q->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
                                 })
                                 ->orWhereHas('slotDate.geos.serviceArea', function ($q) use ($latitude, $longitude) {
-                                    $q->select('vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
+                                    $q->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))")->where('is_active_for_vendor_slot', 1);
                                 });
                             });
                         });
@@ -486,7 +486,7 @@ class FrontController extends Controller
         if (!empty($latitude) && !empty($longitude)) {
             $serviceAreaVendors = $serviceAreaVendors->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
                 $query->select('vendor_id')
-                ->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
+                ->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
             });
         }
         $serviceAreaVendors = $serviceAreaVendors->where('status', 1)->get();

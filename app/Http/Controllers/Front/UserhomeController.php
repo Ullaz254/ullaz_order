@@ -1318,7 +1318,7 @@ class UserhomeController extends FrontController
         if(isset($preferences->is_service_area_for_banners) && ($preferences->is_service_area_for_banners == 1) && ($preferences->is_hyperlocal == 1)){
             if(!empty($latitude) && !empty($longitude)){
                 $banners = $banners->whereHas('geos.serviceArea', function($query) use ($latitude, $longitude) {
-                    $query->select('id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
+                    $query->select('id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
                 });
             }
         }
@@ -1336,7 +1336,7 @@ class UserhomeController extends FrontController
         if(isset($preferences->is_service_area_for_banners) && ($preferences->is_service_area_for_banners == 1) && ($preferences->is_hyperlocal == 1)){
             if(!empty($latitude) && !empty($longitude)){
                 $mobile_banners = $mobile_banners->whereHas('geos.serviceArea', function($query) use ($latitude, $longitude) {
-                    $query->select('id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
+                    $query->select('id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
                 });
             }
         }

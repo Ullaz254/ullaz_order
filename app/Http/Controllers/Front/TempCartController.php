@@ -156,7 +156,7 @@ class TempCartController extends FrontController
                             if (!empty($latitude) && !empty($longitude)) {
                                 $serviceArea = $vendorData->vendor->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
                                     $query->select('vendor_id')
-                                    ->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
+                                    ->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
                                 })->where('id', $vendorData->vendor_id)->get();
                             }
                         }
@@ -1690,7 +1690,7 @@ class TempCartController extends FrontController
                             if (!empty($latitude) && !empty($longitude)) {
                                 $serviceArea = $vendorData->vendor->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
                                     $query->select('vendor_id')
-                                    ->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
+                                    ->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $latitude . " " . $longitude . ")'))");
                                 })->where('id', $vendorData->vendor_id)->get();
                             }
                         }

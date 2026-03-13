@@ -66,7 +66,7 @@ class YachtController extends Controller
         })->where(function ($q) use ($request, $pickup_lat, $pickup_lng) {
             if (isset($pickup_lat) && isset($pickup_lng)) {
                 $q->whereHas('vendor.serviceArea', function ($q) use ($pickup_lat,$pickup_lng) {
-                    $q->select('id', 'vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(" . $pickup_lat . " " . $pickup_lng . ")'))");
+                    $q->select('id', 'vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(" . $pickup_lat . " " . $pickup_lng . ")'))");
                 });
             }
 

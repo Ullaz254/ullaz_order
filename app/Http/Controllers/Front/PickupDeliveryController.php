@@ -144,7 +144,7 @@ class PickupDeliveryController extends FrontController{
 
             if (!empty($pickup_latitude) && !empty($pickup_longitude) && !empty($dropoff_latitude) && !empty($dropoff_longitude)) {
                 $vendors = $vendors->whereHas('serviceArea', function ($query) use ($pickup_latitude, $pickup_longitude,$dropoff_latitude,$dropoff_longitude) {
-                    $query->select('vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(".$pickup_latitude." ".$pickup_longitude.")'))")->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(".$dropoff_latitude." ".$dropoff_longitude.")'))");
+                    $query->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(".$pickup_latitude." ".$pickup_longitude.")'))")->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(".$dropoff_latitude." ".$dropoff_longitude.")'))");
                 });
             }
         }

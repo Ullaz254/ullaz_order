@@ -240,7 +240,7 @@ class P2PController extends BaseController
 
                 if (!empty($pickup_latitude) && !empty($pickup_longitude)) {
                     $vendorData = $vendorData->whereHas('serviceArea', function ($query) use ($pickup_latitude, $pickup_longitude) {
-                        $query->select('vendor_id')->whereRaw("ST_Contains(POLYGON, ST_GEOMFROMTEXT('POINT(".$pickup_latitude." ".$pickup_longitude.")'))");
+                        $query->select('vendor_id')->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(".$pickup_latitude." ".$pickup_longitude.")'))");
                     });
                 }
             }
