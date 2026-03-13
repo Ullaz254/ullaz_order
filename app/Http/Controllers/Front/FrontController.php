@@ -22,6 +22,7 @@ use App\Models\{Client, Category, Product,Type, SmsTemplate, ClientPreference,Em
 use App\Models\PermissionsOld;
 use App\Models\UserPermissions;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 class FrontController extends Controller
 {
@@ -435,12 +436,13 @@ class FrontController extends Controller
         if($vendorType){
             $serviceAreaVendors = $serviceAreaVendors->where($vendorType, 1);
         }
-        if( (isset($preferences->is_hyperlocal)) && ($preferences->is_hyperlocal == 1) ){
+        $hasPolygonColumn = Schema::hasColumn('service_areas', 'polygon');
+        if ( (isset($preferences->is_hyperlocal)) && ($preferences->is_hyperlocal == 1) && $hasPolygonColumn ){
 
             if (!empty($latitude) && !empty($longitude)) {
                 $serviceAreaVendors = $serviceAreaVendors->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
                     $query->select('vendor_id')
-                    ->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
+                    ->whereRaw("ST_Contains(service_areas.polygon, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
                 });
 
 
@@ -483,10 +485,10 @@ class FrontController extends Controller
             $serviceAreaVendors = $serviceAreaVendors->where($vendorType, 1);
         }
 
-        if (!empty($latitude) && !empty($longitude)) {
+        if (!empty($latitude) && !empty($longitude) && Schema::hasColumn('service_areas', 'polygon')) {
             $serviceAreaVendors = $serviceAreaVendors->whereHas('serviceArea', function ($query) use ($latitude, $longitude) {
                 $query->select('vendor_id')
-                ->whereRaw("ST_Contains(`polygon`, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
+                ->whereRaw("ST_Contains(service_areas.polygon, ST_GEOMFROMTEXT('POINT(".$latitude." ".$longitude.")'))");
             });
         }
         $serviceAreaVendors = $serviceAreaVendors->where('status', 1)->get();
