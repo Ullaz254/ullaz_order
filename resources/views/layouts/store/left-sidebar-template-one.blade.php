@@ -33,117 +33,79 @@ $q->where(['is_published' => 1, 'language_id' => session()->get('customerLanguag
 ->orderBy('order_by', 'ASC')
 ->get();
 @endphp
-<article class="site-header @if ($client_preference_detail->business_type == 'taxi') taxi-header @endif">
+<article class="site-header @if (($client_preference_detail->business_type ?? '') == 'taxi' || ($set_common_business_type ?? '') == 'taxi') taxi-header @endif">
     @include('layouts.store/topbar-template-one')
 
-    @if($client_preference_detail->business_type == 'taxi')
-    <!-- Start Cab Booking Header From Here -->
-    <div class="cab-booking-header" style="background: var(--top-header-color)">
+    @if(($client_preference_detail->business_type ?? '') == 'taxi' || ($set_common_business_type ?? '') == 'taxi')
+    <!-- Start Cab Booking Header (Drivarr style: logo | pill search | account + hamburger) -->
+    <div class="cab-booking-header cab-header-drivarr" style="background: var(--top-header-color)">
         <div class="container-fluid">
             <div class="row align-items-center">
-                <div class="col-sm-3 col-md-2">
-                    <a class="navbar-brand mr-0"  href="{{ route('userHome') }}"><img id="theme-logo" class="logo-image" style="height:60px" alt="" src="{{ $urlImg }}"></a>
+                <div class="col-4 col-md-2">
+                    <a class="navbar-brand mr-0" href="{{ route('userHome') }}"><img id="theme-logo" class="logo-image" style="height:60px" alt="Drivarr" src="{{ $urlImg }}"></a>
                 </div>
-                <div class="col-sm-9 col-md-10 top-header bg-transparent">
-                    <ul class="header-dropdown d-flex align-items-center justify-content-md-end justify-content-center">
-                        @if ($client_preference_detail->header_quick_link == 1)
-                        <li class="onhover-dropdown quick-links quick-links">
-                            <span class="quick-links ml-1 align-middle">{{ __('Quick Links') }}</span>
-                            <ul class="onhover-show-div">
-
-
-                                @foreach ($pages as $page)
-                                @if (isset($page->primary->type_of_form) && $page->primary->type_of_form == 2)
-                                @if (isset($last_mile_common_set) && $last_mile_common_set != false)
-                                <li>
-                                    <a href="{{ route('extrapage', ['slug' => $page->slug]) }}">
-                                        @if (isset($page->translations) && $page->translations->first()->title != null)
-                                        {{ __($page->translations->first()->title) ?? '' }}
-                                        @else
-                                        {{ __($page->primary->title) ?? '' }}
-                                        @endif
-                                    </a>
-                                </li>
-                                @endif
-                                @else
-                                <li>
-                                    <a href="{{ route('extrapage', ['slug' => $page->slug]) }}" target="_blank">
-                                        @if (isset($page->translations) && $page->translations->first()->title != null)
-                                        {{ __($page->translations->first()->title) ?? '' }}
-                                        @else
-                                        {{ __($page->primary->title) ?? '' }}
-                                        @endif
-                                    </a>
-                                </li>
-                                @endif
-                                @endforeach
-                            </ul>
-                        </li>
-                        @endif
-                        <li class="onhover-dropdown change-language">
-                            <a href="javascript:void(0)">{{ session()->get('locale') }}
-                                <span class="icon-ic_lang align-middle"></span>
-                                <span class="language ml-1 align-middle">{{ __('language') }}</span>
-                            </a>
-                            <ul class="onhover-show-div">
-                                @foreach ($languageList as $key => $listl)
-                                <li
-                                    class="{{ session()->get('locale') == $listl->language->sort_code ? 'active' : '' }}">
-                                    <a href="javascript:void(0)" class="customerLang"
-                                        langId="{{ $listl->language_id }}">{{ $listl->language->name }}</a>
-                                </li>
-                                @endforeach
-                            </ul>
-                        </li>
-                        <li class="onhover-dropdown change-currency">
-                            <a href="javascript:void(0)">{{ session()->get('iso_code') }}
-                                <span class="icon-ic_currency align-middle"></span>
-                                <span class="currency ml-1 align-middle">{{ __('currency') }}</span>
-                            </a>
-                            <ul class="onhover-show-div">
-                                @foreach ($currencyList as $key => $listc)
-                                <li
-                                    class="{{ session()->get('iso_code') == $listc->currency->iso_code ? 'active' : '' }}">
-                                    <a href="javascript:void(0)" currId="{{ $listc->currency_id }}" class="customerCurr"
-                                        currSymbol="{{ $listc->currency->symbol }}">
-                                        {{ $listc->currency->iso_code }}
-                                    </a>
-                                </li>
-                                @endforeach
-                            </ul>
-                        </li>
-                        @if (Auth::guest())
-                        <li class="onhover-dropdown mobile-account d-block">
-                            <i class="fa fa-user mr-1" aria-hidden="true"></i>{{ __('Account') }}
-                            <ul class="onhover-show-div">
-                                <li>
-                                    <a href="{{ route('customer.login') }}" data-lng="en">{{ __('Login') }}</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('customer.register') }}" data-lng="es">{{ __('Register') }}</a>
-                                </li>
-                            </ul>
-                        </li>
-                        @else
-                        <li class="onhover-dropdown mobile-account d-block">
-                            <i class="fa fa-user mr-1" aria-hidden="true"></i>{{ __('Account') }}
-                            <ul class="onhover-show-div">
-                                @if (Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
-                                <li>
-                                    <a href="{{ route('client.dashboard') }}"
-                                        data-lng="en">{{getNomenclatureName('Control Panel', true)}}</a>
-                                </li>
-                                @endif
-                                <li>
-                                    <a href="{{ route('user.profile') }}" data-lng="en">{{ __('Profile') }}</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('user.logout') }}" data-lng="es">{{ __('Logout') }}</a>
-                                </li>
-                            </ul>
-                        </li>
-                        @endif
-                    </ul>
+                <div class="col-4 col-md-7 d-flex justify-content-center">
+                    <div class="cab-header-pill d-flex align-items-center rounded-pill bg-white shadow-sm">
+                        <a href="#edit-address" data-toggle="modal" class="cab-pill-location d-flex align-items-center text-dark text-decoration-none">
+                            <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-1 flex-shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.848633 6.15122C0.848633 2.7594 3.60803 0 6.99985 0C10.3917 0 13.1511 2.7594 13.1511 6.15122C13.1511 8.18227 12.1614 9.98621 10.6392 11.107L7.46151 15.7563C7.3573 15.9088 7.18455 16 6.99985 16C6.81516 16 6.64237 15.9088 6.5382 15.7563L3.36047 11.107C1.8383 9.98621 0.848633 8.18227 0.848633 6.15122ZM6.99981 10.4225C7.23979 10.4225 7.47461 10.4072 7.70177 10.3806C9.73302 10.0446 11.2871 8.27613 11.287 6.15122C11.287 3.78725 9.36375 1.86402 6.99977 1.86402C4.6358 1.86402 2.71257 3.78725 2.71257 6.15122C2.71257 8.27613 4.26665 10.0446 6.29786 10.3806C6.52498 10.4072 6.75984 10.4225 6.99981 10.4225Z" fill="currentColor"/></svg>
+                            <span class="cab-location-text text-truncate" style="max-width:120px" data-placement="top" title="{{ session('selectedAddress') ?? ($client_preference_detail->Default_location_name ?? 'Kenya') }}">{{ session('selectedAddress') ?? ($client_preference_detail->Default_location_name ?? __('Kenya')) }}</span>
+                            <i class="fa fa-chevron-down ml-1 small"></i>
+                        </a>
+                        <span class="cab-pill-divider mx-2" style="width:1px;height:20px;background:#ddd"></span>
+                        <a href="{{ route('userHome') }}#search" class="cab-pill-search d-flex align-items-center text-dark text-decoration-none flex-grow-1">
+                            <i class="fa fa-search mr-2 text-muted"></i>
+                            @php $searchPlaceholder = getNomenclatureName('Search', true); $searchPlaceholder = ($searchPlaceholder === 'Search product, vendor, item') ? __('Search product, vendor, item') : $searchPlaceholder; @endphp
+                            <span class="text-muted">{{ $searchPlaceholder }}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-4 col-md-3 d-flex align-items-center justify-content-end">
+                    <a href="{{ Auth::check() ? route('user.profile') : route('customer.login') }}" class="btn btn-link text-dark p-2 mr-1" title="{{ __('Account') }}" aria-label="{{ __('Account') }}">
+                        <i class="fa fa-user-o fa-lg" aria-hidden="true"></i>
+                    </a>
+                    <div class="dropdown onhover-dropdown">
+                        <button type="button" class="btn btn-link text-dark p-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ __('Menu') }}" aria-label="{{ __('Menu') }}">
+                            <i class="fa fa-bars fa-lg" aria-hidden="true"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right cab-header-dropdown">
+                            @if ($client_preference_detail->header_quick_link == 1)
+                            <li class="dropdown-header">{{ __('Quick Links') }}</li>
+                            @foreach ($pages as $page)
+                            @if (isset($page->primary->type_of_form) && $page->primary->type_of_form == 2)
+                            @if (isset($last_mile_common_set) && $last_mile_common_set != false)
+                            <li><a class="dropdown-item" href="{{ route('extrapage', ['slug' => $page->slug]) }}">{{ $page->translations->first()->title ?? $page->primary->title ?? '' }}</a></li>
+                            @endif
+                            @else
+                            <li><a class="dropdown-item" href="{{ route('extrapage', ['slug' => $page->slug]) }}" target="_blank">{{ $page->translations->first()->title ?? $page->primary->title ?? '' }}</a></li>
+                            @endif
+                            @endforeach
+                            @endif
+                            @if(count($languageList) > 1)
+                            <li class="dropdown-divider"></li>
+                            <li class="dropdown-header">{{ __('Language') }}</li>
+                            @foreach ($languageList as $listl)
+                            <li><a href="javascript:void(0)" class="dropdown-item customerLang" langId="{{ $listl->language_id }}">{{ $listl->language->name }}</a></li>
+                            @endforeach
+                            @endif
+                            @if(count($currencyList) > 1)
+                            <li class="dropdown-header">{{ __('Currency') }}</li>
+                            @foreach ($currencyList as $listc)
+                            <li><a href="javascript:void(0)" class="dropdown-item customerCurr" currId="{{ $listc->currency_id }}" currSymbol="{{ $listc->currency->symbol }}">{{ $listc->currency->iso_code }}</a></li>
+                            @endforeach
+                            @endif
+                            <li class="dropdown-divider"></li>
+                            @if (Auth::guest())
+                            <li><a class="dropdown-item" href="{{ route('customer.login') }}">{{ __('Login') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('customer.register') }}">{{ __('Register') }}</a></li>
+                            @else
+                            @if (Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
+                            <li><a class="dropdown-item" href="{{ route('client.dashboard') }}">{{ getNomenclatureName('Control Panel', true) }}</a></li>
+                            @endif
+                            <li><a class="dropdown-item" href="{{ route('user.profile') }}">{{ __('Profile') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('user.logout') }}">{{ __('Logout') }}</a></li>
+                            @endif
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

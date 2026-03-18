@@ -1356,7 +1356,7 @@ class CartController extends BaseController
                     }
                 }
                 $vendorData->is_promo_code_available = $is_promo_code_available;
-                $slotsDate = findSlot('',$vendorData->vendor->id,$type,'api');
+                $slotsDate = findSlot($vendorData->vendor->id,'',$type,'api');
                 $vendorData->delaySlot = $slotsDate;
                 $totalDeliveryCharges+=$deliveryCharges_real;
 
@@ -1485,11 +1485,11 @@ class CartController extends BaseController
             $vendorId = $cartData[0]->vendor_id;
             //type must be a : delivery , takeaway,dine_in
             $duration = Vendor::where('id',$vendorId)->select('slot_minutes','closed_store_order_scheduled')->first();
-            $slotsDate = findSlot('',$vendorId,$type,'api');
-            $slots = showSlot($slotsDate,$vendorId,$type,$duration->slot_minutes, 1);
+            $slotsDate = findSlot($vendorId,'',$type,'api');
+            $slots = showSlot($vendorId, $slotsDate,$type,$duration->slot_minutes, 1);
             $cart->slots = $slots;
             if($preferences->business_type == 'laundry'){
-                $dropoff_slots = showSlot($slotsDate,$vendorId,$type,$duration->slot_minutes, 2);
+                $dropoff_slots = showSlot($vendorId, $slotsDate,$type,$duration->slot_minutes, 2);
                 $cart->dropoff_slots = $dropoff_slots;
             }else{
                 $cart->dropoff_slots = [];
@@ -1729,7 +1729,7 @@ class CartController extends BaseController
         //type must be a : delivery , takeaway,dine_in
         $duration = Vendor::where('id',$vendorId)->select('slot_minutes')->first();
        // $duration = $duration->slot_minutes??'';
-        $slots = showSlot($request->date,$vendorId,$delivery,$duration->slot_minutes, 1, 'pickup'); // Added 1 for pickup
+        $slots = showSlot($vendorId, $request->date,$delivery,$duration->slot_minutes, 1, 'pickup'); // Added 1 for pickup
         if(count($slots)<=0){
             $slot = [];
         }else{
@@ -1750,7 +1750,7 @@ class CartController extends BaseController
         $vendorId = $request->vendor_id??0;
         $delivery = $request->delivery??'delivery';
         $duration = Vendor::where('id',$vendorId)->select('slot_minutes')->first();
-        $slots = showSlot($request->date,$vendorId,$delivery,$duration->slot_minutes, 2, 'dropoff');
+        $slots = showSlot($vendorId, $request->date,$delivery,$duration->slot_minutes, 2, 'dropoff');
         if(count($slots)<=0){
             $slot = [];
         }else{

@@ -31,6 +31,22 @@ class CustomDomain
     // Main domain must use .env default DB only — never switch to a client DB (avoids "Unknown database royo_royoorders" etc.)
     $mainDomain = env('Main_Domain', '');
     if ($domain === $mainDomain || $domain === 'drivarr.com' || $domain === 'localhost' || $domain === '127.0.0.1' || strpos($domain, 'localhost') !== false) {
+      // Set clientdata and preferences for main domain so store views (e.g. footer) have them
+      if (!Session::has('clientdata') || !Session::has('preferences')) {
+        try {
+          $cl = Client::first();
+          $clientPreference = ClientPreference::first();
+          if ($cl) {
+            $cl->logo_image_url = (is_array($cl->logo ?? null) && isset($cl->logo['original'])) ? $cl->logo['original'] : '';
+            Session::put('clientdata', $cl);
+          }
+          if ($clientPreference) {
+            Session::put('preferences', $clientPreference);
+          }
+        } catch (\Throwable $e) {
+          // DB/table missing: leave session unset; views use optional()
+        }
+      }
       return $next($request);
     }
 

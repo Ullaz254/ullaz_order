@@ -446,7 +446,7 @@ class UserhomeController extends FrontController
 
     //         $is_service_product_price_from_dispatch_forOnDemand = 0;
 
-    //         $getOnDemandPricingRule = getOnDemandPricingRule($vendor_type, Session::get('onDemandPricingSelected'),$additionalPreference);
+    //         $getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, $vendor_type, Session::get('onDemandPricingSelected'));
 
     //         $is_service_product_price_from_dispatch_forOnDemand =$getOnDemandPricingRule['is_price_from_freelancer'];
     //         // if(($additionalPreference['is_service_product_price_from_dispatch'] == 1) && ( Session::get('vendorType') == 'on_demand')){
@@ -468,6 +468,14 @@ class UserhomeController extends FrontController
         try {
 
             $startTime = microtime(true); // Start time in seconds with microseconds
+            $client_preferences = $this->client_preferences;
+
+            // Blocking: home page requires at least one client_preferences row (and one client row)
+            if (!$client_preferences) {
+                \Illuminate\Support\Facades\Log::warning('UserhomeController::index missing client_preferences. Add one row to clients (id=1) and one to client_preferences (id=1, client_code matching clients.code).');
+                abort(503, 'Setup required: Please add a client and client preferences in the database. See docs/MINIMAL-SEED-DATA.md.');
+            }
+
             $getAdditionalPreference = getAdditionalPreference(['is_rental_weekly_monthly_price']);
             $client = Client::first();
             $home = array();
@@ -475,14 +483,13 @@ class UserhomeController extends FrontController
             if ($request->has('ref')) {
                 session(['referrer' => $request->query('ref')]);
             }
-            $additionalPreference = getAdditionalPreference(['is_token_currency_enable', 'token_currency','is_long_term_service','is_admin_vendor_rating', 'is_service_product_price_from_dispatch','is_service_price_selection']);
+            $additionalPreference = getAdditionalPreference(['is_token_currency_enable', 'token_currency','is_long_term_service','is_admin_vendor_rating','is_service_product_price_from_dispatch','is_service_price_selection']);
             $latitude = Session::get('latitude') ?? null;
             $longitude = Session::get('longitude') ?? null;
             $curId = Session::get('customerCurrency');
             $langId = Session::get('customerLanguage');
             $client_config = Session::get('client_config');
             $selectedAddress = Session::get('selectedAddress');
-            $client_preferences = $this->client_preferences;
             $_REQUEST['request_from'] = 1;
 
             $navCategories = $this->categoryNav($langId);
@@ -645,7 +652,7 @@ class UserhomeController extends FrontController
 
                 $is_service_product_price_from_dispatch_forOnDemand = 0;
 
-                $getOnDemandPricingRule = getOnDemandPricingRule($vendor_type, Session::get('onDemandPricingSelected'),$additionalPreference);
+                $getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, $vendor_type, Session::get('onDemandPricingSelected'));
 
                 $is_service_product_price_from_dispatch_forOnDemand =$getOnDemandPricingRule['is_price_from_freelancer'];
                 // if(($additionalPreference['is_service_product_price_from_dispatch'] == 1) && ( Session::get('vendorType') == 'on_demand')){

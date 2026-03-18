@@ -1,5 +1,5 @@
 @php
-$checkSlot = findSlot('', $vendor->id, '');
+$checkSlot = findSlot($vendor->id, '', '');
 @endphp
 @extends('layouts.store', ['title' => $vendor->name])
 @section('css')

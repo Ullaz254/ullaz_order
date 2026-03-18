@@ -1,5 +1,5 @@
 @php
-$checkSlot = findSlot('', $vendor->id, '');
+$checkSlot = findSlot($vendor->id, '', '');
 @endphp
 @extends('layouts.store', ['title' => $vendor->name])
 @section('css')
@@ -36,7 +36,7 @@ span.alPriceValue, span.alPriceValue i {
 $add_to_cart =  route('addToCart') ;
 $is_service_product_price_from_dispatch_forOnDemand = 0;
 $additionalPreference = getAdditionalPreference(['is_service_product_price_from_dispatch','is_service_price_selection','is_enable_allergic_items']);
-$getOnDemandPricingRule = getOnDemandPricingRule(Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''),$additionalPreference);
+$getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''));
 $category_type_idForNotShowshPlusMinus = ['12'];
 if($getOnDemandPricingRule['is_price_from_freelancer'] ==1 ){
     $is_service_product_price_from_dispatch_forOnDemand =1;

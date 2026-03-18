@@ -13,9 +13,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Front\FrontController;
-use App\Models\{Currency, CategoryKycDocuments,Banner, Category, Brand, Product, Celebrity, ClientLanguage, Vendor, VendorCategory, ClientCurrency, ProductVariantSet, ServiceArea, UserAddress,Country,Cart,CartProduct,SubscriptionInvoicesUser,ClientPreference,LoyaltyCard,Order,CaregoryKycDoc,Rider, Attribute, Company, ProductVariant};
+use App\Models\{Currency, CategoryKycDocuments,Banner, Category, Brand, Product, Celebrity, ClientLanguage, Vendor, VendorCategory, ClientCurrency, ProductVariantSet, ServiceArea, UserAddress,Country,Cart,CartProduct,SubscriptionInvoicesUser,ClientPreference,LoyaltyCard,Order,CaregoryKycDoc,Rider, Attribute, Company, ProductVariant, CabBookingLayout};
 use Redirect;
 use Log;
+use Illuminate\Support\Facades\Schema;
 use \App\Http\Traits\{VendorTrait};
 use App\Models\Client as ModelsClient;
 class CategoryController extends FrontController{
@@ -171,16 +172,19 @@ class CategoryController extends FrontController{
 
         $newProducts = [];
         if($page == 'pickup/delivery'){
-            if(!Auth::user()){
-                return redirect()->route('customer.login');
-            }else{
+            $clientCurrency = ClientCurrency::where('currency_id', $curId)->first();
+            $product = Product::where('category_id', $category->id)->orderBy('per_hour_price','asc')->first();
+            $companies = Company::get();
+            if (Auth::user()) {
                 $user_addresses = UserAddress::whereNotNull('latitude')->whereNotNull('longitude')->get();
-                $clientCurrency = ClientCurrency::where('currency_id', $curId)->first();
                 $wallet_balance = Auth::user()->balanceFloat * ($clientCurrency->doller_compare ?? 1);
-                $riders = Rider::where('user_id',Auth::user()->id)->orderBy('id','DESC')->get();
-
-                return view('frontend.booking.index')->with(['maxPrice'=>$maxPrice,'clientCurrency' => $clientCurrency ,'wallet_balance' => $wallet_balance, 'user_addresses' => $user_addresses, 'navCategories' => $navCategories,'category' => $category,'riders'=>$riders, 'is_cab_pooling' => $getAdditionalPreference['is_cab_pooling'], 'is_bid_ride_enable' => $getAdditionalPreference['is_bid_ride_enable'],'is_postpay_enable' => $getAdditionalPreference['is_postpay_enable'], 'is_particular_driver' => $getAdditionalPreference['is_particular_driver'],'is_recurring_booking' => $getAdditionalPreference['is_recurring_booking'],'is_share_ride_users'=>$getAdditionalPreference['is_share_ride_users']]);
+                $riders = Rider::where('user_id', Auth::user()->id)->orderBy('id','DESC')->get();
+            } else {
+                $user_addresses = collect();
+                $wallet_balance = 0;
+                $riders = collect();
             }
+            return view('frontend.booking.index')->with(['maxPrice'=>$maxPrice,'clientCurrency' => $clientCurrency ,'wallet_balance' => $wallet_balance, 'user_addresses' => $user_addresses, 'navCategories' => $navCategories,'category' => $category,'riders'=>$riders, 'is_cab_pooling' => $getAdditionalPreference['is_cab_pooling'], 'is_bid_ride_enable' => $getAdditionalPreference['is_bid_ride_enable'],'is_postpay_enable' => $getAdditionalPreference['is_postpay_enable'], 'is_particular_driver' => $getAdditionalPreference['is_particular_driver'],'is_recurring_booking' => $getAdditionalPreference['is_recurring_booking'],'is_share_ride_users'=>$getAdditionalPreference['is_share_ride_users'],'companies'=>$companies,'product'=>$product]);
         }
     }
 
@@ -191,6 +195,18 @@ class CategoryController extends FrontController{
      */
     public function categoryProduct(Request $request, $domain = '', $slug = 0, $service = null)
     {
+        // With Route::domain('{domain}'), first param is domain (e.g. localhost), second is path segment (e.g. cabservice).
+        // Prefer path segment as category slug so /category/cabservice looks up slug 'cabservice', not 'localhost'.
+        $categorySlug = (string) (($slug !== null && $slug !== '' && $slug !== '0') ? $slug : $domain);
+        if ($categorySlug === '' || $categorySlug === '0') {
+            abort(404);
+        }
+
+        // Ensure cabservice category exists so /category/cabservice works even if seeder was not run
+        if ($categorySlug === 'cabservice') {
+            $this->ensureCabserviceCategoryExists();
+        }
+
         //$preferences = Session::get('preferences');
         if(!empty($service) && $service == 'pick_drop'){
             Session::forget('vendorType');
@@ -215,11 +231,14 @@ class CategoryController extends FrontController{
         },
         'allParentsAccount'])
         ->select('id', 'icon', 'image', 'slug', 'type_id', 'can_add_products', 'parent_id', 'sub_cat_banners')
-        ->where('slug', $slug)->firstOrFail();
+        ->where('slug', $categorySlug)->firstOrFail();
 
         $category->translation_name = ($category->translationLatest) ? $category->translationLatest->name : $category->slug;
         foreach($category->childs as $key => $child){
             $child->translation_name = ($child->translationLatest) ? $child->translationLatest->name : $child->slug;
+        }
+        if (!$category->type) {
+            abort(404, 'Category type not found');
         }
         $service_type = $category->type->service_type ?? "";
 
@@ -304,11 +323,15 @@ class CategoryController extends FrontController{
                         })
                     ->groupBy('product_variant_sets.variant_type_id')->get();
                  //   pr($variantSets);
-        $redirect_to = $category->type->redirect_to;
+        if (!$category->type) {
+            abort(404, 'Category type not found');
+        }
+        $redirect_to = $category->type->redirect_to ?? '';
         $listData = $this->listData($langId, $category->id, $redirect_to,$vendorIds,false);
 
-        $maxPrice = DB::select("SELECT MAX(product_variants.price) as max_price FROM product_variants INNER JOIN products ON products.id = product_variants.product_id WHERE product_variants.status = 1 AND products.is_live = 1 AND products.category_id = ?", [$category->id])[0]->max_price;
-        $page = (strtolower($redirect_to) != '') ? strtolower($redirect_to) : 'product';
+        $maxPriceResult = DB::select("SELECT MAX(product_variants.price) as max_price FROM product_variants INNER JOIN products ON products.id = product_variants.product_id WHERE product_variants.status = 1 AND products.is_live = 1 AND products.category_id = ?", [$category->id]);
+        $maxPrice = (!empty($maxPriceResult) && isset($maxPriceResult[0]->max_price)) ? $maxPriceResult[0]->max_price : 0;
+        $page = (strtolower((string) $redirect_to) != '') ? strtolower($redirect_to) : 'product';
         // $newProducts =  $this->getNewProducts($vendorIds, $langId, $curId);
         $productAttributes = '';
         $getAdditionalPreference = getAdditionalPreference(['is_attribute','is_postpay_enable','is_cab_pooling','is_bid_ride_enable','is_particular_driver','is_recurring_booking','is_share_ride_users']);
@@ -329,30 +352,69 @@ class CategoryController extends FrontController{
 
         $newProducts = [];
         if($page == 'pickup/delivery' || $page == 'product' && $slug == 'yacht'){
-            if(!Auth::user()){
-                return redirect()->route('customer.login');
-            }else{
+            $product = Product::where('category_id', $category->id)->orderBy('per_hour_price','asc')->first();
+            $clientCurrency = ClientCurrency::where('currency_id', $curId)->first();
+            $companies = Company::get();
 
-                $product = Product::where('category_id', $category->id)->orderBy('per_hour_price','asc')->first();
-
-
+            if (Auth::user()) {
                 $user_addresses = UserAddress::whereNotNull('latitude')->whereNotNull('longitude')->get();
-                $clientCurrency = ClientCurrency::where('currency_id', $curId)->first();
                 $wallet_balance = Auth::user()->balanceFloat * ($clientCurrency->doller_compare ?? 1);
-                $riders = Rider::where('user_id',Auth::user()->id)->orderBy('id','DESC')->get();
-                $companies  = Company::get();
-
-
-                // if($preferences->is_hourly_pickup_rental == 1)
-                // {
-                //     return view('frontend.booking.hourly_rental')->with(['maxPrice'=>$maxPrice,'clientCurrency' => $clientCurrency ,'wallet_balance' => $wallet_balance, 'user_addresses' => $user_addresses, 'navCategories' => $navCategories,'category' => $category,'riders'=>$riders, 'is_cab_pooling' => $getAdditionalPreference['is_cab_pooling'], 'is_bid_ride_enable' => $getAdditionalPreference['is_bid_ride_enable'],'is_postpay_enable' => $getAdditionalPreference['is_postpay_enable'], 'is_particular_driver' => $getAdditionalPreference['is_particular_driver'],'is_recurring_booking' => $getAdditionalPreference['is_recurring_booking'],'is_share_ride_users'=>$getAdditionalPreference['is_share_ride_users'],'companies'=>$companies,'product'=> $product]);
-
-                // }else{
-
-                    return view('frontend.booking.index')->with(['maxPrice'=>$maxPrice,'clientCurrency' => $clientCurrency ,'wallet_balance' => $wallet_balance, 'user_addresses' => $user_addresses, 'navCategories' => $navCategories,'category' => $category,'riders'=>$riders, 'is_cab_pooling' => $getAdditionalPreference['is_cab_pooling'], 'is_bid_ride_enable' => $getAdditionalPreference['is_bid_ride_enable'],'is_postpay_enable' => $getAdditionalPreference['is_postpay_enable'], 'is_particular_driver' => $getAdditionalPreference['is_particular_driver'],'is_recurring_booking' => $getAdditionalPreference['is_recurring_booking'],'is_share_ride_users'=>$getAdditionalPreference['is_share_ride_users'],'companies'=>$companies,'product'=> $product]);
-                // }
-
+                $riders = Rider::where('user_id', Auth::user()->id)->orderBy('id','DESC')->get();
+            } else {
+                // Guest: show cab booking UI with empty data; login required when they proceed to book
+                $user_addresses = collect();
+                $wallet_balance = 0;
+                $riders = collect();
             }
+
+            // Cab service landing: use existing cabbooking-single-module (same as home) with store layout for header/footer/theme.
+            if ($category->slug === 'cabservice' && !$request->filled('pickup_location')) {
+                $langId = Session::get('customerLanguage');
+                $homePageLabel = CabBookingLayout::with([
+                    'translations' => function ($q) use ($langId) {
+                        $q->where('language_id', $langId);
+                    },
+                    'pickupCategories.categoryDetail',
+                ])->where('slug', 'pickup_delivery')->where('is_active', 1)->web()->first();
+
+                if ($homePageLabel && $homePageLabel->pickupCategories->isNotEmpty()) {
+                    $hasCabservice = $homePageLabel->pickupCategories->contains(function ($pc) {
+                        return $pc->categoryDetail && $pc->categoryDetail->slug === 'cabservice';
+                    });
+                    if (!$hasCabservice) {
+                        $homePageLabel = $this->buildCabserviceHomePageLabel($category);
+                    } elseif ($homePageLabel->translations->isEmpty()) {
+                        $homePageLabel->translations = collect([(object)['title' => __('PICKUP AND DELIVERY')]]);
+                    }
+                } else {
+                    $homePageLabel = $this->buildCabserviceHomePageLabel($category);
+                }
+                $key = 0;
+                return view('frontend.booking.cabservice-live')->with([
+                    'homePageLabel' => $homePageLabel,
+                    'key' => $key,
+                    'category' => $category,
+                    'navCategories' => $navCategories,
+                ]);
+            }
+
+            return view('frontend.booking.index')->with([
+                'maxPrice' => $maxPrice,
+                'clientCurrency' => $clientCurrency,
+                'wallet_balance' => $wallet_balance,
+                'user_addresses' => $user_addresses,
+                'navCategories' => $navCategories,
+                'category' => $category,
+                'riders' => $riders,
+                'is_cab_pooling' => $getAdditionalPreference['is_cab_pooling'],
+                'is_bid_ride_enable' => $getAdditionalPreference['is_bid_ride_enable'],
+                'is_postpay_enable' => $getAdditionalPreference['is_postpay_enable'],
+                'is_particular_driver' => $getAdditionalPreference['is_particular_driver'],
+                'is_recurring_booking' => $getAdditionalPreference['is_recurring_booking'],
+                'is_share_ride_users' => $getAdditionalPreference['is_share_ride_users'],
+                'companies' => $companies,
+                'product' => $product,
+            ]);
         }elseif($page == 'on demand service' || $page == 'appointment'){
             $cartDataGet = $this->getCartOnDemand($request);
             if($request->step == 2 && empty($request->addons) && empty($request->dataset)){
@@ -868,7 +930,7 @@ class CategoryController extends FrontController{
 
             $last_mile_check       = $product ? $product->Requires_last_mile  : '';
             $vendorStartDate       = $vendorStartTime  = '';
-            $slotsDate = findSlot('',$product->vendor_id,'','webFormet');
+            $slotsDate = findSlot($product->vendor_id,'','','webFormet');
 
 
             if($slotsDate){
@@ -928,7 +990,7 @@ class CategoryController extends FrontController{
             $date = $today;
         }
 
-        $slots = showSlot($date,$request->product_vendor_id,'delivery');
+        $slots = showSlot($request->product_vendor_id, $date,'delivery');
 
 
         $vendor = Vendor::where('id', $product->vendor_id)->select('show_slot')->first();
@@ -1033,5 +1095,98 @@ class CategoryController extends FrontController{
             return response()->json(['view' => $view]);
         }
 
+    }
+
+    /**
+     * Ensure the cabservice category exists so /category/cabservice works without running the seeder.
+     * Safe to call on every request; only inserts when missing.
+     * Creates type 'Pickup/Delivery' if missing so category can always be created.
+     */
+    private function ensureCabserviceCategoryExists(): void
+    {
+        if (!Schema::hasTable('types') || !Schema::hasTable('categories')) {
+            return;
+        }
+
+        $exists = DB::table('categories')->where('slug', 'cabservice')->exists();
+        if ($exists) {
+            return;
+        }
+
+        $typeId = DB::table('types')->where('title', 'Pickup/Delivery')->value('id');
+        if (!$typeId) {
+            // Create type so cabservice category can be created (avoids 404 when seeder not run)
+            $typeId = DB::table('types')->insertGetId([
+                'title'      => 'Pickup/Delivery',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            if (!$typeId) {
+                $typeId = DB::table('types')->value('id'); // fallback to first type
+            }
+        }
+        if (!$typeId) {
+            return;
+        }
+
+        $clientCode = DB::table('client_preferences')->value('client_code');
+
+        DB::table('categories')->insert([
+            'slug'             => 'cabservice',
+            'type_id'          => $typeId,
+            'icon'             => null,
+            'image'            => null,
+            'is_visible'       => 1,
+            'status'           => 1,
+            'position'         => 1,
+            'is_core'          => 1,
+            'can_add_products' => 0,
+            'parent_id'        => null,
+            'vendor_id'        => null,
+            'client_code'      => $clientCode,
+            'created_at'       => now(),
+            'updated_at'       => now(),
+        ]);
+
+        $categoryId = DB::table('categories')->where('slug', 'cabservice')->value('id');
+        if (!$categoryId || !Schema::hasTable('category_translations')) {
+            return;
+        }
+
+        $langId = DB::table('client_languages')->where('is_primary', 1)->value('language_id')
+            ?? DB::table('languages')->value('id');
+        if (!$langId) {
+            return;
+        }
+
+        $transExists = DB::table('category_translations')
+            ->where('category_id', $categoryId)
+            ->where('language_id', $langId)
+            ->exists();
+        if (!$transExists) {
+            DB::table('category_translations')->insert([
+                'category_id'      => $categoryId,
+                'language_id'      => $langId,
+                'name'             => 'Cab Service',
+                'trans-slug'       => 'cabservice',
+                'meta_title'       => 'Cab Service',
+                'meta_description' => null,
+                'meta_keywords'    => null,
+                'created_at'       => now(),
+                'updated_at'       => now(),
+            ]);
+        }
+    }
+
+    /**
+     * Build a minimal homePageLabel for cab service when CabBookingLayout pickup_delivery is missing or has no cabservice category.
+     * Ensures cabbooking-single-module can render with correct title and form action.
+     */
+    private function buildCabserviceHomePageLabel(Category $category)
+    {
+        $label = new \stdClass();
+        $label->translations = collect([(object)['title' => __('PICKUP AND DELIVERY')]]);
+        $label->pickupCategories = collect([(object)['categoryDetail' => $category]]);
+        return $label;
     }
 }

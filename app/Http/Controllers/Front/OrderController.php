@@ -121,7 +121,7 @@ class OrderController extends FrontController
         $langId = Session::get('customerLanguage');
         $navCategories = $this->categoryNav($langId);
         $additionalPreference = getAdditionalPreference(['is_long_term_service', 'is_token_currency_enable', 'token_currency', 'is_postpay_enable', 'is_order_edit_enable', 'order_edit_before_hours', 'is_service_product_price_from_dispatch', 'is_service_price_selection']);
-        $getOnDemandPricingRule = getOnDemandPricingRule(Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''), $additionalPreference);
+        $getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''));
         $is_service_product_price_from_dispatch_forOnDemand = $getOnDemandPricingRule['is_price_from_freelancer'] ?? 0;
 
 
@@ -433,7 +433,7 @@ class OrderController extends FrontController
         $langId = Session::get('customerLanguage');
         $navCategories = $this->categoryNav($langId);
         $additionalPreference = getAdditionalPreference(['is_long_term_service', 'is_token_currency_enable', 'token_currency', 'is_postpay_enable', 'is_order_edit_enable', 'order_edit_before_hours', 'is_service_product_price_from_dispatch', 'is_service_price_selection']);
-        $getOnDemandPricingRule = getOnDemandPricingRule(Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''), $additionalPreference);
+        $getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''));
         $is_service_product_price_from_dispatch_forOnDemand = $getOnDemandPricingRule['is_price_from_freelancer'] ?? 0;
 
         $dispatcher_icons = OrderDeliveryStatusIcon::select('image', 'image_url')->get();
@@ -766,7 +766,7 @@ class OrderController extends FrontController
         $langId = Session::get('customerLanguage');
         $navCategories = $this->categoryNav($langId);
         $additionalPreference = getAdditionalPreference(['is_long_term_service', 'is_token_currency_enable', 'token_currency', 'is_postpay_enable', 'is_order_edit_enable', 'order_edit_before_hours', 'is_service_product_price_from_dispatch', 'is_service_price_selection']);
-        $getOnDemandPricingRule = getOnDemandPricingRule(Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''), $additionalPreference);
+        $getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''));
         $is_service_product_price_from_dispatch_forOnDemand = $getOnDemandPricingRule['is_price_from_freelancer'] ?? 0;
 
 
@@ -1848,7 +1848,7 @@ class OrderController extends FrontController
             $additionalPreferences = getAdditionalPreference(['is_tax_price_inclusive', 'is_gift_card', 'is_service_product_price_from_dispatch', 'order_edit_before_hours', 'is_show_vendor_on_subcription', 'is_service_price_selection', 'stock_notification_before', 'stock_notification_qunatity']);
 
             if (($action == 'on_demand') && ($additionalPreferences['is_service_product_price_from_dispatch'] == 1)) {
-                $getOnDemandPricingRule = getOnDemandPricingRule($action, Session::get('onDemandPricingSelected'), $additionalPreferences);
+                $getOnDemandPricingRule = getOnDemandPricingRule($additionalPreferences, $action, Session::get('onDemandPricingSelected'));
                 $is_service_product_price_from_dispatch = $getOnDemandPricingRule['is_price_from_freelancer'];
             }
             $additionalPreferences = (object) $additionalPreferences;

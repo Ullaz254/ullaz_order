@@ -2,7 +2,7 @@
 $additionalPreference = getAdditionalPreference(['is_service_product_price_from_dispatch','is_service_price_selection']);
 $is_service_product_price_from_dispatch_forOnDemand = 0;
 
-$getOnDemandPricingRule = getOnDemandPricingRule(Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''),$additionalPreference);
+$getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''));
 if($getOnDemandPricingRule['is_price_from_freelancer']==1){
     $is_service_product_price_from_dispatch_forOnDemand =1;
 }
@@ -29,7 +29,7 @@ if($getOnDemandPricingRule['is_price_from_freelancer']==1){
                             @endif
                         </h3>
                         <div class="product-description_list border-bottom">
-                            @if($dicountPercentage = productDiscountPercentage($data->variant_price, $data->variant_compare_at_price))
+                            @if($dicountPercentage = productDiscountPercentage($data->variant_compare_at_price, $data->variant_price))
                                 <span class="flag-discount">{{$dicountPercentage}}% Off</span>
                             @endif
                             <h6 class="mt-0 mb-1"><b>{{$data->vendor->name}}</b></h6>

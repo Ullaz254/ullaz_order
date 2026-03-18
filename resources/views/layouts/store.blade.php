@@ -1,6 +1,7 @@
 @php
 $set_template = \App\Models\WebStylingOption::where('web_styling_id',1)->where('is_selected',1)->first();
-$set_common_business_type = $client_preference_detail->business_type??'';
+// Show cab header (Drivarr logo, country, search) on cab service page even when business_type is not taxi
+$set_common_business_type = request()->is('*category/cabservice*') ? 'taxi' : ($client_preference_detail->business_type ?? '');
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -15,15 +16,19 @@ $set_common_business_type = $client_preference_detail->business_type??'';
 @php
 
 $dark_mode = '';
-if($client_preference_detail->show_dark_mode == 1){
-  $dark_mode = 'dark';
-}else if($client_preference_detail->show_dark_mode == 2){
-  if(session()->has('config_theme')){
-    $dark_mode = session()->get('config_theme');
+// Force light theme on login/register so CSS and readability are correct
+$authRoutes = ['customer.login', 'customer.register', 'customer.forgotPassword', 'customer.resetPassword'];
+if (!in_array(Route::currentRouteName(), $authRoutes) && $client_preference_detail) {
+  if($client_preference_detail->show_dark_mode == 1){
+    $dark_mode = 'dark';
+  }else if($client_preference_detail->show_dark_mode == 2){
+    if(session()->has('config_theme')){
+      $dark_mode = session()->get('config_theme');
+    }
   }
 }
 $analytics = getAdditionalPreference(['gtag_id', 'fpixel_id','is_service_product_price_from_dispatch','is_service_price_selection']);
-$getOnDemandPricingRule = getOnDemandPricingRule(Session::get('vendorType'),'',$analytics);
+$getOnDemandPricingRule = getOnDemandPricingRule($analytics, Session::get('vendorType'),'');
 //pr($getOnDemandPricingRule);
 $is_ondemand_multi_pricing = $getOnDemandPricingRule['is_ondemand_multi_pricing'];
 

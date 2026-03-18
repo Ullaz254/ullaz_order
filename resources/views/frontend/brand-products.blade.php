@@ -7,7 +7,7 @@
 $additionalPreference = getAdditionalPreference(['is_token_currency_enable','is_service_product_price_from_dispatch','is_service_price_selection']);
 $is_service_product_price_from_dispatch_forOnDemand = 0;
 
-$getOnDemandPricingRule = getOnDemandPricingRule(Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''),$additionalPreference);
+$getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''));
 $is_service_product_price_from_dispatch_forOnDemand =$getOnDemandPricingRule['is_price_from_freelancer'] ?? 0;
 @endphp
 @section('content')
@@ -88,7 +88,7 @@ $is_service_product_price_from_dispatch_forOnDemand =$getOnDemandPricingRule['is
                                                             </div>
                                                             <div class="media-body align-self-center card-text">
                                                                 <div class="inner_spacing w-100">
-                                                                @if($dicountPercentage = productDiscountPercentage($data->variant_price, $data->variant_compare_at_price))
+                                                                @if($dicountPercentage = productDiscountPercentage($data->variant_compare_at_price, $data->variant_price))
                                                                         <span class="flag-discount">{{$dicountPercentage}}% Off</span>
                                                                     @endif
                                                                     <h3 class="d-flex align-items-center justify-content-between text-left">

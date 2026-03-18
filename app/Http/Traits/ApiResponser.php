@@ -214,22 +214,44 @@ trait ApiResponser
             $all = ClientCurrency::orderBy('is_primary','desc')->where('currency_id',$currency_id)->first();
             if(empty($all)){
                 $primaryCurrency = ClientCurrency::where('is_primary','=', 1)->first();
-                Session::put('customerCurrency',$primaryCurrency->currency_id);
-				Session::put('currencySymbol',$primaryCurrency->currency->symbol);
-                $currency_id = $primaryCurrency->currency_id ;
-            }else{
+                if ($primaryCurrency && $primaryCurrency->currency) {
+                    Session::put('customerCurrency', $primaryCurrency->currency_id);
+                    Session::put('currencySymbol', $primaryCurrency->currency->symbol);
+                    $currency_id = $primaryCurrency->currency_id;
+                } else {
+                    $currency_id = $this->resolveDefaultCurrencyId();
+                }
+            } else {
                 $currency_id = (int)$currency_id;
-                Session::put('customerCurrency',$currency_id);
+                Session::put('customerCurrency', $currency_id);
+            }
+        } else {
+            $primaryCurrency = ClientCurrency::where('is_primary','=', 1)->first();
+            if ($primaryCurrency && $primaryCurrency->currency) {
+                Session::put('customerCurrency', $primaryCurrency->currency_id);
+                Session::put('currencySymbol', $primaryCurrency->currency->symbol);
+                $currency_id = $primaryCurrency->currency_id;
+            } else {
+                $currency_id = $this->resolveDefaultCurrencyId();
             }
         }
-        else{
-            $primaryCurrency = ClientCurrency::where('is_primary','=', 1)->first();
-            Session::put('customerCurrency',$primaryCurrency->currency_id);
-			Session::put('currencySymbol',$primaryCurrency->currency->symbol);
-            $currency_id = $primaryCurrency->currency_id ;
-        }
 
-		return  $currency_id;
+		return $currency_id;
+	}
+
+	/**
+	 * Fallback when no client_currencies row with is_primary=1 exists (e.g. empty DB).
+	 */
+	protected function resolveDefaultCurrencyId(){
+		$first = \App\Models\Currency::orderBy('id')->first();
+		if ($first) {
+			Session::put('customerCurrency', $first->id);
+			Session::put('currencySymbol', $first->symbol ?? '');
+			return $first->id;
+		}
+		Session::put('customerCurrency', null);
+		Session::put('currencySymbol', '');
+		return null;
 	}
 
 	public function getCart($cart, $address_id = 0)

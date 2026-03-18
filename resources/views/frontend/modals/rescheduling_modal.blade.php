@@ -67,14 +67,14 @@
                                   $duration = \App\Models\Vendor::where('id',$vendor_id)->select('slot_minutes')->first();
                                   if($clientPreference->same_day_orders_for_rescheduing == 1 && $clientPreference->business_type == 'laundry'){
                                         $pickupDate = date('Y-m-d');
-                                        $slotsForPickup  = (object)showSlot(date('Y-m-d'),$vendor_id,'delivery',$duration->slot_minutes,1);
+                                        $slotsForPickup  = (object)showSlot($vendor_id, date('Y-m-d'),'delivery',$duration->slot_minutes,1);
                                         $dropoffDate = date('Y-m-d');
-                                        $slotsForDropoff = (object)showSlot(date('Y-m-d'),$vendor_id,'delivery',$duration->slot_minutes,2); 
+                                        $slotsForDropoff = (object)showSlot($vendor_id, date('Y-m-d'),'delivery',$duration->slot_minutes,2); 
                                   }else{
                                         $pickupDate = date('Y-m-d',strtotime('+1 day'));
-                                        $slotsForPickup  = (object)showSlot(date('Y-m-d',strtotime('+1 day')),$vendor_id,'delivery',$duration->slot_minutes,1);
+                                        $slotsForPickup  = (object)showSlot($vendor_id, date('Y-m-d',strtotime('+1 day')),'delivery',$duration->slot_minutes,1);
                                         $dropoffDate = date('Y-m-d',strtotime('+2 day'));
-                                        $slotsForDropoff = (object)showSlot(date('Y-m-d',strtotime('+2 day')),$vendor_id,'delivery',$duration->slot_minutes,2); 
+                                        $slotsForDropoff = (object)showSlot($vendor_id, date('Y-m-d',strtotime('+2 day')),'delivery',$duration->slot_minutes,2); 
                                   }
                                 ?>
                                 <div class="col-md-6">

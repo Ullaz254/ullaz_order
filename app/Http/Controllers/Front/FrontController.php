@@ -927,7 +927,7 @@ class FrontController extends Controller
         $additionalPreference = getAdditionalPreference(['is_service_product_price_from_dispatch','is_service_price_selection']);
         $is_service_product_price_from_dispatch_forOnDemand = 0;
 
-        $getOnDemandPricingRule = getOnDemandPricingRule(Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''),$additionalPreference);
+        $getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''));
         if($getOnDemandPricingRule['is_price_from_freelancer']==1){
             $is_service_product_price_from_dispatch_forOnDemand =1;
         }
@@ -987,7 +987,7 @@ class FrontController extends Controller
 
                 $cartData[$key]->period = $period;
             }else{
-                $slotsDate = findSlot('',$data->vendor_id,'','webFormet');
+                $slotsDate = findSlot($data->vendor_id,'','','webFormet');
                 if($slotsDate){
                     $vendorStartDate = (($slotsDate)?$slotsDate['date']:'');
                     $vendorStartTime = (($slotsDate)?$slotsDate['time']:'');
@@ -1057,7 +1057,7 @@ class FrontController extends Controller
                             }
                         }
                     }else{
-                        $slotsRes = getShowSlot($selectedDate,$data->vendor_id,'delivery');
+                        $slotsRes = getShowSlot($data->vendor_id, $selectedDate,'delivery');
                         $slots = (object)$slotsRes['slots'];
                         $time_slots =  $slots;
                     }

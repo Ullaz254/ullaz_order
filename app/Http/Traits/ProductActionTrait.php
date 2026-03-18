@@ -728,7 +728,7 @@ trait ProductActionTrait{
                 $slotsDate = 0;
                 $value->date_with_slots = [];
                 if($value->closed_store_order_scheduled == 1){
-                    $slotsDate = findSlot('',$value->id,$type );
+                    $slotsDate = findSlot($value->id,'',$type );
                     $value->delaySlot = $slotsDate;
                     $value->closed_store_order_scheduled = (($slotsDate)?$value->closed_store_order_scheduled:0);
 
@@ -737,7 +737,7 @@ trait ProductActionTrait{
                         $slotWithDate = [];
                         foreach($period as $key => $date){
                             $slotDate = trim(date('Y-m-d', strtotime($date)));
-                            $slots = showSlot($slotDate,$value->id,'delivery');
+                            $slots = showSlot($value->id, $slotDate,'delivery');
                             if(!empty($slots)){
                                 $slotData['date']  =  $slotDate;
                                 $slotData['slots'] = $slots;
@@ -752,7 +752,7 @@ trait ProductActionTrait{
                 }
 
                 if($value->closed_store_order_scheduled == 1){
-                    $slotsDate = findSlot('',$value->id,$type );
+                    $slotsDate = findSlot($value->id,'',$type );
                     $value->closed_store_order_scheduled = (($slotsDate)?$value->closed_store_order_scheduled:0);
 
                 }else{

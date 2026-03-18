@@ -26,7 +26,7 @@
                             @endif 
                         </div>
                         <div class="product-description_list border-bottom">
-                            @if($dicountPercentage = productDiscountPercentage(@$product->price_numeric ?? 0, @$product->compare_price ?? 0))
+                            @if($dicountPercentage = productDiscountPercentage(@$product->compare_price ?? 0, @$product->price_numeric ?? 0))
                                 <span class="flag-discount">{{$dicountPercentage}}% Off</span>
                             @endif
                             <p>

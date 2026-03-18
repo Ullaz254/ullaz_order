@@ -8229,4 +8229,6 @@ $(".menu-slider2").slick({
   ],
 });
 
-AOS.init({ disable: "mobile" });
+if (typeof AOS !== 'undefined') {
+  AOS.init({ disable: "mobile" });
+}

@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(){
          $this->call([
+              MinimalUiSeeder::class,  // minimal client + preferences so store front loads (no-op if already seeded)
               AppStylingSeeder::class,
               BannerDataSeeder::class,
               CommonDataSeeder::class,
@@ -43,6 +44,7 @@ class DatabaseSeeder extends Seeder
               TemplateSeeder::class,
               TimezoneSeeder::class,
               TypeSeeder::class,
+              CabBookingHomeSeeder::class,
               VendorProductTempleteSeeder::class,
               WebStylingSeeder::class,
               WebStylingOptionSeeder::class,

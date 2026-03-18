@@ -249,7 +249,7 @@ class ProductController extends BaseController
 
             $slotsDate = 0;
             if($product->vendor->is_vendor_closed){
-                $slotsDate = findSlot('',$product->vendor->id,'');
+                $slotsDate = findSlot($product->vendor->id,'','');
                 $product->delaySlot = $slotsDate;
                 $product->vendor->closed_store_order_scheduled = (($slotsDate)?$product->vendor->closed_store_order_scheduled:0);
             }else{

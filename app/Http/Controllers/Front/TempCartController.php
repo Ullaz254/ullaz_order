@@ -488,7 +488,7 @@ class TempCartController extends FrontController
             $vendorId = $cartData[0]->vendor_id;
             //type must be a : delivery , takeaway,dine_in
             $duration = Vendor::where('id',$vendorId)->select('slot_minutes')->first();
-            $slots = showSlotTemp('',$vendorId, $cart->user_id, 'delivery',$duration->slot_minutes);
+            $slots = showSlotTemp($vendorId, $cart->user_id, '', 'delivery',$duration->slot_minutes);
             $cart->slots = $slots;
            // $cart->vendor_id =  $vendorId;
         }else{
@@ -2018,7 +2018,7 @@ class TempCartController extends FrontController
             $vendorId = $cartData[0]->vendor_id;
             //type must be a : delivery , takeaway,dine_in
             $duration = Vendor::where('id',$vendorId)->select('slot_minutes')->first();
-            $slots = showSlotTemp('',$vendorId, $cart->user_id, 'delivery',$duration->slot_minutes);
+            $slots = showSlotTemp($vendorId, $cart->user_id, '', 'delivery',$duration->slot_minutes);
             $cart->slots = $slots;
            // $cart->vendor_id =  $vendorId;
         }else{

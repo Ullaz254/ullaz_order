@@ -64,3 +64,38 @@ Route::get('/manifest', function () {
     return response()->json(config('manifest'));
 });
 
+// Local/dev: serve placeholder for image proxy requests so browser doesn't hit images.drivarr.com (ERR_SSL_PROTOCOL_ERROR)
+if (in_array(env('APP_ENV'), ['local', 'development'], true)) {
+    Route::get('/img/{path}', function ($path = '') {
+        $file = public_path('images/no-stores.svg');
+        if (!is_file($file)) {
+            abort(404);
+        }
+        return response()->file($file, ['Content-Type' => 'image/svg+xml']);
+    })->where('path', '.*');
+}
+
+// Database connection test (only in local/development) – remove or guard in production
+if (in_array(env('APP_ENV'), ['local', 'development'], true)) {
+    Route::get('/test-db', function () {
+        $config = config('database.connections.' . config('database.default'));
+        try {
+            \DB::connection()->getPdo();
+            $name = \DB::connection()->getDatabaseName();
+            return response()->json([
+                'ok' => true,
+                'message' => 'Database connected.',
+                'database' => $name,
+                'host' => $config['host'] ?? null,
+            ], 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Database connection failed.',
+                'error' => $e->getMessage(),
+                'hint' => 'Check .env DB_* (and that DB_PASSWORD is in double quotes if it contains special chars). In Hostinger, verify the MySQL user password for this database.',
+            ], 500, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        }
+    });
+}
+

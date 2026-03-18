@@ -54,7 +54,7 @@
             <div class="col-lg-6">
                 <h3>Login</h3>
                 <div class="theme-card">
-                    @if(session('preferences')->fb_login == 1 || session('preferences')->twitter_login == 1 || session('preferences')->google_login == 1 || session('preferences')->apple_login == 1)
+                    @if(session('preferences') && (session('preferences')->fb_login == 1 || session('preferences')->twitter_login == 1 || session('preferences')->google_login == 1 || session('preferences')->apple_login == 1))
                         <div class="form-row mb-5">
                             <h3>Social Login</h3>
                             <div class="col-md-12">

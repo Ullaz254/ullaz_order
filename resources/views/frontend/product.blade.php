@@ -787,7 +787,7 @@ $category_name =  ($category->translation->first()) ? $category->translation->fi
                                         @php
                                             // check if vendor is closed or not, if closed then get slots otherwise no need.
                                             if($vendor_info->is_vendor_closed == 1)
-                                                $checkSlot = findSlot('',$product->vendor->id,'');
+                                                $checkSlot = findSlot($product->vendor->id,'','');
                                             else
                                                 $checkSlot = 0;
                                         @endphp

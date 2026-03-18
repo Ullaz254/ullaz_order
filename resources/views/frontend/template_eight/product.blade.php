@@ -45,7 +45,7 @@
     </div>
   </div> -->
 @php
-$checkSlot = findSlot('',$product->vendor->id,'');
+$checkSlot = findSlot($product->vendor->id,'','');
 @endphp
 <section class="section-b-space FiveTemplate alSingleProducts">
     <div class="collection-wrapper al">

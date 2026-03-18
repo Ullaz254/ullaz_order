@@ -343,7 +343,7 @@ trait cartManager{
         $is_recurring_booking = 0;
         $action = (session()->has('vendorType')) ? session()->get('vendorType') : 'delivery';
         $is_service_product_price_from_dispatch = 0;
-        $getOnDemandPricingRule = getOnDemandPricingRule($action, (@Session::get('onDemandPricingSelected') ?? ''),$additionalPreference);
+        $getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, $action, (@Session::get('onDemandPricingSelected') ?? ''));
         if($getOnDemandPricingRule['is_price_from_freelancer']==1){
             $is_service_product_price_from_dispatch =1;
         }
@@ -496,7 +496,7 @@ trait cartManager{
                 // }else{
                 //     $vendorData->scheduled_date_time = date('Y-m-d',strtotime($vendorData->scheduled_date_time)) ;
                 // }
-                    $slotsRes = getShowSlot($vendorData->scheduled_date_time,$vendorData->vendor_id,'delivery',"60",0,'',$cart_id);
+                    $slotsRes = getShowSlot($vendorData->vendor_id, $vendorData->scheduled_date_time,'delivery',"60",0,'',$cart_id);
 
                 $slots = (object)$slotsRes['slots'];
                 // this variable for get slot from dispatc
@@ -616,7 +616,7 @@ trait cartManager{
                         $prod->long_term_products=$LongTermProducts;
                     }
 
-                  $slotsDate = findSlot('',$vendorData->vendor->id,'','webFormet',$cart_id);
+                  $slotsDate = findSlot($vendorData->vendor->id,'','','webFormet',$cart_id);
 
                   $vendorData->delaySlot = (($slotsDate)? ( $slotsDate['datetime']?  $slotsDate['datetime'] : '' ):'');
                   $vendorStartDate =  (($slotsDate)? ( $slotsDate['date'] ?  $slotsDate['date'] : '' ):'');
@@ -1408,7 +1408,7 @@ trait cartManager{
                 }
                 if($preferences->scheduling_with_slots != 1 && $preferences->business_type != 'laundry'){
                     $myDate = $cartData[0]->scheduled_date_time;
-                    $slotsRes = getShowSlot($myDate,$vendorId,'delivery',$duration->slot_minutes, 0,$cart_id);
+                    $slotsRes = getShowSlot($vendorId, $myDate,'delivery',$duration->slot_minutes, 0,'',$cart_id);
                     $slots = (object)$slotsRes['slots'];
                     $slotsdate = $slotsRes['date'];
                     $cart->slotsdate = $slotsdate;
@@ -1426,7 +1426,7 @@ trait cartManager{
                 if($preferences->scheduling_with_slots == 1 && $preferences->business_type == 'laundry'){
                     // For Pickup
                     //$pickupSlots = (object)getShowSlot($myDate,$vendorId,'delivery',$duration->slot_minutes, 1);
-                    $slotsRes = getShowSlot($myDate,$vendorId,'delivery',$duration->slot_minutes, 1,'',$cart_id);
+                    $slotsRes = getShowSlot($vendorId, $myDate,'delivery',$duration->slot_minutes, 1,'',$cart_id);
                     $pickupSlots = (object)$slotsRes['slots'];
                     $pickupslotsdate = $slotsRes['date'];
                     $cart->slotsForPickupdate= $pickupslotsdate;
@@ -1434,7 +1434,7 @@ trait cartManager{
 
                     // For Dropoff
                     $myDropoffDate = date('Y-m-d');
-                    $slotsRes = getShowSlot($myDropoffDate,$vendorId,'delivery',$duration->slot_minutes, 2,'',$cart_id);
+                    $slotsRes = getShowSlot($vendorId, $myDropoffDate,'delivery',$duration->slot_minutes, 2,'',$cart_id);
                     $dropoffSlots = (object)$slotsRes['slots'];
                     $dropoffSlotsdate = $slotsRes['date'];
                     $cart->slotsForDropoffDate = $dropoffSlotsdate;

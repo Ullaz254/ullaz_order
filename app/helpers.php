@@ -877,11 +877,34 @@ if (!function_exists('imageExistsS3')) {
     }
 }
 
+if (!function_exists('getPlaceholderImageUrl')) {
+    /**
+     * URL to use when no image is present or in local/dev to avoid external proxy (ERR_SSL_PROTOCOL_ERROR).
+     * Uses an image present in the codebase (no-stores.svg). In production you can set STATIC_ASSETS_BASE_URL
+     * for a CDN base; in local/development returns local asset.
+     *
+     * @return string
+     */
+    function getPlaceholderImageUrl()
+    {
+        $env = env('APP_ENV', 'development');
+        if (in_array($env, ['local', 'development'], true)) {
+            return asset('images/no-stores.svg');
+        }
+        $base = env('STATIC_ASSETS_BASE_URL');
+        if (!empty($base)) {
+            return rtrim($base, '/') . '/images/no-stores.svg';
+        }
+        return asset('images/no-stores.svg');
+    }
+}
+
 if (!function_exists('getImageUrl')) {
     function getImageUrl($image, $dim)
     {
         $server = env('APP_ENV', 'development');
-        if ($server == 'local') {
+        // Bypass external image proxy on local/dev to avoid ERR_SSL_PROTOCOL_ERROR and timeouts
+        if (in_array($server, ['local', 'development'], true)) {
             return $image;
         }
         return \Config::get('app.FIT_URl').$dim.\Config::get('app.IMG_URL2').'/'.$image.'@webp';
@@ -1012,7 +1035,7 @@ if (!function_exists('SplitTime')) {
 }
 
 if (!function_exists('showSlot')) {
-    function showSlot($myDate = null, $vid, $type = 'delivery', $duration="60", $slot_type=0, $request_from='',$cart_id = 0)
+    function showSlot($vid, $myDate = null, $type = 'delivery', $duration = "60", $slot_type = 0, $request_from = '', $cart_id = 0)
     {
         $type = empty($type)? "delivery": $type;
         $slotDuration = Vendor::select('slot_minutes')->where('id', $vid)->first();
@@ -1148,21 +1171,21 @@ if (!function_exists('showNumericPrice')) {
     }
 
 if (!function_exists('getShowSlot')) {
-    function getShowSlot($myDate = null, $vid, $type = 'delivery', $duration="60", $slot_type=0, $request_from='',$cart_id = 0)
+    function getShowSlot($vid, $myDate = null, $type = 'delivery', $duration = "60", $slot_type = 0, $request_from = '', $cart_id = 0)
     {
-        $slots = (object)showSlot($myDate,$vid,$type,$duration, $slot_type,'', $cart_id);
+        $slots = (object)showSlot($vid, $myDate, $type, $duration, $slot_type, '', $cart_id);
         if(count((array)$slots) == 0){
             $myDate  = date('Y-m-d',strtotime('+1 day'));
-            $slots = (object)showSlot($myDate,$vid,$type,$duration, $slot_type,'', $cart_id);
+            $slots = (object)showSlot($vid, $myDate, $type, $duration, $slot_type, '', $cart_id);
         }
         if(count((array)$slots) == 0){
             $myDate  = date('Y-m-d',strtotime('+2 day'));
-            $slots = (object)showSlot($myDate,$vid,$type,$duration, $slot_type,'', $cart_id);
+            $slots = (object)showSlot($vid, $myDate, $type, $duration, $slot_type, '', $cart_id);
         }
 
         if(count((array)$slots) == 0){
             $myDate  = date('Y-m-d',strtotime('+3 day'));
-            $slots = (object)showSlot($myDate,$vid,$type,$duration, $slot_type,'', $cart_id);
+            $slots = (object)showSlot($vid, $myDate, $type, $duration, $slot_type, '', $cart_id);
         }
         $response['slots']=$slots;
         $response['date']=$myDate;
@@ -1170,7 +1193,7 @@ if (!function_exists('getShowSlot')) {
     }
 }
 if (!function_exists('showSlotTemp')) {
-    function showSlotTemp($myDate = null, $vid, $user_id, $type = 'delivery', $duration="60")
+    function showSlotTemp($vid, $user_id, $myDate = null, $type = 'delivery', $duration = "60")
     {
         $slotDuration = Vendor::select('slot_minutes')->where('id', $vid)->first();
         $duration = ($slotDuration->slot_minutes) ?? $duration;
@@ -1288,26 +1311,26 @@ if (!function_exists('SplitTimeTemp')) {
 
 
 if (!function_exists('findSlot')) {
-    function findSlot($myDate = null, $vid, $type = 'delivery', $api = null,$cart_id = 0)
+    function findSlot($vid, $myDate = null, $type = 'delivery', $api = null, $cart_id = 0)
     {
-        $type = empty($type) ? 'delivery' :$type;
+        $type = empty($type) ? 'delivery' : $type;
         $myDate  = date('Y-m-d');
-        $type = ((session()->get('vendorType'))?session()->get('vendorType'):$type);
-        $slots = showSlot($myDate, $vid,  $type,"60",0,'',$cart_id);
+        $type = ((session()->get('vendorType')) ? session()->get('vendorType') : $type);
+        $slots = showSlot($vid, $myDate, $type, "60", 0, '', $cart_id);
 
         if (count((array)$slots) == 0) {
             $myDate  = date('Y-m-d', strtotime('+1 day'));
-            $slots = showSlot($myDate, $vid, $type,"60",0,'',$cart_id);
+            $slots = showSlot($vid, $myDate, $type, "60", 0, '', $cart_id);
         }
 
         if (count((array)$slots) == 0) {
             $myDate  = date('Y-m-d', strtotime('+2 day'));
-            $slots = showSlot($myDate, $vid, $type,"60",0,'',$cart_id);
+            $slots = showSlot($vid, $myDate, $type, "60", 0, '', $cart_id);
         }
 
         if (count((array)$slots) == 0) {
             $myDate  = date('Y-m-d', strtotime('+3 day'));
-            $slots = showSlot($myDate, $vid, $type,"60",0,'',$cart_id);
+            $slots = showSlot($vid, $myDate, $type, "60", 0, '', $cart_id);
         }
         if (isset($slots) && count((array)$slots)>0) {
             $time = explode(' - ', $slots[0]['value']);
@@ -1329,22 +1352,22 @@ if (!function_exists('findSlot')) {
     }
 }
 if (!function_exists('findSlotNew')) {
-    function findSlotNew($myDate,$vid,$type = 'delivery', $duration = 0)
+    function findSlotNew($myDate, $vid, $type = 'delivery', $duration = 0)
     {
-            $slots = showSlot($myDate,$vid,$type, $duration);
+            $slots = showSlot($vid, $myDate, $type, $duration);
                 if(count((array)$slots) == 0){
                     $myDate  = date('Y-m-d',strtotime('+1 day'));
-                    $slots = showSlot($myDate,$vid,$type, $duration);
+                    $slots = showSlot($vid, $myDate, $type, $duration);
                 }
 
                 if(count((array)$slots) == 0){
                     $myDate  = date('Y-m-d',strtotime('+2 day'));
-                    $slots = showSlot($myDate,$vid,$type, $duration);
+                    $slots = showSlot($vid, $myDate, $type, $duration);
                 }
 
                 if(count((array)$slots) == 0){
                     $myDate  = date('Y-m-d',strtotime('+3 day'));
-                    $slots = showSlot($myDate,$vid,$type, $duration);
+                    $slots = showSlot($vid, $myDate, $type, $duration);
                 }
                 if(isset($slots)){
                     $slots = $slots;
@@ -2023,7 +2046,7 @@ if( !function_exists('is_category_products') ) {
 // }
 
 if( !function_exists('productDiscountPercentage') ) {
-    function productDiscountPercentage($product_price = 0, $product_compare_price)
+    function productDiscountPercentage($product_compare_price, $product_price = 0)
     {
         if($product_compare_price > 0) {
             $discount = ($product_compare_price - $product_price) / $product_compare_price * 100;
@@ -2290,7 +2313,7 @@ if (!function_exists('getOnDemandPricingRule')) {
      * @param  mixed $is_service_price_selection custoom mode selecter by admin  $is_service_product_price_from_dispatch = 0,$is_service_price_selection = 0,
      * @return void
      */
-    function getOnDemandPricingRule($vendorType = "on_demand",$userSelection = "vendor",$additionalPreference)
+    function getOnDemandPricingRule($additionalPreference, $vendorType = "on_demand", $userSelection = "vendor")
     {
 
         $is_service_product_price_from_dispatch = @$additionalPreference['is_service_product_price_from_dispatch'] ?? 0;

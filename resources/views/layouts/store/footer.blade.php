@@ -15,9 +15,17 @@
 @php
     $mapKey = 'AIzaSyD0edfD0pDgXVYBT65c8qczFdsx9j24PyY';
     $theme = Session::get('preferences');
-
-    if($theme && !empty($theme->map_key)){
-        $mapKey = $theme->map_key;
+    if ($theme) {
+        $mk = is_array($theme) ? ($theme['map_key'] ?? null) : ($theme->map_key ?? null);
+        if (!empty($mk)) {
+            $mapKey = $mk;
+        }
+    }
+    if (empty($mapKey) || $mapKey === 'AIzaSyD0edfD0pDgXVYBT65c8qczFdsx9j24PyY') {
+        $envKey = env('GOOGLE_MAPS_GEOCODING_API_KEY') ?: env('MAP_KEY');
+        if (!empty($envKey)) {
+            $mapKey = $envKey;
+        }
     }
 
     $webColor = '#ff4c3b';
@@ -124,7 +132,7 @@ $is_map_search_perticular_country = getMapConfigrationPreference();
     var Alltranslations = {!! \Cache::get('translations') !!};
  </script>
 
-@if (Auth::check() && Session::has('preferences') && !empty(Session::get('preferences')['fcm_api_key']))
+@if (Auth::check() && Session::has('preferences') && !empty(optional(Session::get('preferences'))->fcm_api_key))
 <script  type="text/javascript" src="https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js"></script>
 <script  type="text/javascript" src="https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js"></script>
 
@@ -249,7 +257,7 @@ gtag('config', 'G-5LPF1QP3Y3');
 @endif
 </script>
 <!-- End googletagmanager -->
-    @if(isset($analytics['fpixel_id']))
+    @if(!empty($analytics['fpixel_id']))
     <!-- Meta Pixel Code -->
         <script>
         !function(f,b,e,v,n,t,s)
@@ -285,7 +293,7 @@ if($showSubscriptionPlanPopUp == 1){
     @endif
     @php
         $additionalPreference = getAdditionalPreference(['is_service_product_price_from_dispatch','is_service_price_selection']);
-        $getOnDemandPricingRule = getOnDemandPricingRule(Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''),$additionalPreference);
+        $getOnDemandPricingRule = getOnDemandPricingRule($additionalPreference, Session::get('vendorType'), (@Session::get('onDemandPricingSelected') ?? ''));
         $is_service_product_price_from_dispatch_forOnDemand =$getOnDemandPricingRule['is_price_from_freelancer'] ?? 0;
     @endphp
 
@@ -381,10 +389,10 @@ if($showSubscriptionPlanPopUp == 1){
     var default_country_code = "{{ session()->get('default_country_code') }}";
 
 // Logged In User Detail
-    var logged_in_user_name = "{{Auth::user()->name??''}}";
-    var logged_in_user_email = "{{Auth::user()->email??''}}";
-    var logged_in_user_phone = "{{Auth::user()->phone_number??''}}";
-    var logged_in_user_dial_code = "{{Auth::user()->dial_code??'91'}}";
+    var logged_in_user_name = "{{ optional(Auth::user())->name ?? '' }}";
+    var logged_in_user_email = "{{ optional(Auth::user())->email ?? '' }}";
+    var logged_in_user_phone = "{{ optional(Auth::user())->phone_number ?? '' }}";
+    var logged_in_user_dial_code = "{{ optional(Auth::user())->dial_code ?? '91' }}";
 // Payment Gateway Key Detail
     var razorpay_api_key = "{{getRazorPayApiKey()??''}}";
 
@@ -392,20 +400,20 @@ if($showSubscriptionPlanPopUp == 1){
     var khalti_api_key = "{{getKhaltiPayApiKey()??''}}";
 
 // Client Perference  Detail
-    var client_preference_web_color = "{{Session::get('preferences')->web_color ?? ''  }}";
-    var client_preference_web_rgb_color = "{{Session::get('preferences')->wb_color_rgb  ?? ''}}";
-    var stop_accepting_orders = "{{Session::get('preferences')->stop_order_acceptance_for_users ?? 0}}";
+    var client_preference_web_color = "{{ optional(Session::get('preferences'))->web_color ?? '' }}";
+    var client_preference_web_rgb_color = "{{ optional(Session::get('preferences'))->wb_color_rgb ?? '' }}";
+    var stop_accepting_orders = "{{ optional(Session::get('preferences'))->stop_order_acceptance_for_users ?? 0 }}";
 
 // Client Detail
-    var client_company_name = "{{Session::get('clientdata')->company_name}}";
-    var client_logo_url = "{{Session::get('clientdata')->logo_image_url}}";
-    var digit_count = "{{$client_preference_detail->digit_after_decimal}}";
+    var client_company_name = "{{ optional(Session::get('clientdata'))->company_name ?? '' }}";
+    var client_logo_url = "{{ optional(Session::get('clientdata'))->logo_image_url ?? '' }}";
+    var digit_count = "{{ optional($client_preference_detail)->digit_after_decimal ?? '' }}";
 
 //////////////Telr payment Routes
     var skipcash = "{{route('payment.skipcash')}}";
 
 // is restricted
-    var is_age_restricted ="{{$client_preference_detail->age_restriction}}";
+    var is_age_restricted ="{{ optional($client_preference_detail)->age_restriction ?? 0 }}";
     //user lat long
     // check vendor slot urkl
     var checkSlotOrdersUrl = "{{route('checkSlotOrders')}}";
@@ -414,8 +422,8 @@ if($showSubscriptionPlanPopUp == 1){
     var userLongitude = "{{ session()->has('longitude') ? session()->get('longitude') : 0 }}";
 
     if(!userLatitude || userLongitude ==0 || userLongitude==''){
-        @if(!empty($client_preference_detail->Default_latitude))
-            userLatitude = "{{$client_preference_detail->Default_latitude}}";
+        @if($client_preference_detail && !empty($client_preference_detail->Default_latitude))
+            userLatitude = "{{ $client_preference_detail->Default_latitude }}";
         @endif
     }
     if(!userLatitude ){
@@ -423,8 +431,8 @@ if($showSubscriptionPlanPopUp == 1){
     }
 
     if(!userLongitude || userLongitude ==0 || userLongitude==''){
-        @if(!empty($client_preference_detail->Default_longitude))
-             userLongitude = "{{$client_preference_detail->Default_longitude}}";
+        @if($client_preference_detail && !empty($client_preference_detail->Default_longitude))
+             userLongitude = "{{ $client_preference_detail->Default_longitude }}";
         @endif
     }
     if(!userLongitude ){
@@ -435,11 +443,11 @@ if($showSubscriptionPlanPopUp == 1){
         selected_address = 1;
     @endif
 
-    @if($client_preference_detail->is_hyperlocal == 1)
+    @if($client_preference_detail && $client_preference_detail->is_hyperlocal == 1)
         is_hyperlocal = 1;
-        var defaultLatitude = "{{$client_preference_detail->Default_latitude}}";
-        var defaultLongitude = "{{$client_preference_detail->Default_longitude}}";
-        var defaultLocationName = "{{$client_preference_detail->Default_location_name}}";
+        var defaultLatitude = "{{ $client_preference_detail->Default_latitude }}";
+        var defaultLongitude = "{{ $client_preference_detail->Default_longitude }}";
+        var defaultLocationName = "{{ $client_preference_detail->Default_location_name ?? '' }}";
     @endif
 
     var NumberFormatHelper = { formatPrice: function(x,format=1){
@@ -471,7 +479,7 @@ if($showSubscriptionPlanPopUp == 1){
     bindLatestCoords(userLatitude, userLongitude);
 
     // || $set_common_business_type == 'taxi'
-    @if($client_preference_detail->hide_nav_bar == 1)
+    @if($client_preference_detail && $client_preference_detail->hide_nav_bar == 1)
       $('.main-menu').addClass('d-none').removeClass('d-block');
       $('.menu-navigation').addClass('d-none').removeClass('d-block');
     @endif

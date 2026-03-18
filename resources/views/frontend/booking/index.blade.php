@@ -1484,7 +1484,7 @@ input[type=number]::-webkit-outer-spin-button {
                     <div class="modal-body pb-0">
                         <div class="form-group">
                             <div class="text-36">{{ Session::get('currencySymbol') }}<span
-                                    class="wallet_balance">{{ decimal_format(Auth::user()->balanceFloat * (isset($clientCurrency->doller_compare) ? $clientCurrency->doller_compare : 1)) }}</span>
+                                    class="wallet_balance">{{ decimal_format(isset($wallet_balance) ? $wallet_balance : (Auth::check() ? Auth::user()->balanceFloat * (isset($clientCurrency->doller_compare) ? $clientCurrency->doller_compare : 1) : 0)) }}</span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -1795,7 +1795,7 @@ input[type=number]::-webkit-outer-spin-button {
             ajaxCall = $.ajax({
                 type: "post",
                 dataType: "json",
-                url: "{{ route('verifyInformation', Auth::user()->id) }}",
+                url: "{{ Auth::check() ? route('verifyInformation', Auth::user()->id) : '' }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "type": $type,

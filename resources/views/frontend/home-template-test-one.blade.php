@@ -19,7 +19,7 @@ $preference = $client_preference_detail;
    @media(max-width:767px){.cardbanner {height:120px;}}
 </style>
 @endsection
-<!-- <div class="offset-top @if((\Request::route()->getName() != 'userHome') || ($client_preference_detail->show_icons == 0)) inner-pages-offset @endif @if($client_preference_detail->hide_nav_bar == 1) set-hide-nav-bar @endif"></div> -->
+{{-- offset div: show_icons/hide_nav_bar --}}
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary d-none" data-toggle="modal" data-target="#login_modal"> Launch demo modal </button>
 

@@ -179,7 +179,7 @@ class OrderController extends BaseController
                 $is_service_product_price_from_dispatch = 0;
                 if(($action == 'on_demand') && ($additionalPreferences['is_service_product_price_from_dispatch'] ==1)){
                     $on_demand_price_selection_type = ($request->has('on_demand_price_selection_type')) ? $request->on_demand_price_selection_type : 'vendor';
-                    $getOnDemandPricingRule = getOnDemandPricingRule($action, $on_demand_price_selection_type ,$additionalPreferences);
+                    $getOnDemandPricingRule = getOnDemandPricingRule($additionalPreferences, $action, $on_demand_price_selection_type);
                     $is_service_product_price_from_dispatch =$getOnDemandPricingRule['is_price_from_freelancer'];
                 }
                 $additionalPreferences = (object) $additionalPreferences ;
@@ -2874,11 +2874,11 @@ class OrderController extends BaseController
                         $vendorId = $vendor->vendor->id;
                         //type must be a : delivery , takeaway,dine_in
                         $duration = Vendor::where('id',$vendorId)->select('slot_minutes','closed_store_order_scheduled')->first();
-                        $slotsDate = findSlot('',$vendorId,'','api');
-                        $slots = showSlot($slotsDate,$vendorId,'delivery',$duration->slot_minutes, 1);
+                        $slotsDate = findSlot($vendorId,'','','api');
+                        $slots = showSlot($vendorId, $slotsDate,'delivery',$duration->slot_minutes, 1);
                         $vendor->slots = $slots;
                         if($preferences->business_type == 'laundry'){
-                            $dropoff_slots = showSlot($slotsDate,$vendorId,'delivery',$duration->slot_minutes, 2);
+                            $dropoff_slots = showSlot($vendorId, $slotsDate,'delivery',$duration->slot_minutes, 2);
                             $vendor->dropoff_slots = $dropoff_slots;
                         }else{
                             $vendor->dropoff_slots = [];
@@ -2888,7 +2888,7 @@ class OrderController extends BaseController
                          }else{
                             $vendor->closed_store_order_scheduled = 0;
                         }
-                        $slotsDate = findSlot('',$vendorId,'','api');
+                        $slotsDate = findSlot($vendorId,'','','api');
                         $vendor->delaySlot = $slotsDate;
                         $vendor->same_day_orders_for_rescheduling = $preferences->same_day_orders_for_rescheduing??0;
 
@@ -5034,11 +5034,11 @@ class OrderController extends BaseController
                         $vendorId = $vendor->vendor->id;
                         //type must be a : delivery , takeaway,dine_in
                         $duration = Vendor::where('id',$vendorId)->select('slot_minutes','closed_store_order_scheduled')->first();
-                        $slotsDate = findSlot('',$vendorId,'','api');
-                        $slots = showSlot($slotsDate,$vendorId,'delivery',$duration->slot_minutes, 1);
+                        $slotsDate = findSlot($vendorId,'','','api');
+                        $slots = showSlot($vendorId, $slotsDate,'delivery',$duration->slot_minutes, 1);
                         $vendor->slots = $slots;
                         if($preferences->business_type == 'laundry'){
-                            $dropoff_slots = showSlot($slotsDate,$vendorId,'delivery',$duration->slot_minutes, 2);
+                            $dropoff_slots = showSlot($vendorId, $slotsDate,'delivery',$duration->slot_minutes, 2);
                             $vendor->dropoff_slots = $dropoff_slots;
                         }else{
                             $vendor->dropoff_slots = [];
@@ -5048,7 +5048,7 @@ class OrderController extends BaseController
                          }else{
                             $vendor->closed_store_order_scheduled = 0;
                         }
-                        $slotsDate = findSlot('',$vendorId,'','api');
+                        $slotsDate = findSlot($vendorId,'','','api');
                         $vendor->delaySlot = $slotsDate;
                         $vendor->same_day_orders_for_rescheduling = $preferences->same_day_orders_for_rescheduing??0;
 

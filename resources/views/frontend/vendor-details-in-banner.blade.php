@@ -97,7 +97,7 @@
                                     </li>
                                 @endif
                                 @php
-                                    $checkSlot = findSlot('', $vendor->id, '');
+                                    $checkSlot = findSlot($vendor->id, '', '');
                                 @endphp
 
                                 <li class="vendor-timing">
