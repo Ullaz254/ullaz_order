@@ -564,7 +564,7 @@ class CustomerAuthController extends FrontController
             }
 
             //Login Observer
-            UserObserver::signIn(auth()->user());
+            (new UserObserver())->signIn(auth()->user());
 
             $message = ('Logged in successfully');
             $redirect_to = '';
@@ -743,7 +743,7 @@ class CustomerAuthController extends FrontController
                 if (Auth::attempt(['email' => $username, 'password' => $request->password, 'status' => 1])) {
 
                     //Login Observer
-                     UserObserver::signIn(auth()->user());
+                    (new UserObserver())->signIn(auth()->user());
 
                     $userid = Auth::id();
                     $Authuser = Auth::user();
