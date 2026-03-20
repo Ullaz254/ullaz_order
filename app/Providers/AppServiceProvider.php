@@ -122,7 +122,7 @@ class AppServiceProvider extends ServiceProvider
         if (!$client_preference_detail) {
             $client_preference_detail = new ClientPreference();
         }
-        $client_head = Client::where(['id' => 1])->first();
+        $client_head = Client::where('id', '>', 0)->first();
 
         $payment_codes = ['stripe', 'stripe_fpx', 'yoco', 'checkout', 'cashfree','payphone','stripe_oxxo','stripe_ideal','khalti','data_trans'];
         $stripe_publishable_key = $yoco_public_key = $checkout_public_key = $stripe_fpx_publishable_key = $cashfree_test_mode = $stripe_oxxo_publishable_key = $stripe_ideal_publishable_key = $khalti_api_key = '';
