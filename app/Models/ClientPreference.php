@@ -52,6 +52,26 @@ class ClientPreference extends Model
       return $this->belongsTo('App\Models\Client','client_code','code')->select('id', 'code', 'custom_domain');
     }
 
+    /**
+     * Resolve an image path to a URL without triggering AWS credential lookups.
+     * Priority: already-full-URL > STATIC_ASSETS_BASE_URL (local) > S3 fallback.
+     */
+    private function resolveImageUrl(string $img): string
+    {
+        if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://')) {
+            return $img;
+        }
+        $staticBase = env('STATIC_ASSETS_BASE_URL');
+        if ($staticBase) {
+            return rtrim($staticBase, '/') . '/' . ltrim($img, '/');
+        }
+        try {
+            return \Storage::disk('s3')->url($img);
+        } catch (\Exception $e) {
+            return \Storage::url($img);
+        }
+    }
+
     public function getFaviconAttribute($value)
     {
       $values = array();
@@ -61,12 +81,12 @@ class ClientPreference extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
+
     public function getSignupImageAttribute($value)
     {
       $values = array();
@@ -76,10 +96,9 @@ class ClientPreference extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
 
@@ -95,17 +114,15 @@ class ClientPreference extends Model
 
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
 
     public function getDineiniconAttribute($value)
     {
       $values = array();
-      //$img = 'default/default_image.png';
       if(!empty($value)){
         $img = $value;
       }else{
@@ -113,17 +130,15 @@ class ClientPreference extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
 
     public function getTakewayiconAttribute($value)
     {
       $values = array();
-      //$img = 'default/default_image.png';
       if(!empty($value)){
         $img = $value;
       }else{
@@ -131,17 +146,15 @@ class ClientPreference extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
 
     public function getRentaliconAttribute($value)
     {
       $values = array();
-      //$img = 'default/default_image.png';
       if(!empty($value)){
         $img = $value;
       }else{
@@ -149,16 +162,15 @@ class ClientPreference extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
+
     public function getPickDropiconAttribute($value)
     {
       $values = array();
-      //$img = 'default/default_image.png';
       if(!empty($value)){
         $img = $value;
       }else{
@@ -166,16 +178,15 @@ class ClientPreference extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
+
     public function getOnDemandiconAttribute($value)
     {
       $values = array();
-      //$img = 'default/default_image.png';
       if(!empty($value)){
         $img = $value;
       }else{
@@ -183,16 +194,15 @@ class ClientPreference extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
+
     public function getLaundryiconAttribute($value)
     {
       $values = array();
-      //$img = 'default/default_image.png';
       if(!empty($value)){
         $img = $value;
       }else{
@@ -200,17 +210,15 @@ class ClientPreference extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
 
     public function getP2piconAttribute($value)
     {
       $values = array();
-      //$img = 'default/default_image.png';
       if(!empty($value)){
         $img = $value;
       }else{
@@ -218,17 +226,15 @@ class ClientPreference extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
 
     public function getappointmenticonAttribute($value)
     {
       $values = array();
-      //$img = 'default/default_image.png';
       if(!empty($value)){
         $img = $value;
       }else{
@@ -236,10 +242,9 @@ class ClientPreference extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$this->resolveImageUrl($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      //$values['small'] = url('showImage/small/' . $img);
       return $values;
     }
 
