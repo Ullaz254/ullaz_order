@@ -98,34 +98,68 @@ class Client extends Authenticatable implements Auditable
     public function getLogoAttribute($value)
     {
       $values = array();
-      $img = 'default/default_image.png';
-      if(!empty($value)){
+      $img = 'default/default_logo.png';
+      if (!empty($value)) {
+        // If already a full URL (legacy S3 URLs stored in DB), return directly
+        // without calling AWS SDK which would time out on non-AWS hosts
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+          $values['proxy_url'] = \Config::get('app.IMG_URL1');
+          $values['image_path'] = parse_url($value, PHP_URL_PATH);
+          $values['image_fit'] = $value;
+          $values['original'] = $value;
+          $values['logo_db_value'] = $value;
+          return $values;
+        }
         $img = $value;
       }
       $ex = checkImageExtension($img);
-      $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
-      $values['image_fit'] = \Config::get('app.FIT_URl');
-      $values['original'] = \Storage::disk('s3')->url($img);
+      $staticBase = env('STATIC_ASSETS_BASE_URL');
+      if ($staticBase) {
+        $baseUrl = rtrim($staticBase, '/');
+        $values['proxy_url'] = \Config::get('app.IMG_URL1');
+        $values['image_path'] = '/' . $img . $ex;
+        $values['image_fit'] = \Config::get('app.FIT_URl');
+        $values['original'] = $baseUrl . '/' . $img;
+      } else {
+        $values['proxy_url'] = \Config::get('app.IMG_URL1');
+        $values['image_path'] = \Config::get('app.IMG_URL2') . '/' . \Storage::disk('s3')->url($img) . $ex;
+        $values['image_fit'] = \Config::get('app.FIT_URl');
+        $values['original'] = \Storage::disk('s3')->url($img);
+      }
       $values['logo_db_value'] = $value;
-
       return $values;
     }
-    
+
     public function getDarkLogoAttribute($value)
     {
       $values = array();
-      $img = 'default/default_image.png';
-      if(!empty($value)){
+      $img = 'default/default_logo.png';
+      if (!empty($value)) {
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+          $values['proxy_url'] = \Config::get('app.IMG_URL1');
+          $values['image_path'] = parse_url($value, PHP_URL_PATH);
+          $values['image_fit'] = $value;
+          $values['original'] = $value;
+          $values['logo_db_value'] = $value;
+          return $values;
+        }
         $img = $value;
       }
       $ex = checkImageExtension($img);
-      $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
-      $values['image_fit'] = \Config::get('app.FIT_URl');
-      $values['original'] = \Storage::disk('s3')->url($img);
+      $staticBase = env('STATIC_ASSETS_BASE_URL');
+      if ($staticBase) {
+        $baseUrl = rtrim($staticBase, '/');
+        $values['proxy_url'] = \Config::get('app.IMG_URL1');
+        $values['image_path'] = '/' . $img . $ex;
+        $values['image_fit'] = \Config::get('app.FIT_URl');
+        $values['original'] = $baseUrl . '/' . $img;
+      } else {
+        $values['proxy_url'] = \Config::get('app.IMG_URL1');
+        $values['image_path'] = \Config::get('app.IMG_URL2') . '/' . \Storage::disk('s3')->url($img) . $ex;
+        $values['image_fit'] = \Config::get('app.FIT_URl');
+        $values['original'] = \Storage::disk('s3')->url($img);
+      }
       $values['logo_db_value'] = $value;
-
       return $values;
     }
 

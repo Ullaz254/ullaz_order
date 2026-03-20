@@ -107,7 +107,7 @@ class CustomDomain
     $callback = '';
     $redisData = json_decode($existRedis);
     if ($redisData) {
-      $database_name = 'royo_' . $redisData->database_name;
+      $database_name = $redisData->database_name;
       $database_host = !empty($redisData->database_host) ? $redisData->database_host : env('DB_HOST', '127.0.0.1');
       $database_port = !empty($redisData->database_port) ? $redisData->database_port : env('DB_PORT', '3306');
       $database_username = !empty($redisData->database_username) ? $redisData->database_username : env('DB_USERNAME', 'royoorders');
