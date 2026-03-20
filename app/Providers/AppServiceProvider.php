@@ -100,11 +100,8 @@ class AppServiceProvider extends ServiceProvider
         $favicon_url = asset('assets/images/favicon.png');
         $client_preference_detail = null;
         try {
-            $client_preference_detail = ClientPreference::where(['id' => 1])->first();
-            // Fallback: try any record (id may differ after DB migration)
-            if (!$client_preference_detail) {
-                $client_preference_detail = ClientPreference::first();
-            }
+            // Use first() directly — id may be 0 after DB migration, not 1
+            $client_preference_detail = ClientPreference::first();
             if ($client_preference_detail && isset($client_preference_detail->favicon)) {
                 $favicon_url = $client_preference_detail->favicon['proxy_url'] . '600/400' . $client_preference_detail->favicon['image_path'];
             }
