@@ -171,17 +171,16 @@ class CategoryController extends FrontController{
 
         $newProducts = [];
         if($page == 'pickup/delivery'){
-            $clientCurrency = ClientCurrency::where('currency_id', $curId)->first();
-            if (Auth::user()) {
+            if(!Auth::user()){
+                return redirect()->route('customer.login');
+            }else{
                 $user_addresses = UserAddress::whereNotNull('latitude')->whereNotNull('longitude')->get();
+                $clientCurrency = ClientCurrency::where('currency_id', $curId)->first();
                 $wallet_balance = Auth::user()->balanceFloat * ($clientCurrency->doller_compare ?? 1);
-                $riders = Rider::where('user_id', Auth::user()->id)->orderBy('id', 'DESC')->get();
-            } else {
-                $user_addresses = collect([]);
-                $wallet_balance = 0;
-                $riders = collect([]);
+                $riders = Rider::where('user_id',Auth::user()->id)->orderBy('id','DESC')->get();
+
+                return view('frontend.booking.index')->with(['maxPrice'=>$maxPrice,'clientCurrency' => $clientCurrency ,'wallet_balance' => $wallet_balance, 'user_addresses' => $user_addresses, 'navCategories' => $navCategories,'category' => $category,'riders'=>$riders, 'is_cab_pooling' => $getAdditionalPreference['is_cab_pooling'], 'is_bid_ride_enable' => $getAdditionalPreference['is_bid_ride_enable'],'is_postpay_enable' => $getAdditionalPreference['is_postpay_enable'], 'is_particular_driver' => $getAdditionalPreference['is_particular_driver'],'is_recurring_booking' => $getAdditionalPreference['is_recurring_booking'],'is_share_ride_users'=>$getAdditionalPreference['is_share_ride_users']]);
             }
-            return view('frontend.booking.index')->with(['maxPrice'=>$maxPrice,'clientCurrency' => $clientCurrency ,'wallet_balance' => $wallet_balance, 'user_addresses' => $user_addresses, 'navCategories' => $navCategories,'category' => $category,'riders'=>$riders, 'is_cab_pooling' => $getAdditionalPreference['is_cab_pooling'], 'is_bid_ride_enable' => $getAdditionalPreference['is_bid_ride_enable'],'is_postpay_enable' => $getAdditionalPreference['is_postpay_enable'], 'is_particular_driver' => $getAdditionalPreference['is_particular_driver'],'is_recurring_booking' => $getAdditionalPreference['is_recurring_booking'],'is_share_ride_users'=>$getAdditionalPreference['is_share_ride_users']]);
         }
     }
 
@@ -330,25 +329,22 @@ class CategoryController extends FrontController{
 
         $newProducts = [];
         if($page == 'pickup/delivery' || $page == 'product' && $slug == 'yacht'){
-            // Allow guests to VIEW the booking page; auth is enforced at the
-            // API/booking-submission layer so the page itself is publicly accessible.
-            $product = Product::where('category_id', $category->id)->orderBy('per_hour_price','asc')->first();
-            $clientCurrency = ClientCurrency::where('currency_id', $curId)->first();
+            if(!Auth::user()){
+                return redirect()->route('customer.login');
+            }else{
 
-            if (Auth::user()) {
+                $product = Product::where('category_id', $category->id)->orderBy('per_hour_price','asc')->first();
+
+
                 $user_addresses = UserAddress::whereNotNull('latitude')->whereNotNull('longitude')->get();
+                $clientCurrency = ClientCurrency::where('currency_id', $curId)->first();
                 $wallet_balance = Auth::user()->balanceFloat * ($clientCurrency->doller_compare ?? 1);
-                $riders = Rider::where('user_id', Auth::user()->id)->orderBy('id', 'DESC')->get();
-            } else {
-                $user_addresses = collect([]);
-                $wallet_balance = 0;
-                $riders = collect([]);
+                $riders = Rider::where('user_id',Auth::user()->id)->orderBy('id','DESC')->get();
+                $companies  = Company::get();
+
+                    return view('frontend.booking.index')->with(['maxPrice'=>$maxPrice,'clientCurrency' => $clientCurrency ,'wallet_balance' => $wallet_balance, 'user_addresses' => $user_addresses, 'navCategories' => $navCategories,'category' => $category,'riders'=>$riders, 'is_cab_pooling' => $getAdditionalPreference['is_cab_pooling'], 'is_bid_ride_enable' => $getAdditionalPreference['is_bid_ride_enable'],'is_postpay_enable' => $getAdditionalPreference['is_postpay_enable'], 'is_particular_driver' => $getAdditionalPreference['is_particular_driver'],'is_recurring_booking' => $getAdditionalPreference['is_recurring_booking'],'is_share_ride_users'=>$getAdditionalPreference['is_share_ride_users'],'companies'=>$companies,'product'=> $product]);
+
             }
-
-            $companies = Company::get();
-
-            return view('frontend.booking.index')->with(['maxPrice'=>$maxPrice,'clientCurrency' => $clientCurrency ,'wallet_balance' => $wallet_balance, 'user_addresses' => $user_addresses, 'navCategories' => $navCategories,'category' => $category,'riders'=>$riders, 'is_cab_pooling' => $getAdditionalPreference['is_cab_pooling'], 'is_bid_ride_enable' => $getAdditionalPreference['is_bid_ride_enable'],'is_postpay_enable' => $getAdditionalPreference['is_postpay_enable'], 'is_particular_driver' => $getAdditionalPreference['is_particular_driver'],'is_recurring_booking' => $getAdditionalPreference['is_recurring_booking'],'is_share_ride_users'=>$getAdditionalPreference['is_share_ride_users'],'companies'=>$companies,'product'=> $product]);
-
         }elseif($page == 'on demand service' || $page == 'appointment'){
             $cartDataGet = $this->getCartOnDemand($request);
             if($request->step == 2 && empty($request->addons) && empty($request->dataset)){
