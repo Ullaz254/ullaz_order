@@ -571,7 +571,7 @@ class UserhomeController extends FrontController
                             $q->where('language_id', $langId);
                         }]);
 
-                    $home_page_labels = $home_page_labels->get();
+                    $home_page_labels = $home_page_labels->with('pickupCategories.categoryDetail')->get();
                 } catch (\Exception $e) {
                     // Table doesn't exist or query failed, use empty collection
                     $home_page_labels = collect([]);
@@ -616,16 +616,17 @@ class UserhomeController extends FrontController
                     return $da;
                 });
 
-                // Try to check cab booking setting, handle missing table gracefully
+                // Check cab booking setting — when enabled, render home page with pick_drop mode
+                // instead of redirecting, so the Google-Maps cab booking module displays at drivarr.com
                 $only_cab_booking = 0;
                 try {
                     $only_cab_booking = OnboardSetting::where('key_value', 'home_page_cab_booking')->count();
                 } catch (\Exception $e) {
-                    // Table doesn't exist, use default
                     $only_cab_booking = 0;
                 }
-                if ($only_cab_booking == 1)
-                    return Redirect::route('categoryDetail', 'cabservice');
+                if ($only_cab_booking == 1) {
+                    $vendor_type = 'pick_drop';
+                }
 
                 // Try to get pickup labels, handle missing table gracefully
                 try {
