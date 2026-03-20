@@ -910,6 +910,14 @@ if (!function_exists('getImageUrl')) {
         if ($server == 'local') {
             return $image;
         }
+        // When using local storage (no image proxy), return image directly
+        if (env('STATIC_ASSETS_BASE_URL')) {
+            return $image;
+        }
+        // If image is already an absolute URL (e.g. from asset()), return it directly
+        if (str_starts_with((string)$image, 'http://') || str_starts_with((string)$image, 'https://')) {
+            return $image;
+        }
         return \Config::get('app.FIT_URl').$dim.\Config::get('app.IMG_URL2').'/'.$image.'@webp';
     }
 }
