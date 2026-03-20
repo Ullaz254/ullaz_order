@@ -139,55 +139,114 @@
 		background: linear-gradient(to right, <?= ($client_preference_detail) ? $client_preference_detail->web_color : '#ff4c3b' ?>, #ffce32, <?= ($client_preference_detail) ? $client_preference_detail->site_top_header_color : '#3a77ff' ?>);
 	}
     @if($set_common_business_type == 'taxi')
-      .cabbooking-loader {width: 30px;height: 30px;animation: loading 1s infinite ease-out;margin: auto;border-radius: 50%;background-color: red;}
-      @keyframes loading {0% {transform: scale(1);}100% {transform: scale(8);opacity: 0;}}
-      .site-topbar,.main-menu.d-block{display: none !important;}
-      .cab-booking-header img.img-fluid {height: 50px;}
-      .cab-booking-header{display: block !important;}
-      .container .main-menu .d-block{display: none;}
-      @media(max-width: 991px){
-        .cab-booking-header img.img-fluid {height: auto !important;}
+      /* ── Taxi: hide standard nav, show cab header ── */
+      .cabbooking-loader{width:30px;height:30px;animation:loading 1s infinite ease-out;margin:auto;border-radius:50%;background-color:red;}
+      @keyframes loading{0%{transform:scale(1);}100%{transform:scale(8);opacity:0;}}
+      .site-topbar,.main-menu.d-block{display:none !important;}
+      .cab-booking-header{display:block !important;}
+      .container .main-menu .d-block{display:none;}
+
+      /* ── Text logo (when image unavailable) ── */
+      .drivarr-brand-link{text-decoration:none !important;}
+      .drivarr-text-logo{
+        color: var(--theme-deafult);
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-transform: capitalize;
+        font-family: inherit;
       }
-      @media(max-width:767px){.cab-booking-header a.navbar-brand.mr-0 {margin: 10px auto 0;text-align: center;display: block;}}
-      /* Circular dark/light toggle button for taxi mode */
-      .dark-light {
-        border-radius: 50% !important;
-        border-top-right-radius: 50% !important;
-        border-bottom-right-radius: 50% !important;
-        right: 15px !important;
-        width: 46px !important;
-        height: 46px !important;
-        background: linear-gradient(135deg, #f7b733, #fc4a1a) !important;
-        box-shadow: 0 4px 15px rgba(247, 120, 50, 0.5) !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+
+      /* ── Light-mode header (white background) ── */
+      .cab-booking-header{
+        border-bottom: 1px solid #e8e8e8;
+        padding: 8px 0;
       }
-      .sidebar-btn.dark-light-btn { display: block !important; }
-      .dark-light .theme-layout-version { display: none; }
-      /* Dark footer for taxi mode */
+      .cab-booking-header .location-bar,
+      .cab-booking-header .homepage-address h2,
+      .cab-booking-header .homepage-address h2 span,
+      .cab-booking-header .homepage-address h2 *,
+      .cab-booking-header .header-dropdown li a,
+      .cab-booking-header .header-dropdown .fa-user,
+      .cab-booking-header .taxi-search-bar button,
+      .cab-booking-header .taxi-search-bar input::placeholder{
+        color: #333 !important;
+      }
+      .cab-booking-header .taxi-search-bar input{
+        color: #333 !important;
+      }
+      .cab-booking-header .taxi-search-bar{
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: #f5f5f5;
+        padding: 5px 14px !important;
+      }
+      .cab-booking-header .location-bar{
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 4px 12px;
+        background: #f5f5f5;
+      }
+      .cab-booking-header .map-icon{color: var(--theme-deafult);}
+
+      /* ── Dark-mode header override ── */
+      .dark .cab-booking-header{
+        background: #1a1a1a !important;
+        border-bottom: 1px solid #333;
+      }
+      .dark .cab-booking-header .location-bar,
+      .dark .cab-booking-header .homepage-address h2,
+      .dark .cab-booking-header .homepage-address h2 span,
+      .dark .cab-booking-header .homepage-address h2 *,
+      .dark .cab-booking-header .header-dropdown li a,
+      .dark .cab-booking-header .header-dropdown .fa-user,
+      .dark .cab-booking-header .taxi-search-bar button,
+      .dark .cab-booking-header .taxi-search-bar input::placeholder{
+        color: #eee !important;
+      }
+      .dark .cab-booking-header .taxi-search-bar input{color:#eee !important;}
+      .dark .cab-booking-header .taxi-search-bar{
+        background:#2a2a2a;border-color:#444;
+      }
+      .dark .cab-booking-header .location-bar{
+        background:#2a2a2a;border-color:#444;
+      }
+      .dark .drivarr-text-logo{color: var(--theme-deafult);}
+
+      /* ── Circular dark/light toggle button ── */
+      .dark-light{
+        border-radius:50% !important;
+        border-top-right-radius:50% !important;
+        border-bottom-right-radius:50% !important;
+        right:15px !important;
+        width:46px !important;
+        height:46px !important;
+        background:linear-gradient(135deg,#f7b733,#fc4a1a) !important;
+        box-shadow:0 4px 15px rgba(247,120,50,.5) !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+      }
+      .sidebar-btn.dark-light-btn{display:block !important;}
+      .dark-light .theme-layout-version{display:none;}
+
+      /* ── Dark footer ── */
       footer#footer .light-layout,
-      footer#footer.footer-light .section-b-space {
-        background-color: #232323 !important;
+      footer#footer.footer-light .section-b-space{background-color:#232323 !important;}
+      footer#footer h4{color:#fff !important;}
+      footer#footer h6,footer#footer p,footer#footer a,footer#footer li,
+      footer#footer .footer-title h4,footer#footer .footer-contant ul li a,
+      footer#footer .footer-social ul li a{color:#ccc !important;}
+      footer#footer .footer-end{background-color:#1a1a1a !important;color:#aaa !important;}
+      footer#footer .footer-end p{color:#aaa !important;}
+
+      @media(max-width:991px){.cab-booking-header img.img-fluid{height:auto !important;}}
+      @media(max-width:767px){
+        .cab-booking-header a.navbar-brand.mr-0{margin:10px auto 0;text-align:center;display:block;}
+        .drivarr-text-logo{font-size:20px;}
       }
-      footer#footer h4,
-      footer#footer h6,
-      footer#footer p,
-      footer#footer a,
-      footer#footer li,
-      footer#footer .footer-title h4,
-      footer#footer .footer-contant ul li a,
-      footer#footer .footer-social ul li a {
-        color: #ccc !important;
-      }
-      footer#footer h4 { color: #fff !important; }
-      footer#footer .footer-end {
-        background-color: #1a1a1a !important;
-        color: #aaa !important;
-      }
-      footer#footer .footer-end p { color: #aaa !important; }
     @else
-       .cab-booking-header{display: none;}
+      .cab-booking-header{display:none;}
     @endif
 </style>
   @yield('css')

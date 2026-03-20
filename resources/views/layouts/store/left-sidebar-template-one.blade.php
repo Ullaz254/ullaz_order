@@ -1,16 +1,21 @@
 @php
 $clientData = null;
-$urlImg = URL::to('/').'/assets/images/users/user-1.jpg';
+$urlImg = '';          // empty = use text logo
+$useTextLogo = true;  // default: render APP_NAME as styled text
 try {
     $clientData = \App\Models\Client::select('id', 'logo')
     ->where('id', '>', 0)
     ->first();
-    if($clientData && isset($clientData->logo['original'])) {
-        $urlImg = $clientData->logo['original'];
+    if ($clientData && isset($clientData->logo['original'])) {
+        $rawLogoUrl = $clientData->logo['original'];
+        // Use image only when it is NOT an S3 URL (S3 assets unavailable after migration)
+        if (!empty($rawLogoUrl) && strpos($rawLogoUrl, 's3.amazonaws.com') === false && strpos($rawLogoUrl, 's3.') === false) {
+            $urlImg       = $rawLogoUrl;
+            $useTextLogo  = false;
+        }
     }
 } catch (\Exception $e) {
-    // Table or column doesn't exist, use default
-    $urlImg = URL::to('/').'/assets/images/users/user-1.jpg';
+    // Table or column doesn't exist – fall through to text logo
 }
 $compId = session()->get('company_id')??null;
 if(!empty($compId) ||  (@auth()->check() && @auth()->user()->company_id))
@@ -69,7 +74,15 @@ try {
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-4 col-sm-3 col-md-2">
-                    <a class="navbar-brand mr-0" href="{{ route('userHome') }}"><img id="theme-logo" class="logo-image" style="height:60px" alt="" src="{{ $urlImg }}"></a>
+                    @if($useTextLogo)
+                    <a class="navbar-brand mr-0 drivarr-brand-link" href="{{ route('userHome') }}">
+                        <span class="drivarr-text-logo">{{ ucfirst(config('app.name', 'Drivarr')) }}</span>
+                    </a>
+                    @else
+                    <a class="navbar-brand mr-0" href="{{ route('userHome') }}">
+                        <img id="theme-logo" class="logo-image" style="height:60px" alt="{{ config('app.name') }}" src="{{ $urlImg }}">
+                    </a>
+                    @endif
                 </div>
                 <div class="col-4 col-sm-5 col-md-7">
                     <div class="d-flex align-items-center">
