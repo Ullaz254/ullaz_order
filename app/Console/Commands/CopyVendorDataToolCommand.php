@@ -45,7 +45,7 @@ class CopyVendorDataToolCommand extends Command
     public function handle()
     {
         $client = Client::select('database_name', 'sub_domain')->where('code','1a3404')->first();
-        $database_name = 'royo_' . $client->database_name;
+        $database_name = $client->database_name;
         $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
         $db = DB::select($query, [
             $database_name

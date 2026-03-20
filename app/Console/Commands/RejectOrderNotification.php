@@ -55,7 +55,7 @@ class RejectOrderNotification extends Command
         $intervalTime2 = $intervalTime->addSeconds(40);
         $databases = AutoRejectOrderCron::whereBetween('auto_reject_time',[$intervalTime,$intervalTime2])->groupBy('database_name')->get();
         foreach ($databases as $client) {
-            $database_name = 'royo_' . $client->database_name;
+            $database_name = $client->database_name;
             $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
             $db = DB::select($query, [$database_name]);
             if ($db) {

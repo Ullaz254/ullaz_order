@@ -60,7 +60,7 @@ class MargApiOrderUpdate extends Command
 
             foreach ($clients as $key => $client) {
                 //Connect client connection
-                $database_name  = 'royo_' . $client->database_name;
+                $database_name  = $client->database_name;
                 $header         = $client->database_name;
 
                 $result = DB::select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$database_name]);

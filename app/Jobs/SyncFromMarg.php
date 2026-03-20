@@ -43,7 +43,7 @@ use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, MargTrait;
     {
         $clients = Client::get();
         foreach ($clients as $key => $client) {
-            $database_name = 'royo_' . $client->database_name;
+            $database_name = $client->database_name;
             $this->info("migrate database start: {$database_name}!");
             $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
             $db = DB::select($query, [$database_name]);

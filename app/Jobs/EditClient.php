@@ -55,7 +55,7 @@ class EditClient implements ShouldQueue
 
         );
 
-        $schemaName = 'royo_' . $client->database_name;
+        $schemaName = $client->database_name;
         $default = [
             'driver' => env('DB_CONNECTION', 'mysql'),
             'host' => env('DB_HOST'),

@@ -43,25 +43,25 @@ class CloneDatabase extends Command
         try{
 
             $old_db = $this->argument('old_db'); 
-            $database_name = 'royo_'.$this->argument('old_db'); 
+            $database_name = $this->argument('old_db'); 
 
 
             $result = DB::select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$database_name]);
             if (!empty($result)) {
-                DB::statement('DROP DATABASE IF EXISTS royo_'.$old_db);
+                DB::statement('DROP DATABASE IF EXISTS '.$old_db);
                 // Create a new database
-                DB::statement('CREATE DATABASE royo_'.$old_db);
+                DB::statement('CREATE DATABASE '.$old_db);
                 $this->info("Db '$old_db' has been dropped.");
             }else{
                 $this->info("Db '$old_db' in--- else --.");
                 // Create a new database
-                DB::statement('CREATE DATABASE royo_'.$old_db);
+                DB::statement('CREATE DATABASE '.$old_db);
                 $this->info("Db '$old_db' has been created.");
             }
             
      
 
-        $database_name = 'royo_' . $old_db;
+        $database_name = $old_db;
             $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
             $db = DB::select($query, [$database_name]);
             if ($db) {

@@ -37,7 +37,7 @@ class UpdateClient implements ShouldQueue
      * @return void
      */
     public function handle(){
-        $schemaName = config("database.connections.mysql.database") ? config("database.connections.mysql.database") : 'royo_orders';
+        $schemaName = config("database.connections.mysql.database") ? config("database.connections.mysql.database") : env('DB_DATABASE', 'royoorders');
         $default = [
             'driver' => env('DB_CONNECTION', 'mysql'),
             'host' => env('DB_HOST'),

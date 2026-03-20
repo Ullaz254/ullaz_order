@@ -55,7 +55,7 @@ class SendCampaignNotification extends Command
             {
                 break;
             }
-            $database_name = 'royo_' . $client->database_name;
+            $database_name = $client->database_name;
             $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
             $db = DB::select($query, [$database_name]);
             if ($db) {

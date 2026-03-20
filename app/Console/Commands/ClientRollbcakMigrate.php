@@ -45,7 +45,7 @@ class ClientRollbcakMigrate extends Command
         // $clients = Client::where('status', 1)->get();
         $clients = Client::all();
         foreach ($clients as $key => $client) {
-            $database_name = 'royo_' . $client->database_name;
+            $database_name = $client->database_name;
             $default = [
                 'driver' => env('DB_CONNECTION', 'mysql'),
                 'host' => env('DB_HOST'),

@@ -43,7 +43,7 @@ class SingleClientDatabaseMigrate extends Command
     {
         $database_name = $this->option('db');
         $clients = Client::get();
-        $database_name = 'royo_' . $database_name;
+        $database_name = $database_name;
         $this->info("migrate database start: {$database_name}!");
         $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
         $db = DB::select($query, [$database_name]);

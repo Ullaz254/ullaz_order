@@ -219,7 +219,7 @@ class ClientController extends Controller{
 
     public function remove(Request $request){
         $client = Client::where('id', $request->client_id)->first();
-        $cmd =  \DB::statement("DROP DATABASE `royo_".$client->database_name."`");
+        $cmd =  \DB::statement("DROP DATABASE `".$client->database_name."`");
         $client->delete();
         return $this->successResponse(['status'=>'success', 'message' => 'Client account deleted successfully!'], '', 200);
     }
@@ -302,7 +302,7 @@ class ClientController extends Controller{
             if (isset($request->business_type) && !empty($request->business_type)) {
                 $client = Client::find($id);
 
-                $schemaName = 'royo_' . $client->database_name;
+                $schemaName = $client->database_name;
                 $database_host = !empty($client->database_host) ? $client->database_host : env('DB_HOST', '127.0.0.1');
                 $database_port = !empty($client->database_port) ? $client->database_port : env('DB_PORT', '3306');
                 $database_username = !empty($client->database_username) ? $client->database_username : env('DB_USERNAME', 'root');
@@ -432,7 +432,7 @@ class ClientController extends Controller{
             // if (isset($request->single_vendor) && !empty($request->single_vendor)) {
                  $client = Client::find($id);
  
-                 $schemaName = 'royo_' . $client->database_name;
+                 $schemaName = $client->database_name;
                  $database_host = !empty($client->database_host) ? $client->database_host : env('DB_HOST', '127.0.0.1');
                  $database_port = !empty($client->database_port) ? $client->database_port : env('DB_PORT', '3306');
                  $database_username = !empty($client->database_username) ? $client->database_username : env('DB_USERNAME', 'root');

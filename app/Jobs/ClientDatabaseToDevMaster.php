@@ -46,7 +46,7 @@ class ClientDatabaseToDevMaster implements ShouldQueue
            
         try {
 
-            $databaseNameSet = 'royo_'.$client['database_name'];
+            $databaseNameSet = $client['database_name'];
             $db_name_set = $databaseNameSet.'.sql';
             \Spatie\DbDumper\Databases\MySql::create()
                 ->setDbName($databaseNameSet)
@@ -55,7 +55,7 @@ class ClientDatabaseToDevMaster implements ShouldQueue
                 ->setHost($client['database_host'])
                 ->dumpToFile($db_name_set);
  
-            $schemaName = 'royo_' . $client['database_name'] ?: config("database.connections.mysql.database");
+            $schemaName = $client['database_name'] ?: config("database.connections.mysql.database");
             $dumpinto = $this->dumpinto;
 
                 $database_host_dev = env('DB_HOST_'.$dumpinto, '');

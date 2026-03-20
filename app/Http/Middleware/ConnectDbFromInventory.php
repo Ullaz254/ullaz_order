@@ -41,7 +41,7 @@ class ConnectDbFromInventory
                 'message' => 'Company has been blocked. Please contact administration.']);
         }      
         if (isset($client)) {
-            $database_name =  'royo_'.$client['database_name'];
+            $database_name =  $client['database_name'];
             $database_host = !empty($client->database_host) ? $client->database_host : env('DB_HOST', '127.0.0.1');
             $database_port = !empty($client->database_port) ? $client->database_port : env('DB_PORT', '3306');
             $database_username = !empty($client->database_username) ? $client->database_username : env('DB_USERNAME', 'cbladmin');

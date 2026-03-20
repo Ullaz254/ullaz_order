@@ -61,7 +61,7 @@ class ProcessClientDatabase implements ShouldQueue
            
         try {
            
-            $schemaName = 'royo_' . $client['database_name'] ?: config("database.connections.mysql.database");
+            $schemaName = $client['database_name'] ?: config("database.connections.mysql.database");
             $default = [
                 'driver' => env('DB_CONNECTION', 'mysql'),
                 'host' => env('DB_HOST'),
