@@ -929,3 +929,22 @@ body_event.on("click", ".theme-layout-version", function () {
             }
         });
     });
+
+/**
+ * Taxi / cab-booking header: header dropdowns use CSS :hover; a global rule had forced
+ * display:none on .onhover-show-div (removed). This adds click/tap toggle for touch and
+ * when users click the user icon on desktop.
+ */
+$(document).on("click", ".cab-booking-header .onhover-dropdown", function (e) {
+    if ($(e.target).closest(".onhover-show-div").length && $(e.target).is("a")) {
+        return;
+    }
+    e.stopPropagation();
+    var $li = $(this);
+    $li.toggleClass("cab-dropdown-open").siblings(".onhover-dropdown").removeClass("cab-dropdown-open");
+});
+$(document).on("click", function (e) {
+    if (!$(e.target).closest(".cab-booking-header .onhover-dropdown").length) {
+        $(".cab-booking-header .onhover-dropdown").removeClass("cab-dropdown-open");
+    }
+});

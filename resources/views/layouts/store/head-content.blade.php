@@ -115,7 +115,8 @@
 <style type="text/css">
     body{font-size:16px;position:initial}.site-header{width:100%;top:0;left:0;background:#fff;position:fixed;-webkit-transition:all .5s ease-in-out;-moz-transition:all .5s ease-in-out;-ms-transition:all .5s ease-in-out;-o-transition:all .5s ease-in-out;transition:all .5s ease-in-out;z-index:11}.top-header.site-topbar{background:var(--top-header-color);padding:5px 0;display:list-item}
 
-    .top-header .header-dropdown li.onhover-dropdown{padding:0 15px}.onhover-dropdown .onhover-show-div{display:none}.shimmer_effect{overflow:hidden}.menu-slider.items-center .slick-track{justify-content:space-between}
+    .top-header .header-dropdown li.onhover-dropdown{padding:0 15px}.shimmer_effect{overflow:hidden}.menu-slider.items-center .slick-track{justify-content:space-between}
+    {{-- Do NOT set .onhover-show-div to display:none — it breaks theme hover (opacity/visibility) and account dropdowns. --}}
 
 	body .menu-slider .slick-track{display:flex;justify-content:start;margin:0 auto!important; gap: 20px;}
 
@@ -188,6 +189,18 @@
         background: #f5f5f5;
       }
       .cab-booking-header .map-icon{color: var(--theme-deafult);}
+
+      /* Account / language / currency dropdowns: above map & click-to-open (see script.js) */
+      .cab-booking-header{overflow:visible !important;}
+      .cab-booking-header .row{overflow:visible !important;}
+      .cab-booking-header .onhover-dropdown{position:relative;z-index:100050;}
+      .cab-booking-header .onhover-dropdown .onhover-show-div{z-index:100051 !important;}
+      .cab-booking-header .onhover-dropdown:hover .onhover-show-div,
+      .cab-booking-header .onhover-dropdown.cab-dropdown-open .onhover-show-div{
+        opacity:1 !important;
+        visibility:visible !important;
+        transform:translateY(8px) !important;
+      }
 
       /* ── Dark-mode header override ── */
       .dark .cab-booking-header{
