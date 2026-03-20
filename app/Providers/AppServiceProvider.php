@@ -102,12 +102,19 @@ class AppServiceProvider extends ServiceProvider
         try {
             // Use first() directly — id may be 0 after DB migration, not 1
             $client_preference_detail = ClientPreference::first();
-            if ($client_preference_detail && isset($client_preference_detail->favicon)) {
-                $favicon_url = $client_preference_detail->favicon['proxy_url'] . '600/400' . $client_preference_detail->favicon['image_path'];
-            }
         } catch (\Exception $e) {
-            // Table doesn't exist or query failed, use default favicon
+            // Table doesn't exist or query failed
             $client_preference_detail = null;
+        }
+        // Favicon access is separate so an accessor exception doesn't null out client_preference_detail
+        if ($client_preference_detail) {
+            try {
+                if (isset($client_preference_detail->favicon)) {
+                    $favicon_url = $client_preference_detail->favicon['proxy_url'] . '600/400' . $client_preference_detail->favicon['image_path'];
+                }
+            } catch (\Exception $e) {
+                // Favicon accessor failed, keep default favicon_url
+            }
         }
         // Always provide a non-null object so blade views never crash on property
         // access. An empty model returns null for all attributes; null == 1 is false,
