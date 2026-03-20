@@ -225,12 +225,17 @@ class AppServiceProvider extends ServiceProvider
 
                     if ($client) {
                         // Try to cache in Redis, but don't fail if Redis is unavailable
+                        $clientJson = json_encode($client->toArray());
                         try {
-                            Redis::set($domain, json_encode($client->toArray()), 'EX', 36000);
+                            Redis::set($domain, $clientJson, 'EX', 36000);
                             $existRedis = Redis::get($domain);
                         } catch (\Exception $e) {
-                            // Redis not available, continue without caching
-                            $existRedis = json_encode($client->toArray());
+                            // Redis not available, use in-memory data
+                            $existRedis = $clientJson;
+                        }
+                        // Fallback: NullRedis silently returns null without throwing
+                        if (empty($existRedis)) {
+                            $existRedis = $clientJson;
                         }
                     }
                 }

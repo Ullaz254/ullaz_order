@@ -43,11 +43,16 @@ class DbChooserApi
               return response()->json(['error' => 'Invalid Code', 'message' => 'Invalid Code'], 404);
               abort(404);
           }
+          $clientJson = json_encode($client->toArray());
           try {
-              Redis::set($clientCode, json_encode($client->toArray()), 'EX', 36000);
+              Redis::set($clientCode, $clientJson, 'EX', 36000);
               $existRedis = Redis::get($clientCode);
           } catch (\Exception $e) {
-              $existRedis = json_encode($client->toArray());
+              $existRedis = $clientJson;
+          }
+          // Fallback: NullRedis silently returns null without throwing
+          if (empty($existRedis)) {
+              $existRedis = $clientJson;
           }
         }
         $redisData = json_decode($existRedis);
