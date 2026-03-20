@@ -149,6 +149,43 @@
         .cab-booking-header img.img-fluid {height: auto !important;}
       }
       @media(max-width:767px){.cab-booking-header a.navbar-brand.mr-0 {margin: 10px auto 0;text-align: center;display: block;}}
+      /* Circular dark/light toggle button for taxi mode */
+      .dark-light {
+        border-radius: 50% !important;
+        border-top-right-radius: 50% !important;
+        border-bottom-right-radius: 50% !important;
+        right: 15px !important;
+        width: 46px !important;
+        height: 46px !important;
+        background: linear-gradient(135deg, #f7b733, #fc4a1a) !important;
+        box-shadow: 0 4px 15px rgba(247, 120, 50, 0.5) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .sidebar-btn.dark-light-btn { display: block !important; }
+      .dark-light .theme-layout-version { display: none; }
+      /* Dark footer for taxi mode */
+      footer#footer .light-layout,
+      footer#footer.footer-light .section-b-space {
+        background-color: #232323 !important;
+      }
+      footer#footer h4,
+      footer#footer h6,
+      footer#footer p,
+      footer#footer a,
+      footer#footer li,
+      footer#footer .footer-title h4,
+      footer#footer .footer-contant ul li a,
+      footer#footer .footer-social ul li a {
+        color: #ccc !important;
+      }
+      footer#footer h4 { color: #fff !important; }
+      footer#footer .footer-end {
+        background-color: #1a1a1a !important;
+        color: #aaa !important;
+      }
+      footer#footer .footer-end p { color: #aaa !important; }
     @else
        .cab-booking-header{display: none;}
     @endif
