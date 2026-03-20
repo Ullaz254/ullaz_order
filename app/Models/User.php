@@ -62,7 +62,8 @@ class User extends Authenticatable implements Wallet, WalletFloat, Auditable
     }
 
     public function country(){
-       return $this->belongsTo('App\Models\Country')->select('id', 'code', 'name','phonecode');
+       // phonecode may not exist in migrated DB — it is added via SQL ALTER TABLE
+       return $this->belongsTo('App\Models\Country')->select('id', 'code', 'name', 'phonecode');
     }
 
     public function sendPasswordResetNotification($token)

@@ -28,7 +28,12 @@ class UserController extends FrontController{
         $langId = Session::get('customerLanguage');
         $curId = Session::get('customerCurrency');
         $user = User::where('id', Auth::user()->id)->first();
-        $preference = ClientPreference::select('verify_email', 'verify_phone','third_party_accounting','sms_credentials')->where('id', '>', 0)->first();
+        // client_preferences may have id=0; fetch first record regardless of id
+        $preference = ClientPreference::select('verify_email', 'verify_phone','third_party_accounting','sms_credentials')->first();
+        if (!$preference) {
+            // No preferences configured — skip verification and go home
+            return redirect()->route('userHome');
+        }
         $passbase_check = VerificationOption::where(['code' => 'passbase','status' => 1])->first();
         if(Session::has('user_type')){
             Session::forget('user_type');
