@@ -28,7 +28,7 @@
         $classBody1 = 'light';
         $Default_latitude = '30.7187';
         $Default_longitude = '76.8106';
-        $theme1 = \App\Models\ClientPreference::where(['id' => 1])->first('theme_admin','Default_latitude','Default_longitude');
+        $theme1 = \App\Models\ClientPreference::first('theme_admin','Default_latitude','Default_longitude');
         if($theme1 && ($theme1->theme_admin == 'dark' || $theme1->theme_admin == 'Dark')){
             $classBody1 = 'dark';
         }

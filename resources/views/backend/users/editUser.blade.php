@@ -275,7 +275,7 @@
                                     </thead>
                                     <tbody>
                                         @php
-                                        $brity = \App\Models\ClientPreference::where(['id' => 1])->first('celebrity_check');
+                                        $brity = \App\Models\ClientPreference::first('celebrity_check');
                                         @endphp
                                         @foreach($permissions as $singlepermission)
                                         @if($singlepermission->name == 'CELEBRITY')

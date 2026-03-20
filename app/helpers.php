@@ -1392,7 +1392,7 @@ if (!function_exists('GoogleDistanceMatrix')) {
     function GoogleDistanceMatrix($latitude, $longitude)
     {
         $send   = [];
-        $client = ClientPreference::select('map_key', 'distance_unit')->where('id', 1)->first();
+        $client = ClientPreference::select('map_key', 'distance_unit')->first();
         $lengths = count($latitude) - 1;
         $value = [];
 

@@ -15,7 +15,7 @@ trait YachtTrait
 
         $pickup_time = $pickup->time ?? '';
         $drop_time = $dropOff->time ?? '';
-        $clientPreference = \App\Models\ClientPreference::where(['id' => 1])->first();
+        $clientPreference = \App\Models\ClientPreference::first();
         if ($request->service == 'airport') {
             $mapKey = '';
             if ($clientPreference && !empty($clientPreference->map_key)) {

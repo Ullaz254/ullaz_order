@@ -9,7 +9,7 @@
             $client_preference = null;
             try {
                 $clientData = \App\Models\Client::select('id', 'logo','socket_url')->first();
-                $client_preference = \App\Models\ClientPreference::where(['id' => 1])->first();
+                $client_preference = \App\Models\ClientPreference::first();
                 if($clientData && isset($clientData->logo['original'])){
                     $urlImg = $clientData->logo['original'];
                 }
@@ -264,7 +264,7 @@
 
                             @if(@auth()->user()->can('subscription-customer-view') || @auth()->user()->can('subscription-vendor-view') || Auth::user()->is_superadmin == 1)
                             {{-- @if(count(array_intersect($subscription_permissions, $allowed)) || Auth::user()->is_superadmin == 1) --}}
-                                @if($client_preference->subscription_mode == 1)
+                                @if(!empty($client_preference) && $client_preference->subscription_mode == 1)
                                     <li>
                                         <a href="#sidebarsubscriptions" data-toggle="collapse">
                                             <span class="icon-subscribe"></span>
@@ -679,7 +679,7 @@
                                 </a>
                             </li>
                             @endif
-                            @if(Auth::user()->is_superadmin == 1 && $client_preference->celebrity_check == 1)
+                            @if(Auth::user()->is_superadmin == 1 && !empty($client_preference) && $client_preference->celebrity_check == 1)
                                 @if(in_array('celebrity',$allowed) || Auth::user()->is_superadmin == 1)
                                     <li>
                                         <a href="{{ route('celebrity.index') }}">

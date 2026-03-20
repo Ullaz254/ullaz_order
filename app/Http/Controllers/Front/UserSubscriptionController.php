@@ -38,7 +38,7 @@ class UserSubscriptionController extends FrontController
      */
     public function __construct()
     {
-        $preferences = ClientPreference::where(['id' => 1])->first();
+        $preferences = ClientPreference::first();
         if((isset($preferences->subscription_mode)) && ($preferences->subscription_mode == 0)){
             abort(404);
         }

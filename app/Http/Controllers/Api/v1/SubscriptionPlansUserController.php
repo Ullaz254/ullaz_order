@@ -32,7 +32,7 @@ class SubscriptionPlansUserController extends BaseController
         $code = Client::orderBy('id','asc')->value('code');
         $this->folderName = '/'.$code.'/subscriptions/image';
         
-        $preferences = ClientPreference::where(['id' => 1])->first();
+        $preferences = ClientPreference::first();
         if((isset($preferences->subscription_mode)) && ($preferences->subscription_mode == 0)){
             return $this->errorResponse('Subscription mode is not active', 400);
         }

@@ -1,7 +1,7 @@
 <!-- bundle -->
 <!-- Vendor js -->
 <?php
-    $theme = \App\Models\ClientPreference::where(['id' => 1])->first();
+    $theme = \App\Models\ClientPreference::first();
     $analytics = getAdditionalPreference(['gtag_id', 'fpixel_id']);
 if (Session::has('toaster')) {
     $toast = Session::get('toaster');
