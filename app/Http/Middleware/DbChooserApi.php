@@ -43,12 +43,16 @@ class DbChooserApi
               return response()->json(['error' => 'Invalid Code', 'message' => 'Invalid Code'], 404);
               abort(404);
           }
-          Redis::set($clientCode, json_encode($client->toArray()), 'EX', 36000);
-          $existRedis = Redis::get($clientCode);
+          try {
+              Redis::set($clientCode, json_encode($client->toArray()), 'EX', 36000);
+              $existRedis = Redis::get($clientCode);
+          } catch (\Exception $e) {
+              $existRedis = json_encode($client->toArray());
+          }
         }
         $redisData = json_decode($existRedis);
         try {
-            $database_name = 'royo_'.$redisData->database_name;
+            $database_name = $redisData->database_name;
             $database_host = !empty($redisData->database_host) ? $redisData->database_host : '127.0.0.1';
             $database_port = !empty($redisData->database_port) ? $redisData->database_port : '3306';
             $default = [

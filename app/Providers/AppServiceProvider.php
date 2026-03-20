@@ -16,6 +16,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\ServiceProvider;
+use App\Support\NullRedisConnection;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,7 +27,60 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // Wrap the Redis manager so that when Redis is not available (e.g. shared
+        // hosting without Redis), all Redis::get/set/connection() calls silently
+        // return null/empty instead of throwing ConnectionException.
+        $this->app->extend('redis', function ($redis) {
+            $nullConn = new NullRedisConnection();
+            $available = null; // tri-state: null=untested, true=ok, false=unavailable
+
+            return new class($redis, $nullConn, $available) {
+                public function __construct(
+                    private $redis,
+                    private NullRedisConnection $nullConn,
+                    private ?bool $available
+                ) {}
+
+                private function isAvailable(): bool
+                {
+                    if ($this->available === null) {
+                        try {
+                            $this->redis->connection()->ping();
+                            $this->available = true;
+                        } catch (\Throwable $e) {
+                            $this->available = false;
+                        }
+                    }
+                    return $this->available;
+                }
+
+                public function connection($name = null)
+                {
+                    if ($this->isAvailable()) {
+                        try {
+                            return $this->redis->connection($name);
+                        } catch (\Throwable $e) {
+                            $this->available = false;
+                            return $this->nullConn;
+                        }
+                    }
+                    return $this->nullConn;
+                }
+
+                public function __call(string $method, array $args)
+                {
+                    if ($this->isAvailable()) {
+                        try {
+                            return $this->redis->$method(...$args);
+                        } catch (\Throwable $e) {
+                            $this->available = false;
+                            return null;
+                        }
+                    }
+                    return null;
+                }
+            };
+        });
     }
 
     /**
@@ -187,8 +241,8 @@ class AppServiceProvider extends ServiceProvider
 
                 if ($redisData) {
                     if ($domain != env('Main_Domain')) {
-                        if ($redisData && $dbname != 'royo_' . $redisData->database_name) {
-                            $database_name = 'royo_' . $redisData->database_name;
+                        if ($redisData && $dbname != $redisData->database_name) {
+                            $database_name = $redisData->database_name;
                             $database_host = !empty($redisData->database_host) ? $redisData->database_host : env('DB_HOST', '127.0.0.1');
                             $database_port = !empty($redisData->database_port) ? $redisData->database_port : env('DB_PORT', '3306');
                             $database_username = !empty($redisData->database_username) ? $redisData->database_username : env('DB_USERNAME', 'royoorders');
