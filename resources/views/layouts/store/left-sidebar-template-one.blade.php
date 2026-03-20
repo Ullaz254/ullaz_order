@@ -1,21 +1,26 @@
 @php
-$clientData = null;
-$urlImg = '';          // empty = use text logo
-$useTextLogo = true;  // default: render APP_NAME as styled text
+$clientData   = null;
+$urlImg       = '';
+$useTextLogo  = true;  // default: show APP_NAME as styled text
 try {
     $clientData = \App\Models\Client::select('id', 'logo')
-    ->where('id', '>', 0)
-    ->first();
+        ->where('id', '>', 0)
+        ->first();
     if ($clientData && isset($clientData->logo['original'])) {
-        $rawLogoUrl = $clientData->logo['original'];
-        // Use image only when it is NOT an S3 URL (S3 assets unavailable after migration)
-        if (!empty($rawLogoUrl) && strpos($rawLogoUrl, 's3.amazonaws.com') === false && strpos($rawLogoUrl, 's3.') === false) {
-            $urlImg       = $rawLogoUrl;
-            $useTextLogo  = false;
+        $rawLogoUrl    = $clientData->logo['original'];
+        $dbLogoValue   = $clientData->logo['logo_db_value'] ?? '';
+        // Only use image when:
+        //   1. URL is not an S3 link  (S3 assets gone after migration)
+        //   2. DB value is not the generic default placeholder
+        $isS3          = (strpos($rawLogoUrl, 's3.amazonaws.com') !== false || strpos($rawLogoUrl, 's3.') !== false);
+        $isDefault     = empty($dbLogoValue) || strpos($dbLogoValue, 'default/default_logo') !== false;
+        if (!empty($rawLogoUrl) && !$isS3 && !$isDefault) {
+            $urlImg      = $rawLogoUrl;
+            $useTextLogo = false;
         }
     }
 } catch (\Exception $e) {
-    // Table or column doesn't exist – fall through to text logo
+    // Keep text logo
 }
 $compId = session()->get('company_id')??null;
 if(!empty($compId) ||  (@auth()->check() && @auth()->user()->company_id))

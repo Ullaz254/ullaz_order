@@ -214,11 +214,14 @@
       .dark .drivarr-text-logo{color: var(--theme-deafult);}
 
       /* ── Circular dark/light toggle button ── */
+      /* IMPORTANT: use opacity:0 (not display:none) so click handler still fires */
       .dark-light{
+        position:fixed !important;
         border-radius:50% !important;
         border-top-right-radius:50% !important;
         border-bottom-right-radius:50% !important;
         right:15px !important;
+        top:calc(50% + 34px) !important;
         width:46px !important;
         height:46px !important;
         background:linear-gradient(135deg,#f7b733,#fc4a1a) !important;
@@ -226,18 +229,44 @@
         display:flex !important;
         align-items:center !important;
         justify-content:center !important;
+        overflow:visible !important;
+        z-index:9 !important;
+      }
+      /* Overlay the invisible text on the full button so it stays clickable */
+      .dark-light .theme-layout-version{
+        opacity:0 !important;
+        display:block !important;
+        position:absolute !important;
+        top:0 !important; left:0 !important;
+        width:100% !important; height:100% !important;
+        cursor:pointer !important;
+        z-index:10 !important;
+        font-size:0 !important;
+      }
+      /* Keep the icomoon sun/moon icon from color1-style.css but ensure it shows */
+      .dark-light:before{
+        pointer-events:none;
+        z-index:1;
+        color:#fff !important;
       }
       .sidebar-btn.dark-light-btn{display:block !important;}
-      .dark-light .theme-layout-version{display:none;}
+      /* Dark mode: white button, dark icon (original behavior) */
+      .dark .dark-light{
+        background:#fff !important;
+        box-shadow:0 4px 15px rgba(0,0,0,.3) !important;
+      }
+      .dark .dark-light:before{color:#333 !important;}
 
       /* ── Dark footer ── */
+      footer#footer,
       footer#footer .light-layout,
-      footer#footer.footer-light .section-b-space{background-color:#232323 !important;}
+      footer#footer .section-b-space,
+      footer#footer .sub-footer{background-color:#1a1a1a !important;}
       footer#footer h4{color:#fff !important;}
       footer#footer h6,footer#footer p,footer#footer a,footer#footer li,
       footer#footer .footer-title h4,footer#footer .footer-contant ul li a,
       footer#footer .footer-social ul li a{color:#ccc !important;}
-      footer#footer .footer-end{background-color:#1a1a1a !important;color:#aaa !important;}
+      footer#footer .footer-end{background-color:#111 !important;color:#aaa !important;}
       footer#footer .footer-end p{color:#aaa !important;}
 
       @media(max-width:991px){.cab-booking-header img.img-fluid{height:auto !important;}}
