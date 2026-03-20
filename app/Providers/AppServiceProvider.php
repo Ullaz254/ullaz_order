@@ -101,12 +101,22 @@ class AppServiceProvider extends ServiceProvider
         $client_preference_detail = null;
         try {
             $client_preference_detail = ClientPreference::where(['id' => 1])->first();
+            // Fallback: try any record (id may differ after DB migration)
+            if (!$client_preference_detail) {
+                $client_preference_detail = ClientPreference::first();
+            }
             if ($client_preference_detail && isset($client_preference_detail->favicon)) {
                 $favicon_url = $client_preference_detail->favicon['proxy_url'] . '600/400' . $client_preference_detail->favicon['image_path'];
             }
         } catch (\Exception $e) {
             // Table doesn't exist or query failed, use default favicon
             $client_preference_detail = null;
+        }
+        // Always provide a non-null object so blade views never crash on property
+        // access. An empty model returns null for all attributes; null == 1 is false,
+        // so all feature-flag checks in the templates simply evaluate to disabled.
+        if (!$client_preference_detail) {
+            $client_preference_detail = new ClientPreference();
         }
         $client_head = Client::where(['id' => 1])->first();
 
