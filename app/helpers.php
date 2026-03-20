@@ -23,6 +23,32 @@ use Google\Auth\Credentials\ServiceAccountCredentials;
 use Illuminate\Support\Facades\Storage;
 use App\Services\FirebaseService;
 
+/**
+ * Resolve an S3 image path to a URL without triggering AWS credential lookups.
+ * When STATIC_ASSETS_BASE_URL is set (Hostinger / local storage mode), returns
+ * just the relative path so that the IMG_URL2 prefix constructs the correct URL.
+ * Falls back to the real S3 url() call when AWS is configured.
+ */
+if (!function_exists('s3_url')) {
+    function s3_url($img) {
+        if (empty($img)) {
+            return '';
+        }
+        if (str_starts_with((string)$img, 'http://') || str_starts_with((string)$img, 'https://')) {
+            return $img;
+        }
+        if (env('STATIC_ASSETS_BASE_URL')) {
+            // Return relative path; models prepend IMG_URL2 (e.g. https://drivarr.com/storage/)
+            return ltrim((string)$img, '/');
+        }
+        try {
+            return \Storage::disk('s3')->url($img);
+        } catch (\Throwable $e) {
+            return ltrim((string)$img, '/');
+        }
+    }
+}
+
 if (!function_exists('getFcmOauthToken')) {
     function getFcmOauthToken($url = null) {
         try {

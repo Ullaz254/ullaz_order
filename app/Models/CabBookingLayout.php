@@ -45,7 +45,7 @@ class CabBookingLayout extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.s3_url($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
       return $values;

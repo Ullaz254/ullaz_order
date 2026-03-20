@@ -21,7 +21,7 @@ class ProductImage extends Model
                                 "proxy_url"=> \Config::get('app.IMG_URL1'),
                                 "image_path"=> \Config::get('app.IMG_URL2').'/'.$img,
                                 "image_fit"=> \Config::get('app.FIT_URl'),
-                                "original_image"=> \Storage::disk('s3')->url($img)
+                                "original_image"=> s3_url($img)
                             ]
         ]);
 	}

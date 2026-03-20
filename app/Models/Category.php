@@ -120,7 +120,7 @@ class Category extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.s3_url($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
       $values['image'] = $value;
       return $values;
@@ -135,7 +135,7 @@ class Category extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.s3_url($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
       $values['icon'] = $value;
       return $values;
@@ -150,7 +150,7 @@ class Category extends Model
         foreach($imgs as $img){
           $ex = checkImageExtension($img);
           $banner['proxy_url'] = \Config::get('app.IMG_URL1');
-          $banner['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+          $banner['image_path'] = \Config::get('app.IMG_URL2').'/'.s3_url($img).$ex;
           $banner['image_fit'] = \Config::get('app.FIT_URl');
           $banner['sub_cat_banners'] = $value;
           $values[] = $banner;
@@ -166,7 +166,7 @@ class Category extends Model
         $img = $value;
         $ex = checkImageExtension($img);
         $values['proxy_url'] = \Config::get('app.IMG_URL1');
-        $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+        $values['image_path'] = \Config::get('app.IMG_URL2').'/'.s3_url($img).$ex;
         $values['image_fit'] = \Config::get('app.FIT_URl');
         return $values;
       }
@@ -178,7 +178,7 @@ class Category extends Model
       if(!empty($value)){
         $img = $value;
         $values['proxy_url'] = \Config::get('app.IMG_URL1');
-        $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img);
+        $values['image_path'] = \Config::get('app.IMG_URL2').'/'.s3_url($img);
         $values['image_fit'] = \Config::get('app.FIT_URl');
         return $values;
       }

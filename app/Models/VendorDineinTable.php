@@ -18,9 +18,9 @@ class VendorDineinTable extends Model
       }
       $ex = checkImageExtension($img);
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
-      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+      $values['image_path'] = \Config::get('app.IMG_URL2').'/'.s3_url($img).$ex;
       $values['image_fit'] = \Config::get('app.FIT_URl');
-      $values['original'] = \Storage::disk('s3')->url($img);
+      $values['original'] = s3_url($img);
       $values['logo_db_value'] = $value;
 
       return $values;

@@ -91,11 +91,11 @@ class Vendor extends Model implements Auditable{
       if (substr($img, 0, 7) == "http://" || substr($img, 0, 8) == "https://"){
         $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$img;
       } else {
-        $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+        $values['image_path'] = \Config::get('app.IMG_URL2').'/'.s3_url($img).$ex;
       }
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      $values['image_s3_url'] = \Storage::disk('s3')->url($img);
+      $values['image_s3_url'] = s3_url($img);
       return $values;
     }
 
@@ -110,11 +110,11 @@ class Vendor extends Model implements Auditable{
       if (substr($img, 0, 7) == "http://" || substr($img, 0, 8) == "https://"){
         $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$img;
       } else {
-        $values['image_path'] = \Config::get('app.IMG_URL2').'/'.\Storage::disk('s3')->url($img).$ex;
+        $values['image_path'] = \Config::get('app.IMG_URL2').'/'.s3_url($img).$ex;
       }
       $values['image_fit'] = \Config::get('app.FIT_URl');
 
-      $values['image_s3_url'] = \Storage::disk('s3')->url($img);
+      $values['image_s3_url'] = s3_url($img);
       return $values;
     }
     public static function getNameById($vendor_id){
