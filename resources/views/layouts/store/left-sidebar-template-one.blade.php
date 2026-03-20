@@ -59,24 +59,42 @@ try {
 }
 @endphp
 <article class="site-header @if ($client_preference_detail && isset($client_preference_detail->business_type) && $client_preference_detail->business_type == 'taxi') taxi-header @endif">
+    @if(!isset($client_preference_detail) || !isset($client_preference_detail->business_type) || $client_preference_detail->business_type != 'taxi')
     @include('layouts.store/topbar-template-one')
+    @endif
 
     @if($client_preference_detail && isset($client_preference_detail->business_type) && $client_preference_detail->business_type == 'taxi')
     <!-- Start Cab Booking Header From Here -->
     <div class="cab-booking-header" style="background: var(--top-header-color)">
         <div class="container-fluid">
             <div class="row align-items-center">
-                <div class="col-sm-3 col-md-2">
-                    <a class="navbar-brand mr-0"  href="{{ route('userHome') }}"><img id="theme-logo" class="logo-image" style="height:60px" alt="" src="{{ $urlImg }}"></a>
+                <div class="col-4 col-sm-3 col-md-2">
+                    <a class="navbar-brand mr-0" href="{{ route('userHome') }}"><img id="theme-logo" class="logo-image" style="height:60px" alt="" src="{{ $urlImg }}"></a>
                 </div>
-                <div class="col-sm-9 col-md-10 top-header bg-transparent">
-                    <ul class="header-dropdown d-flex align-items-center justify-content-md-end justify-content-center">
+                <div class="col-4 col-sm-5 col-md-7">
+                    <div class="d-flex align-items-center">
+                        @if(isset($client_preference_detail) && isset($client_preference_detail->is_hyperlocal) && $client_preference_detail->is_hyperlocal == 1)
+                        <div class="location-bar d-flex align-items-center mr-2 dropdown-toggle ellips" href="#edit-address" data-toggle="modal" style="cursor:pointer;">
+                            <div class="map-icon mr-1">
+                                <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.848633 6.15122C0.848633 2.7594 3.60803 0 6.99985 0C10.3917 0 13.1511 2.7594 13.1511 6.15122C13.1511 8.18227 12.1614 9.98621 10.6392 11.107L7.46151 15.7563C7.3573 15.9088 7.18455 16 6.99985 16C6.81516 16 6.64237 15.9088 6.5382 15.7563L3.36047 11.107C1.8383 9.98621 0.848633 8.18227 0.848633 6.15122ZM6.99981 10.4225C7.23979 10.4225 7.47461 10.4072 7.70177 10.3806C9.73302 10.0446 11.2871 8.27613 11.287 6.15122C11.287 3.78725 9.36375 1.86402 6.99977 1.86402C4.6358 1.86402 2.71257 3.78725 2.71257 6.15122C2.71257 8.27613 4.26665 10.0446 6.29786 10.3806C6.52498 10.4072 6.75984 10.4225 6.99981 10.4225ZM9.23683 6.15089C9.23683 7.38626 8.23537 8.38772 7.00001 8.38772C5.76464 8.38772 4.76318 7.38626 4.76318 6.15089C4.76318 4.91552 5.76464 3.91406 7.00001 3.91406C8.23537 3.91406 9.23683 4.91552 9.23683 6.15089Z" fill="currentColor"/></svg>
+                            </div>
+                            <div class="homepage-address text-left">
+                                <h2 class="mb-0"><span>{{ session('selectedAddress') ?? ($client_preference_detail->Default_location_name ?? __('Select Location')) }}</span></h2>
+                            </div>
+                        </div>
+                        @endif
+                        <div class="d-none d-md-flex align-items-center taxi-search-bar px-2 py-1">
+                            <button class="btn p-0 mr-1" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            <input class="form-control border-0 bg-transparent p-0" type="search" placeholder="{{ __('Search') }}" id="main_search_box_taxi" autocomplete="off" style="box-shadow:none;outline:none;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 col-sm-4 col-md-3 text-right">
+                    <ul class="header-dropdown d-flex align-items-center justify-content-end">
                         @if ($client_preference_detail && isset($client_preference_detail->header_quick_link) && $client_preference_detail->header_quick_link == 1)
-                        <li class="onhover-dropdown quick-links quick-links">
+                        <li class="onhover-dropdown quick-links d-none d-md-block">
                             <span class="quick-links ml-1 align-middle">{{ __('Quick Links') }}</span>
                             <ul class="onhover-show-div">
-
-
                                 @foreach ($pages as $page)
                                 @if (isset($page->primary->type_of_form) && $page->primary->type_of_form == 2)
                                 @if (isset($last_mile_common_set) && $last_mile_common_set != false)
@@ -105,30 +123,29 @@ try {
                             </ul>
                         </li>
                         @endif
+                        @if(count($languageList) > 1)
                         <li class="onhover-dropdown change-language">
                             <a href="javascript:void(0)">{{ session()->get('locale') }}
                                 <span class="icon-ic_lang align-middle"></span>
-                                <span class="language ml-1 align-middle">{{ __('language') }}</span>
                             </a>
                             <ul class="onhover-show-div">
                                 @foreach ($languageList as $key => $listl)
-                                <li
-                                    class="{{ session()->get('locale') == $listl->language->sort_code ? 'active' : '' }}">
+                                <li class="{{ session()->get('locale') == $listl->language->sort_code ? 'active' : '' }}">
                                     <a href="javascript:void(0)" class="customerLang"
                                         langId="{{ $listl->language_id }}">{{ $listl->language->name }}</a>
                                 </li>
                                 @endforeach
                             </ul>
                         </li>
+                        @endif
+                        @if(count($currencyList) > 1)
                         <li class="onhover-dropdown change-currency">
                             <a href="javascript:void(0)">{{ session()->get('iso_code') }}
                                 <span class="icon-ic_currency align-middle"></span>
-                                <span class="currency ml-1 align-middle">{{ __('currency') }}</span>
                             </a>
                             <ul class="onhover-show-div">
                                 @foreach ($currencyList as $key => $listc)
-                                <li
-                                    class="{{ session()->get('iso_code') == $listc->currency->iso_code ? 'active' : '' }}">
+                                <li class="{{ session()->get('iso_code') == $listc->currency->iso_code ? 'active' : '' }}">
                                     <a href="javascript:void(0)" currId="{{ $listc->currency_id }}" class="customerCurr"
                                         currSymbol="{{ $listc->currency->symbol }}">
                                         {{ $listc->currency->iso_code }}
@@ -137,9 +154,10 @@ try {
                                 @endforeach
                             </ul>
                         </li>
+                        @endif
                         @if (Auth::guest())
                         <li class="onhover-dropdown mobile-account d-block">
-                            <i class="fa fa-user mr-1" aria-hidden="true"></i>{{ __('Account') }}
+                            <i class="fa fa-user" aria-hidden="true"></i>
                             <ul class="onhover-show-div">
                                 <li>
                                     <a href="{{ route('customer.login') }}" data-lng="en">{{ __('Login') }}</a>
@@ -151,7 +169,7 @@ try {
                         </li>
                         @else
                         <li class="onhover-dropdown mobile-account d-block">
-                            <i class="fa fa-user mr-1" aria-hidden="true"></i>{{ __('Account') }}
+                            <i class="fa fa-user" aria-hidden="true"></i>
                             <ul class="onhover-show-div">
                                 @if (Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                                 <li>
