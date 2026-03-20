@@ -87,6 +87,20 @@ class Vendor extends Model implements Auditable{
         $img = $value;
       }
       $ex = checkImageExtension($img);
+      // Local/static storage (Hostinger): admin JS builds proxy_url + '90/90' + image_path — that only
+      // works with the Royo imgproxy. Serve a direct HTTPS URL and set use_direct_logo for admin_vendor.js.
+      if (env('STATIC_ASSETS_BASE_URL')) {
+          $values['proxy_url'] = '';
+          $values['use_direct_logo'] = true;
+          if (substr($img, 0, 7) == 'http://' || substr($img, 0, 8) == 'https://') {
+              $values['image_path'] = $img;
+          } else {
+              $values['image_path'] = rtrim((string) env('STATIC_ASSETS_BASE_URL'), '/') . '/' . ltrim(s3_url($img), '/');
+          }
+          $values['image_fit'] = \Config::get('app.FIT_URl');
+          $values['image_s3_url'] = s3_url($img);
+          return $values;
+      }
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
       if (substr($img, 0, 7) == "http://" || substr($img, 0, 8) == "https://"){
         $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$img;
@@ -106,6 +120,18 @@ class Vendor extends Model implements Auditable{
         $img = $value;
       }
       $ex = checkImageExtension($img);
+      if (env('STATIC_ASSETS_BASE_URL')) {
+          $values['proxy_url'] = '';
+          $values['use_direct_logo'] = true;
+          if (substr($img, 0, 7) == 'http://' || substr($img, 0, 8) == 'https://') {
+              $values['image_path'] = $img;
+          } else {
+              $values['image_path'] = rtrim((string) env('STATIC_ASSETS_BASE_URL'), '/') . '/' . ltrim(s3_url($img), '/');
+          }
+          $values['image_fit'] = \Config::get('app.FIT_URl');
+          $values['image_s3_url'] = s3_url($img);
+          return $values;
+      }
       $values['proxy_url'] = \Config::get('app.IMG_URL1');
       if (substr($img, 0, 7) == "http://" || substr($img, 0, 8) == "https://"){
         $values['image_path'] = \Config::get('app.IMG_URL2').'/'.$img;

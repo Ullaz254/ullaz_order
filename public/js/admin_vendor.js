@@ -1,3 +1,13 @@
+/** Build vendor logo URL for DataTables (imgproxy vs direct local storage). */
+function vendorLogoSrc(logo) {
+    if (!logo) {
+        return '';
+    }
+    if (logo.use_direct_logo) {
+        return logo.image_path || '';
+    }
+    return (logo.proxy_url || '') + '90/90' + (logo.image_path || '');
+}
 
 $(document).ready(function() {
     
@@ -258,7 +268,7 @@ function initDataTable(table, status) {
                 return [
                     {data: 'checkbox',name: 'checkbox', orderable: false, searchable: false},
                     {data: 'order_number', name: 'order_number', orderable: false, searchable: false,"mRender": function ( data, type, full ) {
-                        return "<a class='round_img_box' href='"+full.show_url+"'><img class='rounded-circle' src='"+full.logo.proxy_url+'90/90'+full.logo.image_path+"' alt='"+full.id+"'></a>";
+                        return "<a class='round_img_box' href='"+full.show_url+"'><img class='rounded-circle' src='"+vendorLogoSrc(full.logo)+"' alt='"+full.id+"'></a>";
                     }},
                     {data: 'name', name: 'name', orderable: false, searchable: false, "mRender": function ( data, type, full ) {
                         return "<a href='"+full.show_url+"'>"+full.name+"</a> ";
@@ -303,7 +313,7 @@ function initDataTable(table, status) {
             }else{
                 return  [
                     {data: 'order_number', name: 'order_number', orderable: false, searchable: false,"mRender": function ( data, type, full ) {
-                        return "<a class='round_img_box' href='"+full.show_url+"'><img class='rounded-circle' src='"+full.logo.proxy_url+'90/90'+full.logo.image_path+"' alt='"+full.id+"'></a>";
+                        return "<a class='round_img_box' href='"+full.show_url+"'><img class='rounded-circle' src='"+vendorLogoSrc(full.logo)+"' alt='"+full.id+"'></a>";
                     }},
                     {data: 'name', name: 'name', orderable: false, searchable: false, "mRender": function ( data, type, full ) {
                         return "<a href='"+full.show_url+"'>"+full.name+"</a> ";
