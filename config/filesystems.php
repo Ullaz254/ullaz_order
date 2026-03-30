@@ -57,8 +57,10 @@ return [
 
         's3' => [
             'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID',''),
-            'secret' => env('AWS_SECRET_ACCESS_KEY',''),
+            // Empty string makes the AWS SDK use the default credential chain (IMDS).
+            // Use null when unset; bootstrap may set placeholders on non-AWS hosts.
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION','us-west-2'),
             'bucket' => env('AWS_BUCKET','royoorders2.0-assets'),
             'url' => env('AWS_URL'),

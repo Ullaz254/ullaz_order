@@ -16,10 +16,31 @@ $app = new Illuminate\Foundation\Application(
 );
 
 /*
-| If unset, disable AWS EC2 instance metadata (IMDS) so the SDK does not call
-| 169.254.169.254 (timeouts on shared/VPS like Hostinger). On EC2 using IAM
-| roles only, set AWS_EC2_METADATA_DISABLED=false in .env.
+| Hostinger / non-AWS: when no AWS keys are in .env, the AWS SDK still walks the
+| default credential chain and hits InstanceProfileProvider, which throws if
+| IMDS is disabled or unreachable. Non-empty placeholder keys stop the chain
+| before instance profile (safe when FILESYSTEM/QUEUE/CACHE do not use AWS).
+| Use real keys in .env when using S3/SQS/DynamoDB. On EC2 with IAM roles only,
+| set AWS_EC2_METADATA_DISABLED=false and omit placeholder (do not set keys).
 */
+$awsKey = $_ENV['AWS_ACCESS_KEY_ID'] ?? getenv('AWS_ACCESS_KEY_ID');
+$awsSecret = $_ENV['AWS_SECRET_ACCESS_KEY'] ?? getenv('AWS_SECRET_ACCESS_KEY');
+$awsKeyEmpty = $awsKey === false || $awsKey === null || $awsKey === '';
+$awsSecretEmpty = $awsSecret === false || $awsSecret === null || $awsSecret === '';
+
+$fsDriver = $_ENV['FILESYSTEM_DRIVER'] ?? getenv('FILESYSTEM_DRIVER') ?: 'local';
+$queueDriver = $_ENV['QUEUE_CONNECTION'] ?? getenv('QUEUE_CONNECTION') ?: 'sync';
+$cacheDriver = $_ENV['CACHE_DRIVER'] ?? getenv('CACHE_DRIVER') ?: 'file';
+
+$needsRealAws = ($fsDriver === 's3') || ($queueDriver === 'sqs') || ($cacheDriver === 'dynamodb');
+
+if ($awsKeyEmpty && $awsSecretEmpty && ! $needsRealAws) {
+    putenv('AWS_ACCESS_KEY_ID=hostinger-placeholder-not-for-s3');
+    putenv('AWS_SECRET_ACCESS_KEY=hostinger-placeholder-not-for-s3');
+    $_ENV['AWS_ACCESS_KEY_ID'] = 'hostinger-placeholder-not-for-s3';
+    $_ENV['AWS_SECRET_ACCESS_KEY'] = 'hostinger-placeholder-not-for-s3';
+}
+
 if (! array_key_exists('AWS_EC2_METADATA_DISABLED', $_ENV)) {
     putenv('AWS_EC2_METADATA_DISABLED=true');
     $_ENV['AWS_EC2_METADATA_DISABLED'] = 'true';
