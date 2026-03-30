@@ -61,8 +61,13 @@ class AppStylingController extends BaseController
 
         $client_preferences = ClientPreference::first();
         $AppStylingOption = AppStylingOption::whereNotIn('template_id',[1,2]);
-        
-        switch ($client_preferences->business_type ?? 'default') {
+
+        $businessType = optional($client_preferences)->business_type;
+        if ($businessType === null || $businessType === '') {
+            $businessType = 'default';
+        }
+
+        switch ($businessType) {
             case "taxi":    # if business type is taxi
             $homepage_style = AppStyling::where('name', 'Home Page Style')->first();
             if ($homepage_style) {

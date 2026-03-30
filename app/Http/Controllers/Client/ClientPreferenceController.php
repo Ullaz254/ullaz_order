@@ -128,7 +128,14 @@ class ClientPreferenceController extends BaseController{
 
         // $want_to_tip_nomenclature=Nomenclature::where('label','Want To Tip')->first();
         // $fixed_fee=Nomenclature::where('label','Fixed Fee')->first();
-        $ClientPreference = ClientPreference::where('client_code', $client->code)
+        $ClientPreference = ClientPreference::with([
+            'primary.currency',
+            'currency.currency',
+            'language',
+            'countries',
+            'primarylang',
+            'primary_country',
+        ])->where('client_code', $client->code)
         ->first();
         if(isset($ClientPreference) && $ClientPreference->need_laundry_service == '1') {
             $laundry_teams = $this->getLaundryTeams();
@@ -138,13 +145,13 @@ class ClientPreferenceController extends BaseController{
         $preference = $ClientPreference ? $ClientPreference : new ClientPreference();
 
         $nomenclature_value = $nomenclatureAllToGet->first();
-        foreach ($preference->currency as $value) {
+        foreach ($preference->currency ?? [] as $value) {
             $cli_currs[] = $value->currency_id;
         }
-        foreach ($preference->language as $value) {
+        foreach ($preference->language ?? [] as $value) {
             $cli_langs[] = $value->language_id;
         }
-        foreach ($preference->countries as $value) {
+        foreach ($preference->countries ?? [] as $value) {
             $cli_countries[] = $value->country_id;
         }
         $tags = Tag::with('primary')->get();

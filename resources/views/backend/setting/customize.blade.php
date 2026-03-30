@@ -45,7 +45,7 @@
 <!-- New Customize Page -->
 @php
 $getAdditionalPreference = getAdditionalPreference(['is_phone_signup', 'gtag_id','fpixel_id','is_token_currency_enable', 'token_currency','is_price_by_role','advance_booking_amount', 'advance_booking_amount_percentage','is_user_pre_signup']); //,'seller_sold_title','saller_platform_logo'
-
+$primary_currency_obj = optional(optional($preference->primary ?? null)->currency);
 @endphp
    <!--Localization start -->
     <div class="row">
@@ -218,7 +218,7 @@ $getAdditionalPreference = getAdditionalPreference(['is_phone_signup', 'gtag_id'
                             <label for="primary_currency">{{ __("Primary Currency") }}</label>
                             <select class="form-control al_box_height" id="primary_currency" name="primary_currency">
                                 @foreach($currencies as $currency)
-                                <option iso="{{$currency->iso_code.' '.$currency->symbol}}" {{ (isset($preference) && $preference->primary->currency->id == $currency->id) ? "selected" : ""}} value="{{$currency->id}}"> {{$currency->iso_code.' '.$currency->symbol}} </option>
+                                <option iso="{{$currency->iso_code.' '.$currency->symbol}}" {{ (isset($preference) && $primary_currency_obj && $primary_currency_obj->id == $currency->id) ? "selected" : ""}} value="{{$currency->id}}"> {{$currency->iso_code.' '.$currency->symbol}} </option>
                                 @endforeach
                             </select>
                         </div>
@@ -226,7 +226,7 @@ $getAdditionalPreference = getAdditionalPreference(['is_phone_signup', 'gtag_id'
                             <label for="currency">{{ __("Additional Currency") }}</label>
                             <select class="form-control al_box_height select2-multiple" id="currency" name="currency_data[]" data-toggle="select2" multiple="multiple" data-placeholder="Choose ...">
                                 @foreach($currencies as $currency)
-                                @if($preference->primary->currency->id != $currency->id)
+                                @if(!$primary_currency_obj || $primary_currency_obj->id != $currency->id)
                                 <option value="{{$currency->id}}" iso="{{$currency->iso_code}}" {{ (isset($preference) && in_array($currency->id, $cli_currs))? "selected" : "" }}> {{$currency->iso_code}} {{!empty($currency->symbol) ? $currency->symbol : ''}} </option>
                                 @endif
                                 @endforeach
@@ -237,7 +237,7 @@ $getAdditionalPreference = getAdditionalPreference(['is_phone_signup', 'gtag_id'
                                 @if($preference->currency)
                                 @foreach($preference->currency as $ac)
                                 <div class="col-sm-10 offset-sm-4 col-lg-12 offset-lg-0 col-xl-8 offset-xl-4 mb-2" id="addCur-{{$ac->currency->id}}">
-                                    <label class="primaryCurText">1 {{$preference->primary->currency->iso_code}} {{!empty($preference->primary->currency->symbol) ? $preference->primary->currency->symbol : ''}} = </label>
+                                    <label class="primaryCurText">1 {{ $primary_currency_obj->iso_code ?? '' }} {{!empty($primary_currency_obj->symbol) ? $primary_currency_obj->symbol : ''}} = </label>
                                     <input class="form-control al_box_height w-50 d-inline-block" type="text" value="{{$ac->doller_compare}}" step=".0001" name="multiply_by[{{$ac->currency->id}}]" oninput="changeCurrencyValue(this)"> {{$ac->currency->iso_code}} {{!empty($ac->currency->symbol) ? $ac->currency->symbol : ''}}
                                     <input type="hidden" name="cuid[]" class="curr_id" value="{{ $ac->currency->id }}">
                                 </div>
@@ -2468,7 +2468,7 @@ $getAdditionalPreference = getAdditionalPreference(['is_phone_signup', 'gtag_id'
                     <div class="row token_row" style="{{((isset($getAdditionalPreference['is_token_currency_enable']) && $getAdditionalPreference['is_token_currency_enable'] == 1)) ? '' : 'display:none;'}}">
                        <div class="col-12">
                           <div class="form-group row mt-2 d-flex align-items-center">
-                             <label class="col-3 m-0">1 {{$preference->primary->currency->iso_code}} {{!empty($preference->primary->currency->symbol) ? $preference->primary->currency->symbol : ''}} = </label>
+                             <label class="col-3 m-0">1 {{ $primary_currency_obj->iso_code ?? '' }} {{!empty($primary_currency_obj->symbol) ? $primary_currency_obj->symbol : ''}} = </label>
                              <div class="col-9">
                                 <input type="text" name="token_currency" id="token_currency" placeholder="" class="form-control" value="{{ old('token_currency',  $getAdditionalPreference['token_currency'] ?? '')}}">
                                 @if($errors->has('token_client_id'))

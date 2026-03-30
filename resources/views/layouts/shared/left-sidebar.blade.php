@@ -369,14 +369,14 @@
                         </ul>
                 </li>
                 @endif
-                @if(@auth()->user()->can('setting-customize-view') || @auth()->user()->can('configuration-view') || Auth::user()->is_superadmin == 1)
+                @if(@auth()->user()->can('setting-customize-view') || @auth()->user()->can('configuration-view') || Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                 <li>
                    <a class="menu-title pl-1" href="#">
                         <span>{{ __('SETTINGS') }}</span>
                     </a>
                     <ul class="nav-second-level p-0 mx-2">
 
-                        @if(@auth()->user()->can('setting-profile-view') || Auth::user()->is_superadmin == 1)
+                        @if(@auth()->user()->can('setting-profile-view') || Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                         <li>  <a href="{{route('client.profile')}}">
                                     <span class="icon-profile"></span>
                                     <span> {{ __('Profile') }} </span>
@@ -384,7 +384,7 @@
                             </li>
                             @endif
 
-                        @if(@auth()->user()->can('setting-customize-view') || Auth::user()->is_superadmin == 1)
+                        @if(@auth()->user()->can('setting-customize-view') || Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                             <li>
                                 <a href="{{route('configure.customize')}}">
                                     <span class="icon-customzie"></span>
@@ -392,7 +392,7 @@
                                 </a>
                             </li>
                         @endif
-                        @if(@auth()->user()->can('setting-webstyle-view') || @auth()->user()->can('setting-appstyle-view') || Auth::user()->is_superadmin == 1)
+                        @if(@auth()->user()->can('setting-webstyle-view') || @auth()->user()->can('setting-appstyle-view') || Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                             <li>
                                 <a href="#sidebarstyling" data-toggle="collapse">
                                     <span class="icon-styling"></span>
@@ -400,12 +400,12 @@
                                 </a>
                                 <div class="collapse" id="sidebarstyling">
                                     <ul class="nav-second-level">
-                                        @if(@auth()->user()->can('setting-appstyle-view') || Auth::user()->is_superadmin == 1)
+                                        @if(@auth()->user()->can('setting-appstyle-view') || Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                                             <li>
                                                 <a href="{{route('appStyling.index')}}">{{ __('App Styling') }}</a>
                                             </li>
                                         @endif
-                                        @if(@auth()->user()->can('setting-webstyle-view') || Auth::user()->is_superadmin == 1)
+                                        @if(@auth()->user()->can('setting-webstyle-view') || Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                                             <li>
                                                 <a href="{{route('webStyling.index')}}">{{ __('Web Styling') }}</a>
                                             </li>
@@ -450,7 +450,7 @@
                             </div>
                         </li>
 
-                        @if(@auth()->user()->can('category-view') || Auth::user()->is_superadmin == 1)
+                        @if(@auth()->user()->can('category-view') || Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                             <li>
                                 <a href="{{route('category.index')}}">
                                     <span class="icon-catalogue"></span>
@@ -519,7 +519,7 @@
                             @endif
                         @endif
 
-                        @if(Auth::user()->is_superadmin == 1)
+                        @if(Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                             <li>
                                 <a href="{{route('roles')}}">
                                     <i class="icon-profile"></i>
@@ -584,7 +584,7 @@
                     </a>
                     <ul class="nav-second-level p-0 mx-2">
 
-                        @if(Auth::user()->is_superadmin == 1)
+                        @if(Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                         <li>
                             <a href="#sidebarbanner" data-toggle="collapse">
                                 <span class="icon-styling"></span>
