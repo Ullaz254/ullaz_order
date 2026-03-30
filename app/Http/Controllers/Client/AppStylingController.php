@@ -62,34 +62,36 @@ class AppStylingController extends BaseController
         $client_preferences = ClientPreference::first();
         $AppStylingOption = AppStylingOption::whereNotIn('template_id',[1,2]);
         
-        switch ($client_preferences->business_type) {
-            case 'taxi':
-                $homepage_style = AppStyling::where('name', 'Home Page Style')->first();
-                if ($homepage_style) {
-                    $homepage_style_options = $AppStylingOption->where('image', 'home_six.png')->where('app_styling_id', $homepage_style->id)->get();
-                }
-                $home_page_labels = HomePageLabel::whereIn('slug', ['dynamic_page', 'pickup_delivery'])->with('translations')->orderBy('order_by');
-                $cab_booking_layouts = CabBookingLayout::whereIn('slug', ['dynamic_page', 'pickup_delivery'])->with('translations');
-                break;
-            case 'food_grocery_ecommerce':
-                $homepage_style = AppStyling::where('name', 'Home Page Style')->first();
-                if ($homepage_style) {
-                    $homepage_style_options = $AppStylingOption->where('image', '!=', 'home_six.png')->where('app_styling_id', $homepage_style->id)->get();
-                }
-                $home_page_labels = HomePageLabel::whereNotin('slug', ['pickup_delivery'])->with('translations')->orderBy('order_by');
-                $cab_booking_layouts = CabBookingLayout::whereNotin('slug', ['pickup_delivery'])->with('translations');
-                break;
+        switch($client_preferences->business_type){
+            case "taxi":    # if business type is taxi
+            $homepage_style = AppStyling::where('name', 'Home Page Style')->first();
+            if ($homepage_style) {
+                $homepage_style_options =  $AppStylingOption->where('image', 'home_six.png')->where('app_styling_id', $homepage_style->id)->get();
+            }
+            // Must run even when Home Page Style row is missing (otherwise $cab_booking_layouts is undefined).
+            $home_page_labels = HomePageLabel::whereIn('slug',['dynamic_page','pickup_delivery'])->with('translations')->orderBy('order_by');
+            $cab_booking_layouts = CabBookingLayout::whereIn('slug',['dynamic_page','pickup_delivery'])->with('translations');
+            break;
+            case "food_grocery_ecommerce":    # if business type is taxi
+            $homepage_style = AppStyling::where('name', 'Home Page Style')->first();
+            if ($homepage_style) {
+                $homepage_style_options = $AppStylingOption->where('image','!=', 'home_six.png')->where('app_styling_id', $homepage_style->id)->get();
+            }
+            $home_page_labels = HomePageLabel::whereNotin('slug',['pickup_delivery'])->with('translations')->orderBy('order_by');
+            $cab_booking_layouts = CabBookingLayout::whereNotin('slug',['pickup_delivery'])->with('translations');
+            break;
             default:
-                $homepage_style = AppStyling::where('name', 'Home Page Style')->first();
-                if ($homepage_style) {
-                    $homepage_style_options = $AppStylingOption->where('app_styling_id', $homepage_style->id)->get();
-                }
-                $home_page_labels = HomePageLabel::with('translations')->orderBy('order_by');
-                $cab_booking_layouts = CabBookingLayout::with('translations');
+            $homepage_style = AppStyling::where('name', 'Home Page Style')->first();
+            if ($homepage_style) {
+                $homepage_style_options = $AppStylingOption->where('app_styling_id', $homepage_style->id)->get();
+            }
+            $home_page_labels = HomePageLabel::with('translations')->orderBy('order_by');
+            $cab_booking_layouts = CabBookingLayout::with('translations');
         }
 
-        $cab_booking_layouts = $cab_booking_layouts->app();
-
+        
+            $cab_booking_layouts->app();
+        
 
         $all_pickup_category = Category::with('translation_one')->where('type_id',7)->get();
         if(count($all_pickup_category) == 0){

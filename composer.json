@@ -112,15 +112,15 @@
         "phpunit/phpunit": "^8.5.8|^9.3.3"
     },
     "repositories": [
-    {
-        "type": "path",
-        "url": "./packages/yoco-php"
-    },
-    {
-        "type": "path",
-        "url": "./packages/yoco-php-laravel"
-    }
-],
+        {
+            "type": "path",
+            "url": "./packages/yoco-php"
+        },
+        {
+            "type": "path",
+            "url": "./packages/yoco-php-laravel"
+        }
+    ],
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
@@ -162,7 +162,6 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "install-hostinger": "composer install --no-dev --optimize-autoloader --ignore-platform-reqs",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

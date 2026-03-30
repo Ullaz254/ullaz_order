@@ -1,8 +1,8 @@
 @yield('css')
 @php
-$mapKey = '1234';
+$mapKey = config('geocoder.key') ?: '1234';
 $theme = \App\Models\ClientPreference::first();
-if($theme && !empty($theme->map_key)){
+if ($theme && !empty($theme->map_key)) {
 	$mapKey = $theme->map_key;
 }
 @endphp

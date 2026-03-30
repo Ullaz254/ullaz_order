@@ -13,7 +13,7 @@
     </div>
   </div>
 @php
-    $mapKey = 'AIzaSyD0edfD0pDgXVYBT65c8qczFdsx9j24PyY';
+    $mapKey = config('geocoder.key') ?: '1234';
     $theme = Session::get('preferences');
 
     if($theme && !empty($theme->map_key)){

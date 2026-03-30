@@ -2,13 +2,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Production DBs imported from older dumps may lack doller_compare while
- * application code always selects it (ClientPreference::currency()).
+ * Hostinger / restored DBs may omit columns present in migrations.
+ * Application code expects doller_compare on client_currencies (legacy spelling).
  */
-return new class extends Migration
+class EnsureDollerCompareOnClientCurrenciesTable extends Migration
 {
     public function up(): void
     {
@@ -21,6 +22,8 @@ return new class extends Migration
                 $table->decimal('doller_compare', 14, 8)->nullable();
             });
         }
+
+        DB::table('client_currencies')->whereNull('doller_compare')->update(['doller_compare' => 1]);
     }
 
     public function down(): void
@@ -35,4 +38,4 @@ return new class extends Migration
             });
         }
     }
-};
+}
