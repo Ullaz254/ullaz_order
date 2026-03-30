@@ -157,6 +157,11 @@ return [
     'providers' => [
 
         /*
+         * Must run before packages that may construct Aws\Sdk (Firebase, Flysystem S3, etc.).
+         */
+        App\Providers\AwsImdsBootstrapServiceProvider::class,
+
+        /*
          * Laravel Framework Service Providers...
          */
         Illuminate\Auth\AuthServiceProvider::class,
