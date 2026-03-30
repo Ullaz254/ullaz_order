@@ -16,6 +16,16 @@ $app = new Illuminate\Foundation\Application(
 );
 
 /*
+| If unset, disable AWS EC2 instance metadata (IMDS) so the SDK does not call
+| 169.254.169.254 (timeouts on shared/VPS like Hostinger). On EC2 using IAM
+| roles only, set AWS_EC2_METADATA_DISABLED=false in .env.
+*/
+if (! array_key_exists('AWS_EC2_METADATA_DISABLED', $_ENV)) {
+    putenv('AWS_EC2_METADATA_DISABLED=true');
+    $_ENV['AWS_EC2_METADATA_DISABLED'] = 'true';
+}
+
+/*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces
 |--------------------------------------------------------------------------
