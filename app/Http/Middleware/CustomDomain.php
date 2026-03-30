@@ -113,11 +113,12 @@ class CustomDomain
     $callback = '';
     $redisData = json_decode($existRedis);
     if ($redisData) {
+      $m = dynamic_mysql_defaults();
       $database_name = $redisData->database_name;
-      $database_host = !empty($redisData->database_host) ? $redisData->database_host : env('DB_HOST', '127.0.0.1');
-      $database_port = !empty($redisData->database_port) ? $redisData->database_port : env('DB_PORT', '3306');
-      $database_username = !empty($redisData->database_username) ? $redisData->database_username : env('DB_USERNAME', 'royoorders');
-      $database_password = !empty($redisData->database_password) ? $redisData->database_password : env('DB_PASSWORD', '');
+      $database_host = !empty($redisData->database_host) ? $redisData->database_host : ($m['host'] ?? '127.0.0.1');
+      $database_port = !empty($redisData->database_port) ? $redisData->database_port : ($m['port'] ?? '3306');
+      $database_username = !empty($redisData->database_username) ? $redisData->database_username : ($m['username'] ?? 'forge');
+      $database_password = !empty($redisData->database_password) ? $redisData->database_password : ($m['password'] ?? '');
       
       // #region agent log
       $logData = [
@@ -139,18 +140,20 @@ class CustomDomain
       // #endregion
       
       $default = [
-        'driver' => env('DB_CONNECTION', 'mysql'),
+        'driver' => $m['driver'] ?? 'mysql',
         'host' => $database_host,
         'port' => $database_port,
         'database' => $database_name,
         'username' => $database_username,
         'password' => $database_password,
+        'unix_socket' => $m['unix_socket'] ?? '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
         'prefix' => '',
         'prefix_indexes' => true,
         'strict' => false,
-        'engine' => null
+        'engine' => null,
+        'options' => $m['options'] ?? [],
       ];
       Config::set("database.connections.$database_name", $default);
       Config::set("client_id", 1);
@@ -197,19 +200,22 @@ class CustomDomain
         
         // Fallback: Try using default DB credentials instead of client-specific ones
         try {
+          $mf = dynamic_mysql_defaults();
           $default_db_config = [
-            'driver' => env('DB_CONNECTION', 'mysql'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
+            'driver' => $mf['driver'] ?? 'mysql',
+            'host' => $mf['host'] ?? '127.0.0.1',
+            'port' => $mf['port'] ?? '3306',
             'database' => $database_name,
-            'username' => env('DB_USERNAME'),
-            'password' => env('DB_PASSWORD'),
+            'username' => $mf['username'] ?? 'forge',
+            'password' => $mf['password'] ?? '',
+            'unix_socket' => $mf['unix_socket'] ?? '',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => false,
-            'engine' => null
+            'engine' => null,
+            'options' => $mf['options'] ?? [],
           ];
           Config::set("database.connections.$database_name", $default_db_config);
           DB::setDefaultConnection($database_name);
@@ -248,7 +254,7 @@ class CustomDomain
           // If both fail, continue with default database connection
           // This allows the app to work even if client-specific DB is unavailable
           // The client data might be in the default database
-          DB::setDefaultConnection(env('DB_CONNECTION', 'mysql'));
+          DB::setDefaultConnection(config('database.default', 'mysql'));
           
           // #region agent log
           $logData = [
@@ -258,7 +264,7 @@ class CustomDomain
             'message' => 'Falling back to default database connection',
             'data' => [
               'failed_database' => $database_name,
-              'default_database' => env('DB_DATABASE'),
+              'default_database' => config('database.connections.mysql.database'),
               'warning' => 'Client-specific database unavailable, using default database'
             ],
             'runId' => 'run1',

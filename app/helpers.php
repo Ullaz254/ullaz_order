@@ -49,6 +49,18 @@ if (!function_exists('s3_url')) {
     }
 }
 
+/**
+ * Defaults for middleware that registers extra MySQL connections (client / domain switching).
+ * Use instead of env('DB_*') outside config files: after `php artisan config:cache`, env()
+ * does not return .env values, which breaks DB_PASSWORD ("using password: NO").
+ */
+if (!function_exists('dynamic_mysql_defaults')) {
+    function dynamic_mysql_defaults(): array
+    {
+        return config('database.connections.mysql', []);
+    }
+}
+
 if (!function_exists('getFcmOauthToken')) {
     function getFcmOauthToken($url = null) {
         try {

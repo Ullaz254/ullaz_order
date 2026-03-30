@@ -26,7 +26,6 @@ class DbChooserApi
         config(['auth.guards.api.provider' => 'users']);
         $header = $request->header();
 
-        $database_name = 'royoorders';
         $clientCode = '';
   
         if (!array_key_exists("code", $header)){
@@ -57,22 +56,27 @@ class DbChooserApi
         }
         $redisData = json_decode($existRedis);
         try {
-            $database_name = $redisData->database_name;
-            $database_host = !empty($redisData->database_host) ? $redisData->database_host : '127.0.0.1';
-            $database_port = !empty($redisData->database_port) ? $redisData->database_port : '3306';
+            $m = dynamic_mysql_defaults();
+            $database_name = $redisData->database_name ?? ($m['database'] ?? '');
+            $database_host = !empty($redisData->database_host) ? $redisData->database_host : ($m['host'] ?? '127.0.0.1');
+            $database_port = !empty($redisData->database_port) ? $redisData->database_port : ($m['port'] ?? '3306');
+            $database_username = !empty($redisData->database_username) ? $redisData->database_username : ($m['username'] ?? 'forge');
+            $database_password = !empty($redisData->database_password) ? $redisData->database_password : ($m['password'] ?? '');
             $default = [
-              'driver' => env('DB_CONNECTION','mysql'),
-              'host' => $redisData->database_host,
-              'port' => $redisData->database_port,
+              'driver' => $m['driver'] ?? 'mysql',
+              'host' => $database_host,
+              'port' => $database_port,
               'database' => $database_name,
-              'username' => $redisData->database_username,
-              'password' => $redisData->database_password,
+              'username' => $database_username,
+              'password' => $database_password,
+              'unix_socket' => $m['unix_socket'] ?? '',
               'charset' => 'utf8mb4',
               'collation' => 'utf8mb4_unicode_ci',
               'prefix' => '',
               'prefix_indexes' => true,
               'strict' => false,
-              'engine' => null
+              'engine' => null,
+              'options' => $m['options'] ?? [],
             ];
 
             if (isset($database_name)) {

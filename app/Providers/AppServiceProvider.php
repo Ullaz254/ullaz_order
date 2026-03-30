@@ -267,24 +267,27 @@ class AppServiceProvider extends ServiceProvider
                 if ($redisData) {
                     if ($domain != env('Main_Domain')) {
                         if ($redisData && $dbname != $redisData->database_name) {
+                            $m = dynamic_mysql_defaults();
                             $database_name = $redisData->database_name;
-                            $database_host = !empty($redisData->database_host) ? $redisData->database_host : env('DB_HOST', '127.0.0.1');
-                            $database_port = !empty($redisData->database_port) ? $redisData->database_port : env('DB_PORT', '3306');
-                            $database_username = !empty($redisData->database_username) ? $redisData->database_username : env('DB_USERNAME', 'royoorders');
-                            $database_password = !empty($redisData->database_password) ? $redisData->database_password : env('DB_PASSWORD', '');
+                            $database_host = !empty($redisData->database_host) ? $redisData->database_host : ($m['host'] ?? '127.0.0.1');
+                            $database_port = !empty($redisData->database_port) ? $redisData->database_port : ($m['port'] ?? '3306');
+                            $database_username = !empty($redisData->database_username) ? $redisData->database_username : ($m['username'] ?? 'forge');
+                            $database_password = !empty($redisData->database_password) ? $redisData->database_password : ($m['password'] ?? '');
                             $default = [
-                                'driver' => env('DB_CONNECTION', 'mysql'),
+                                'driver' => $m['driver'] ?? 'mysql',
                                 'host' => $database_host,
                                 'port' => $database_port,
                                 'database' => $database_name,
                                 'username' => $database_username,
                                 'password' => $database_password,
+                                'unix_socket' => $m['unix_socket'] ?? '',
                                 'charset' => 'utf8mb4',
                                 'collation' => 'utf8mb4_unicode_ci',
                                 'prefix' => '',
                                 'prefix_indexes' => true,
                                 'strict' => false,
-                                'engine' => null
+                                'engine' => null,
+                                'options' => $m['options'] ?? [],
                             ];
                             Config::set("database.connections.$database_name", $default);
                             Config::set("client_id", 1);
