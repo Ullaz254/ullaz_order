@@ -75,7 +75,7 @@ class SubscriptionPlansVendorController extends BaseController
                 $plan->features = $features;
             }
         }
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
         return view('backend/subscriptions/subscriptionPlansVendor')->with(['features'=>$featuresList, 'subscription_plans'=>$sub_plans, 'subscribed_vendors_count'=>$subscribed_vendors_count, 'subscribed_vendors_percentage'=>$subscribed_vendors_percentage, 'awaiting_approval_subscriptions_count'=>$awaiting_approval_subscriptions_count, 'rejected_subscriptions_count'=>$rejected_subscriptions_count, 'approved_subscriptions_count'=>$approved_subscriptions_count,'clientCurrency'=>$clientCurrency]);
     }
 

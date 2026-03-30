@@ -49,7 +49,7 @@ class VendorSubscriptionController extends BaseController
                 $sub->features = $subFeaturesList;
             }
         }
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
         return view('backend.vendor.vendorSubscriptions')->with(['subscription_plans'=>$sub_plans, 'clientCurrency'=> $clientCurrency,'subscription'=>$active_subscription]);
     }
 

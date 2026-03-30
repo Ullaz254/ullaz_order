@@ -69,7 +69,7 @@ class OrderCancelRequestsController extends BaseController
         }
         $vendors = $vendors->get();
 
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
         return view('backend.order_cancel_requests.index', compact('pending_requests_count', 'approved_requests_count', 'rejected_requests_count', 'clientCurrency', 'vendors'));
     }
 

@@ -552,7 +552,7 @@
                                     <td>{{$set->min_select}} - {{$set->max_select}}</td>
                                     <td>
                                         @foreach($set->option as $opt)
-                                        <span>{{$opt->title}} - {{$clientCurrency->currency->symbol}}{{decimal_format($opt->price)}}</span><br />
+                                        <span>{{$opt->title}} - {{optional(optional($clientCurrency)->currency)->symbol ?? '$'}}{{decimal_format($opt->price)}}</span><br />
                                         <span></span>
                                         @endforeach
                                     </td>
@@ -640,7 +640,7 @@
                                 <div class="col-md-12" style="overflow-x: auto;">
                                     <table class="table table-borderless mb-0 optionTableAdd" id="banner-datatable">
                                         <tr class="trForClone">
-                                            <th>{{ __("Price") }}({{$clientCurrency->currency->symbol}})</th>
+                                            <th>{{ __("Price") }}({{optional(optional($clientCurrency)->currency)->symbol ?? '$'}})</th>
 
                                             @if (isset($getAdditionalPreference['is_price_by_role']))
                                                 @if($getAdditionalPreference['is_price_by_role'] == '1')

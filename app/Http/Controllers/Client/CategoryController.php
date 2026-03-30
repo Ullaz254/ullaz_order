@@ -79,7 +79,7 @@ class CategoryController extends BaseController
             ->where('is_active', 1)
             ->orderBy('is_primary', 'desc')->get();
         $addon_sets = AddonSet::with('option')->orderBy('id', 'desc')->get();
-        $clientCurrency = ClientCurrency::select('currency_id')->where('is_primary', 1)->with('currency')->first();
+        $clientCurrency = primary_client_currency_for_admin();
         
        
         return view('backend.catalog.index')->with(['clientCurrency' => $clientCurrency, 'categories' => $categories, 'addon_sets' => $addon_sets ,'html' => $tree,  'languages' => $langs, 'variants' => $variants, 'brands' => $brands, 'build' => $build, 'tags'=>$tags,'facilties'=>$facilties,'client_languages'=>$langs, 'attributes'=>$attributes]);

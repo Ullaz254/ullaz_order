@@ -774,7 +774,7 @@ class VendorController extends BaseController
             $returnData['subscription'] = $subscriptions_data['active_sub'];
         }
 
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
         $facilties = Facilty::with(['primary'])->get();
 
         $data = $this->SettingFunction($vendor,$id);
@@ -826,7 +826,7 @@ class VendorController extends BaseController
         $client_preferences = ClientPreference::first();
         $templetes = \DB::table('vendor_templetes')->where('status', 1)->get();
         $vendor_registration_documents = VendorRegistrationDocument::get();
-        $clientCurrency = ClientCurrency::select('currency_id')->where('is_primary', 1)->with('currency')->first();
+        $clientCurrency = primary_client_currency_for_admin();
 
         $facilties = Facilty::with(['primary'])->get();
         $roles = RoleOld::where('status',1)->get();

@@ -61,6 +61,62 @@ if (!function_exists('dynamic_mysql_defaults')) {
     }
 }
 
+/**
+ * Primary client currency with `currency` relation loaded for admin/backend views.
+ * After migrations or missing `client_currencies` rows, plain ClientCurrency::where(is_primary)
+ * returns null and blades crash on $clientCurrency->currency->symbol.
+ */
+if (!function_exists('primary_client_currency_for_admin')) {
+    function primary_client_currency_for_admin(): ClientCurrency
+    {
+        try {
+            $row = ClientCurrency::with('currency')->where('is_primary', 1)->first();
+            if ($row) {
+                if (!$row->currency) {
+                    $row->load('currency');
+                }
+                if ($row->currency) {
+                    return $row;
+                }
+            }
+            $row = ClientCurrency::with('currency')->orderBy('id')->first();
+            if ($row && $row->currency) {
+                return $row;
+            }
+            $currency = Currency::orderBy('id')->first();
+            if (!$currency) {
+                $currency = new Currency();
+                $currency->exists = false;
+                $currency->id = 0;
+                $currency->name = 'USD';
+                $currency->iso_code = 'USD';
+                $currency->symbol = '$';
+            }
+            $placeholder = new ClientCurrency();
+            $placeholder->exists = false;
+            $placeholder->currency_id = $currency->id;
+            $placeholder->doller_compare = 1;
+            $placeholder->setRelation('currency', $currency);
+
+            return $placeholder;
+        } catch (\Throwable $e) {
+            $currency = new Currency();
+            $currency->exists = false;
+            $currency->id = 0;
+            $currency->name = 'USD';
+            $currency->iso_code = 'USD';
+            $currency->symbol = '$';
+            $placeholder = new ClientCurrency();
+            $placeholder->exists = false;
+            $placeholder->currency_id = 0;
+            $placeholder->doller_compare = 1;
+            $placeholder->setRelation('currency', $currency);
+
+            return $placeholder;
+        }
+    }
+}
+
 if (!function_exists('getFcmOauthToken')) {
     function getFcmOauthToken($url = null) {
         try {

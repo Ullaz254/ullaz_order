@@ -213,6 +213,19 @@ class AppServiceProvider extends ServiceProvider
         view()->share('payPhoneToken', $payphone_token??'');
         view()->share('data_trans_script_url', $data_trans_script_url??'');
 
+        // Ensure backend views never receive null $clientCurrency (missing primary row / migration).
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            $name = $view->name();
+            if ($name === null || strpos((string) $name, 'backend.') !== 0) {
+                return;
+            }
+            $data = $view->getData();
+            if (array_key_exists('clientCurrency', $data) && $data['clientCurrency'] !== null) {
+                return;
+            }
+            $view->with('clientCurrency', primary_client_currency_for_admin());
+        });
+
     }
 
     public function connectDynamicDb($request)

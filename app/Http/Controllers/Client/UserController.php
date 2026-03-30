@@ -417,7 +417,7 @@ class UserController extends BaseController
         $vendors = Vendor::where('status', 1)->get();
         $active_orders = $this->getUserOrders($id, 'active');
         $completed_orders =  $this->getUserOrders($id, 'completed');
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
         $langId = Session::get('customerLanguage');
         $fixedFee = $this->fixedFee($langId);
         $getAdditionalPreference = getAdditionalPreference(['is_price_by_role']);
@@ -656,7 +656,7 @@ class UserController extends BaseController
     {
         $pagiNate = 10;
         $trans = Transaction::where('wallet_id', $request->walletId)->orderBy('id', 'desc');
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
         // dd($user_transactions->toArray());
         // foreach ($user_transactions as $key => $trans) {
         //     // $user = User::find($trans->payable_id);
@@ -673,7 +673,9 @@ class UserController extends BaseController
                 return Carbon::parse($trans->created_at)->format('M d, Y, H:i A');
             })
             ->editColumn('amount', function ($trans) use ($clientCurrency) {
-                return $clientCurrency->currency->symbol . sprintf("%.2f", ($trans->amount / 100));
+                $sym = optional(optional($clientCurrency)->currency)->symbol ?? '$';
+
+                return $sym . sprintf("%.2f", ($trans->amount / 100));
             })
             ->addColumn('description', function ($trans) {
                 $reason = json_decode($trans->meta, true);

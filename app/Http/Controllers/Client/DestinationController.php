@@ -17,7 +17,7 @@ class DestinationController extends Controller
         $langs = ClientLanguage::with('language')->select('language_id', 'is_primary', 'is_active')
             ->where('is_active', 1)
             ->orderBy('is_primary', 'desc')->get();
-        $clientCurrency = ClientCurrency::select('currency_id')->where('is_primary', 1)->with('currency')->first();
+        $clientCurrency = primary_client_currency_for_admin();
         return view('backend.destination.index')->with(['destination' => $destinations,'languages' => $langs, 'clientCurrency' => $clientCurrency]);
     }
 
@@ -53,7 +53,7 @@ class DestinationController extends Controller
                     ->orderBy('is_primary', 'desc')->get();
 
         $submitUrl = route('destination.store', $id);
-        $clientCurrency = ClientCurrency::select('currency_id')->where('is_primary', 1)->with('currency')->first();
+        $clientCurrency = primary_client_currency_for_admin();
         $returnHTML = view('backend.destination.edit')->with(['languages' => $langs, 'destination' => $destination, 'clientCurrency' => $clientCurrency])->render();
         return response()->json(array('success' => true, 'html'=>$returnHTML, 'submitUrl' => $submitUrl));
     }

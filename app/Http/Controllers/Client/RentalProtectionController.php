@@ -16,7 +16,7 @@ class RentalProtectionController extends BaseController
         $langs = ClientLanguage::with('language')->select('language_id', 'is_primary', 'is_active')
             ->where('is_active', 1)
             ->orderBy('is_primary', 'desc')->get();
-        $clientCurrency = ClientCurrency::select('currency_id')->where('is_primary', 1)->with('currency')->first();
+        $clientCurrency = primary_client_currency_for_admin();
         return view('backend.rentalProtection.index')->with(['rentalProtection' => $rentalProtection,'languages' => $langs, 'clientCurrency' => $clientCurrency]);
     }
 
@@ -50,7 +50,7 @@ class RentalProtectionController extends BaseController
                     ->orderBy('is_primary', 'desc')->get();
 
         $submitUrl = route('rental.protection.store', $id);
-        $clientCurrency = ClientCurrency::select('currency_id')->where('is_primary', 1)->with('currency')->first();
+        $clientCurrency = primary_client_currency_for_admin();
         $returnHTML = view('backend.rentalProtection.edit')->with(['languages' => $langs, 'rentalProtection' => $rentalProtection, 'clientCurrency' => $clientCurrency])->render();
         return response()->json(array('success' => true, 'html'=>$returnHTML, 'submitUrl' => $submitUrl));
     }

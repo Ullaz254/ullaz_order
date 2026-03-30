@@ -47,7 +47,7 @@ class EstimationController extends BaseController{
         ->where('status', '!=', 2)
         ->orderBy('position', 'asc')->get(); 
 
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
 
         $getAllEstimateAddonSets = EstimateAddonSet::all();
        

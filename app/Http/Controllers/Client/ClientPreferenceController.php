@@ -118,7 +118,7 @@ class ClientPreferenceController extends BaseController{
         $currencies = Currency::where('id', '>', '0')->get();
         $countries = Country::where('id', '>', '0')->get();
         $curtableData = array_chunk($currencies->toArray(), 2);
-        $primaryCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $primaryCurrency = primary_client_currency_for_admin();
         $primaryCountry = ClientCountries::where('is_primary', 1)->first();
         $nomenclatureAllToGet=Nomenclature::get();
         $want_to_tip_nomenclature=$nomenclatureAllToGet->where('label','Want To Tip')->first();

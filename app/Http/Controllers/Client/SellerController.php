@@ -569,7 +569,7 @@ class SellerController extends BaseController
         $vendor_for_pickup_delivery = VendorCategory::where('vendor_id',$id)->whereHas('category',function($q){$q->where('type_id',7);})->count();
         $vendor_for_ondemand = VendorCategory::where('vendor_id',$id)->whereHas('category',function($q){$q->where('type_id',8);})->count();
         $vendor_for_appointment_delivery = VendorCategory::where('vendor_id',$id)->whereHas('category',function($q){$q->where('type_id',12);})->count();
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
         $facilties = Facilty::with(['primary'])->get();
         $vendor_facilty_ids = VendorFacilty::where('vendor_id',$vendor->id)->pluck('facilty_id')->toArray();
 
@@ -623,7 +623,7 @@ class SellerController extends BaseController
         $client_preferences = ClientPreference::first();
         $templetes = \DB::table('vendor_templetes')->where('status', 1)->get();
         $vendor_registration_documents = VendorRegistrationDocument::get();
-        $clientCurrency = ClientCurrency::select('currency_id')->where('is_primary', 1)->with('currency')->first();
+        $clientCurrency = primary_client_currency_for_admin();
         $vendor_for_pickup_delivery = VendorCategory::where('vendor_id',$id)->whereHas('category',function($q){$q->where('type_id',7);})->count();
         $vendor_for_appointment_delivery = VendorCategory::where('vendor_id',$id)->whereHas('category',function($q){$q->where('type_id',12);})->count();
         $vendor_for_ondemand = VendorCategory::where('vendor_id',$id)->whereHas('category',function($q){$q->where('type_id',8);})->count();

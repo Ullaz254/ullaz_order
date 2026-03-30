@@ -181,7 +181,7 @@ class OrderController extends BaseController
             });
         }
         $vendors = $vendors->get();
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
 
         $langId = Session::get('customerLanguage');
         $fixedFee = $this->fixedFee($langId);
@@ -657,7 +657,7 @@ class OrderController extends BaseController
         }
         $admincurrency = ClientCurrency::getAdminCurrencySymbol();
 
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
 
         $langId = Session::get('customerLanguage');
         $fixedFee = $this->fixedFee($langId);
@@ -744,7 +744,7 @@ class OrderController extends BaseController
     {
 
         $langId = Session::has('adminLanguage') ? Session::get('adminLanguage') : 1;
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
         $vendor_order_status_option_ids = [];
         $vendor_order_status_created_dates = [];
         $order = Order::with(array(
@@ -2632,7 +2632,7 @@ class OrderController extends BaseController
                 });
             }
             $orders[$status] = $orders_list->paginate(20);
-            $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+            $clientCurrency = primary_client_currency_for_admin();
             // all vendors
             $vendors = Vendor::where('status', '!=', '2')->orderBy('id', 'desc');
             if ($user->is_superadmin == 0) {
@@ -2658,7 +2658,7 @@ class OrderController extends BaseController
     public function returnOrderFilter(Request $request)
     {
         try {
-            $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+            $clientCurrency = primary_client_currency_for_admin();
             $user = Auth::user();
             $timezone = $user->timezone;
             $orders_list = OrderReturnRequest::with('product', 'order')->orderBy('updated_at', 'DESC');
@@ -3263,7 +3263,7 @@ class OrderController extends BaseController
     public function getOrderDetailEdit($domain = '', $order_id, $vendor_id)
     {
         $langId = Session::has('adminLanguage') ? Session::get('adminLanguage') : 1;
-        $clientCurrency = ClientCurrency::where('is_primary', 1)->first();
+        $clientCurrency = primary_client_currency_for_admin();
         $vendor_order_status_option_ids = [];
         $vendor_order_status_created_dates = [];
         $order = Order::with(array(
