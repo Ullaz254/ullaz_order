@@ -88,9 +88,7 @@
                     @forelse ($roles as $key => $role)
                         <li data-id="{{$role->id}}"  class="role_name @if($key == 0)active @endif"><a href="javascript:void(0)">{{ @$role->name }}</a></li>
                     @empty
-                        <tr>
-                            <li data-id="{{$role->id}}"  class="role_name"><a href="javascript:void(0)">No Record found.</li></tr>
-                        </tr>
+                        <li class="role_name text-muted"><span>{{ __('No roles found.') }}</span></li>
                     @endforelse
                 </ul>
             </div>
