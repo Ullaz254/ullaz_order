@@ -1,9 +1,11 @@
 @yield('css')
 @php
-$mapKey = config('geocoder.key') ?: '1234';
+$mapKey = '1234';
 $theme = \App\Models\ClientPreference::first();
 if ($theme && !empty($theme->map_key)) {
 	$mapKey = $theme->map_key;
+} elseif (!empty(config('services.google_maps.api_key'))) {
+	$mapKey = config('services.google_maps.api_key');
 }
 @endphp
 

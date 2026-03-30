@@ -13,7 +13,7 @@
     </div>
   </div>
 @php
-    $mapKey = config('geocoder.key') ?: '1234';
+    $mapKey = config('services.google_maps.api_key', 'AIzaSyD0edfD0pDgXVYBT65c8qczFdsx9j24PyY');
     $theme = Session::get('preferences');
 
     if($theme && !empty($theme->map_key)){

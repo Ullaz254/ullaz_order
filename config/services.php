@@ -54,4 +54,8 @@ return [
         'redirect' => env('APPLE_CALLBACK_URL'),
     ],
 
+    'google_maps' => [
+        'api_key' => env('GOOGLE_MAPS_GEOCODING_API_KEY'),
+    ],
+
 ];
