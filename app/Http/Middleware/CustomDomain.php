@@ -286,6 +286,9 @@ class CustomDomain
       // Try to get client preferences, handle errors gracefully
       try {
         $clientPreference = ClientPreference::where('client_code', $redisData->code)->first();
+        if (!$clientPreference) {
+          $clientPreference = ClientPreference::first();
+        }
         if ($clientPreference) {
           Config::set('FACEBOOK_CLIENT_ID', $clientPreference->fb_client_id);
           Config::set('FACEBOOK_CLIENT_SECRET', $clientPreference->fb_client_secret);

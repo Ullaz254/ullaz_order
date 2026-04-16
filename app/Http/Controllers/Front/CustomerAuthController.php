@@ -110,6 +110,17 @@ class CustomerAuthController extends FrontController
         $navCategories = $this->categoryNav($langId);
         $preferences = ClientPreference::select('signup_image')->first();
 
+        // Registration Blade templates wrap the form in @if(session('preferences')). CustomDomain can
+        // store an empty array when ClientPreference is missing for client_code; DatabaseDynamic only
+        // fills preferences for authenticated users. Guests then see a blank register page.
+        $sessionPreferences = Session::get('preferences');
+        if ($sessionPreferences === null || $sessionPreferences === '' || (is_array($sessionPreferences) && $sessionPreferences === [])) {
+            $fullClientPreferences = ClientPreference::first();
+            if ($fullClientPreferences) {
+                Session::put('preferences', $fullClientPreferences);
+            }
+        }
+
         $urlPrevious = url()->previous();
         $routePrevious = app('router')->getRoutes($urlPrevious)->match(app('request')->create($urlPrevious))->getName();
         if($routePrevious == 'showCart'){
@@ -142,12 +153,19 @@ class CustomerAuthController extends FrontController
         }
 
         $allergic_items = AllergicItem::get();
-        //echo $register_page; die;
-        if (!Session::get('referrer')) {
-            return view('frontend.'.$register_page)->with(['navCategories' => $navCategories,'privacy' => $privacy,'terms' => $terms , "user_registration_documents"=> $user_registration_documents,'allergic_items' => $allergic_items, 'preferences' => $preferences]);
-        } else {
-            return view('frontend.account.'.$register_page)->with(['navCategories' => $navCategories, 'code' => Session::get('referrer'),'privacy' => $privacy,'terms' => $terms , "user_registration_documents"=> $user_registration_documents,'allergic_items' => $allergic_items, 'preferences' => $preferences]);
+        $viewData = [
+            'navCategories' => $navCategories,
+            'privacy' => $privacy,
+            'terms' => $terms,
+            'user_registration_documents' => $user_registration_documents,
+            'allergic_items' => $allergic_items,
+            'preferences' => $preferences,
+        ];
+        if (Session::get('referrer')) {
+            $viewData['code'] = Session::get('referrer');
         }
+
+        return view('frontend.'.$register_page)->with($viewData);
     }
 
     /**     * check if cookie already exist     */
