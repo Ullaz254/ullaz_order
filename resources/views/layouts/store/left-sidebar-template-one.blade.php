@@ -176,30 +176,29 @@ try {
                         @if (Auth::guest())
                         <li class="onhover-dropdown mobile-account d-block">
                             <i class="fa fa-user" aria-hidden="true"></i>
-                            <ul class="onhover-show-div">
-                                <li>
-                                    <a href="{{ route('customer.login') }}" data-lng="en">{{ __('Login') }}</a>
+                            <ul class="onhover-show-div al-account-dropdown-menu" role="menu">
+                                <li role="none">
+                                    <a href="{{ route('customer.login') }}" class="al-account-dropdown-link" data-lng="en" role="menuitem"><i class="fa fa-sign-in al-account-dropdown-icon" aria-hidden="true"></i><span>{{ __('Login') }}</span></a>
                                 </li>
-                                <li>
-                                    <a href="{{ route('customer.register') }}" data-lng="es">{{ __('Register') }}</a>
+                                <li role="none">
+                                    <a href="{{ route('customer.register') }}" class="al-account-dropdown-link" data-lng="es" role="menuitem"><i class="fa fa-user-plus al-account-dropdown-icon" aria-hidden="true"></i><span>{{ __('Register') }}</span></a>
                                 </li>
                             </ul>
                         </li>
                         @else
                         <li class="onhover-dropdown mobile-account d-block">
                             <i class="fa fa-user" aria-hidden="true"></i>
-                            <ul class="onhover-show-div">
+                            <ul class="onhover-show-div al-account-dropdown-menu" role="menu">
                                 @if (Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
-                                <li>
-                                    <a href="{{ route('client.dashboard') }}"
-                                        data-lng="en">{{getNomenclatureName('Control Panel', true)}}</a>
+                                <li role="none">
+                                    <a href="{{ route('client.dashboard') }}" class="al-account-dropdown-link" data-lng="en" role="menuitem"><i class="fa fa-tachometer al-account-dropdown-icon" aria-hidden="true"></i><span>{{ getNomenclatureName('Control Panel', true) }}</span></a>
                                 </li>
                                 @endif
-                                <li>
-                                    <a href="{{ route('user.profile') }}" data-lng="en">{{ __('Profile') }}</a>
+                                <li role="none">
+                                    <a href="{{ route('user.profile') }}" class="al-account-dropdown-link" data-lng="en" role="menuitem"><i class="fa fa-user-o al-account-dropdown-icon" aria-hidden="true"></i><span>{{ __('Profile') }}</span></a>
                                 </li>
-                                <li>
-                                    <a href="{{ route('user.logout') }}" data-lng="es">{{ __('Logout') }}</a>
+                                <li role="none">
+                                    <a href="{{ route('user.logout') }}" class="al-account-dropdown-link al-account-dropdown-link--logout" data-lng="es" role="menuitem"><i class="fa fa-sign-out al-account-dropdown-icon" aria-hidden="true"></i><span>{{ __('Logout') }}</span></a>
                                 </li>
                             </ul>
                         </li>
