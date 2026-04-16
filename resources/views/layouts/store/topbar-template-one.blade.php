@@ -85,7 +85,7 @@ $preference = $client_preference_detail ?? null;
                     $applocale = session()->get('applocale');
                 }
                 @endphp
-                <ul class="header-dropdown d-none d-sm-flex align-items-center justify-content-end">
+                <ul class="header-dropdown d-none d-sm-inline">
                 
                     @if( $is_ondemand_multi_pricing ==1 )
                         @include('layouts.store.onDemandTopBarli')

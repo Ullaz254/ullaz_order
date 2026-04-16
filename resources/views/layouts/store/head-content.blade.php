@@ -117,6 +117,12 @@
 
     .top-header .header-dropdown li.onhover-dropdown{padding:0 15px}.shimmer_effect{overflow:hidden}.menu-slider.items-center .slick-track{justify-content:space-between}
     {{-- Do NOT set .onhover-show-div to display:none — it breaks theme hover (opacity/visibility) and account dropdowns. --}}
+	.header-dropdown .onhover-dropdown ul.onhover-show-div,
+	.header-dropdown .onhover-dropdown_al ul.onhover-show-div{display:flex!important;flex-direction:column!important;align-items:stretch!important}
+	.header-dropdown .onhover-dropdown ul.onhover-show-div>li,
+	.header-dropdown .onhover-dropdown_al ul.onhover-show-div>li{display:block!important;width:100%!important}
+	.header-dropdown .onhover-dropdown ul.onhover-show-div>li>a,
+	.header-dropdown .onhover-dropdown_al ul.onhover-show-div>li>a{display:block}
 
 	body .menu-slider .slick-track{display:flex;justify-content:start;margin:0 auto!important; gap: 20px;}
 
