@@ -403,16 +403,8 @@ $getAdditionalPreference = getAdditionalPreference(['is_phone_signup']);
                         });
                     }
                     else{
-
-                        if((response.message == 'Incorrect Password') && ($('#password-field').val() == ''))
-                        {
-                            $("#error-msg").html('');
-                            $("#error-msg").hide();
-                        }else{
-                            $("#error-msg").html(response.message);
-                             $("#error-msg").show();
-                        }
-                       
+                        $("#error-msg").html(response.message);
+                        $("#error-msg").show();
                     }
                 }
             });

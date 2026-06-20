@@ -58,7 +58,7 @@
                 <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
                     
                     <div class="dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">Welcome !</h6>
+                        <h6 class="text-overflow m-0">Welcome {{ auth()->user()->name ?? '' }}!</h6>
                     </div>
 
                     <a href="javascript:void(0);" class="dropdown-item notify-item">

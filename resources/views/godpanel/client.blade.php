@@ -44,7 +44,6 @@
                                     <th>{{ __("Name") }}</th>
                                     <th>{{ __("Type") }}</th>
                                     <th>{{ __("Email") }}</th>
-                                    <th>{{ __("Password") }}</th>
                                     <th>{{ __("Phone") }}</th>
                                     <th>{{ __("DB Name") }}</th>
                                     <th>{{ __("SUB Domain") }}</th>
@@ -62,7 +61,6 @@
                                     </td>
                                     <td> @if($client->client_type == 1) <span class="badge bg-success" style="color:#fff;">Live</span> @else <span class="badge bg-warning" style="color:#fff;">Demo</span> @endif </td>
                                     <td> {{$client->email}} </td>
-                                    <td style="width:100px;max-width:100px;"> </td>
                                     <td> {{$client->phone_number}} </td>
                                     <td> {{$client->database_name}} </td>
                                     <td><a target="_blank" href="{{$client->sub_domain_url}}">{{$client->sub_domain }}{{env('SUBMAINDOMAIN') }}</a> </td>

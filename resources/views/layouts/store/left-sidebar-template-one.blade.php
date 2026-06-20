@@ -103,7 +103,7 @@ try {
                         @endif
                         <div class="d-none d-md-flex align-items-center taxi-search-bar px-2 py-1">
                             <button class="btn p-0 mr-1" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
-                            <input class="form-control border-0 bg-transparent p-0" type="search" placeholder="{{ __('Search') }}" id="main_search_box_taxi" autocomplete="off" style="box-shadow:none;outline:none;">
+                            <input class="form-control border-0 bg-transparent p-0" type="search" placeholder="{{ __('Search') }}" id="main_search_box_taxi" autocomplete="off" tabindex="-1" style="box-shadow:none;outline:none;">
                         </div>
                     </div>
                 </div>
@@ -187,7 +187,7 @@ try {
                         </li>
                         @else
                         <li class="onhover-dropdown mobile-account d-block">
-                            <i class="fa fa-user" aria-hidden="true"></i>
+                            <i class="fa fa-user" aria-hidden="true"></i><span class="d-none d-sm-inline ml-1 small" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;">{{ Str::limit(Auth::user()->name ?? __('Account'), 12) }}</span>
                             <ul class="onhover-show-div">
                                 @if (Auth::user()->is_superadmin == 1 || Auth::user()->is_admin == 1)
                                 <li>
