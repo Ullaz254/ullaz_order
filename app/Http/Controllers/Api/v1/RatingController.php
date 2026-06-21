@@ -199,7 +199,7 @@ class RatingController extends BaseController{
     public function setDriverRatingOnDispatch($request)
     {
         try {
-            $dispatch_domain = ClientPreference::select('id', 'delivery_check','delivery_service_key_url','delivery_service_key_code','need_dispacher_ride', 'pickup_delivery_service_key', 'pickup_delivery_service_key_code', 'pickup_delivery_service_key_url')->first();            
+            $dispatch_domain = ClientPreference::select('id', 'delivery_check','delivery_service_key','delivery_service_key_url','delivery_service_key_code','need_dispacher_ride', 'pickup_delivery_service_key', 'pickup_delivery_service_key_code', 'pickup_delivery_service_key_url')->first();            
             if ($dispatch_domain && $dispatch_domain != false) {
                 // $all_location = array();
                 // $postdata =  [ 'order_id' => $request->rating_for_dispatch??'',
@@ -207,7 +207,7 @@ class RatingController extends BaseController{
                 //                 'order_unique_id' => $request->order_unique_id,
                 //                 'rating' => $request->rating??'',
                 //                 'review' => $request->review??''];
-                $client = new GCLIENT(['headers' => ['personaltoken' => $dispatch_domain->delivery_service_key_url,'shortcode' => $dispatch_domain->delivery_service_key_code,'content-type' => 'application/json']]);
+                $client = new GCLIENT(['headers' => ['personaltoken' => $dispatch_domain->delivery_service_key,'shortcode' => $dispatch_domain->delivery_service_key_code,'content-type' => 'application/json']]);
                 $url = $dispatch_domain->delivery_service_key_url;                
                 //$url = "http://127.0.0.1:8002";
                 $res = $client->get($url.'/order/driver-rating/'.$request->client_id.'/'.$request->order_unique_id.'?review='.$request->review.'&rating='.$request->rating);
