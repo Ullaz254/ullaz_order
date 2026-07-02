@@ -853,7 +853,7 @@ class VendorController extends BaseController
         $vendor = Vendor::where('id',$id);
         $langId = Session::has('adminLanguage') ? Session::get('adminLanguage') : 1;
         $vendor_registration_documents = VendorRegistrationDocument::get();
-        if (Auth::user()->is_superadmin == 0) {
+        if (Auth::user()->is_superadmin == 0 && Auth::user()->is_admin == 0) {
             $vendor = $vendor->whereHas('permissionToUser', function ($query) {
                 $query->where('user_id', Auth::user()->id);
             });
