@@ -81,7 +81,7 @@
     <footer class="footer footer-alt">
         <script>
             document.write(new Date().getFullYear())
-        </script> &copy; {{__("All rights reserved")}} by <a href="https://royoapps.com/" class="text-white-50">Royo Apps</a>
+        </script> &copy; {{__("All rights reserved")}} by <a href="https://drivarr.com/" class="text-white-50">Drivarr</a>
     </footer>
     
     <script src="{{asset('assets/js/app.min.js')}}"></script>
