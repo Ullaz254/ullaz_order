@@ -487,7 +487,7 @@ $("#change_password_form").submit(function(e){
     });
 });
 </script> 
-@if(isset($analytics['fpixel_id']))
+@if(!empty($analytics['fpixel_id']))
     <!-- Meta Pixel Code -->
         <script>
         !function(f,b,e,v,n,t,s)

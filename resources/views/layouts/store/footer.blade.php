@@ -249,7 +249,7 @@ gtag('config', 'G-5LPF1QP3Y3');
 @endif
 </script>
 <!-- End googletagmanager -->
-    @if(isset($analytics['fpixel_id']))
+    @if(!empty($analytics['fpixel_id']))
     <!-- Meta Pixel Code -->
         <script>
         !function(f,b,e,v,n,t,s)
