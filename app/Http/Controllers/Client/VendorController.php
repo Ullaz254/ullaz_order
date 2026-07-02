@@ -246,7 +246,7 @@ class VendorController extends BaseController
             $vendor_for_pickup_delivery = $vendor_category->whereHas('category',function($q){$q->where('type_id',7);})->count();
             $vendor_for_ondemand = $vendor_category->whereHas('category',function($q){$q->where('type_id',8);})->count();
         }
-        if(count($vendors) == 1 && $user->is_superadmin == 0){
+        if(count($vendors) == 1 && $user->is_superadmin == 0 && $user->is_admin == 0){
             return Redirect::route('vendor.catalogs', $vendors->first()->id);
         }else{
             $build = array();
@@ -853,9 +853,11 @@ class VendorController extends BaseController
         $vendor = Vendor::where('id',$id);
         $langId = Session::has('adminLanguage') ? Session::get('adminLanguage') : 1;
         $vendor_registration_documents = VendorRegistrationDocument::get();
-        if (Auth::user()->is_superadmin == 0 && Auth::user()->is_admin == 0) {
-            $vendor = $vendor->whereHas('permissionToUser', function ($query) {
-                $query->where('user_id', Auth::user()->id);
+        $authUser = Auth::user();
+        if ($authUser->is_superadmin == 0 && $authUser->is_admin == 0 &&
+            ($authUser->hasRole('Vendor') || $authUser->hasRole('Vendors') || $authUser->hasRole('vendor'))) {
+            $vendor = $vendor->whereHas('permissionToUser', function ($query) use ($authUser) {
+                $query->where('user_id', $authUser->id);
             });
         }
         $vendor  =  $vendor->first();
