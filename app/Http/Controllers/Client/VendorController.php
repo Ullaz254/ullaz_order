@@ -854,15 +854,13 @@ class VendorController extends BaseController
         $langId = Session::has('adminLanguage') ? Session::get('adminLanguage') : 1;
         $vendor_registration_documents = VendorRegistrationDocument::get();
         $authUser = Auth::user();
-        if ($authUser->is_superadmin == 0 && $authUser->is_admin == 0 &&
+        if (!$authUser->is_superadmin && !$authUser->is_admin &&
             ($authUser->hasRole('Vendor') || $authUser->hasRole('Vendors') || $authUser->hasRole('vendor'))) {
             $vendor = $vendor->whereHas('permissionToUser', function ($query) use ($authUser) {
                 $query->where('user_id', $authUser->id);
             });
         }
-        $vendor  =  $vendor->first();
-        if(empty($vendor))
-        abort(404);
+        $vendor  =  $vendor->firstOrFail();
         $vendor->fixedFeeNomenclatures = $this->fixedFee($langId);
         $VendorCategory = VendorCategory::where('vendor_id', $id)->where('status', 1)->pluck('category_id')->toArray();
 

@@ -10,7 +10,7 @@ class AddAverageRatingToProductsIfNotExists extends Migration
     {
         if (!Schema::hasColumn('products', 'averageRating')) {
             Schema::table('products', function (Blueprint $table) {
-                $table->decimal('averageRating', 4, 2)->nullable()->after('has_variant');
+                $table->decimal('averageRating', 4, 2)->nullable();
                 $table->index('averageRating');
             });
         }
